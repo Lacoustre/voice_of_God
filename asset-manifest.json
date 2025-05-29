@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/voice_of_God/static/css/main.417910e4.css",
-    "main.js": "/voice_of_God/static/js/main.d27cb9e6.js",
+    "main.js": "/voice_of_God/static/js/main.19c8e30d.js",
     "static/media/church_photo_3.jpg": "/voice_of_God/static/media/church_photo_3.ce82d964a0104c054aa2.jpg",
     "static/media/church_photo_4.jpg": "/voice_of_God/static/media/church_photo_4.a49ef534ee0bfdf8a6cd.jpg",
     "static/media/friday_night_prayers.jpeg": "/voice_of_God/static/media/friday_night_prayers.c25cb1e04804724f6665.jpeg",
@@ -29,10 +29,10 @@
     "static/media/Pastor_Geina.jpg": "/voice_of_God/static/media/Pastor_Geina.c25937df6aaca823429d.jpg",
     "index.html": "/voice_of_God/index.html",
     "main.417910e4.css.map": "/voice_of_God/static/css/main.417910e4.css.map",
-    "main.d27cb9e6.js.map": "/voice_of_God/static/js/main.d27cb9e6.js.map"
+    "main.19c8e30d.js.map": "/voice_of_God/static/js/main.19c8e30d.js.map"
   },
   "entrypoints": [
     "static/css/main.417910e4.css",
-    "static/js/main.d27cb9e6.js"
+    "static/js/main.19c8e30d.js"
   ]
 }

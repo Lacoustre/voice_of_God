@@ -14,7 +14,7 @@ const leaders = [
   },
   {
     name: "Pastor Geina",
-    title: "Associate Pastor",
+    title: "Residential Pastor",
     image: Pastor_Geina,
     bio: "Dedicated to nurturing spiritual growth and providing pastoral care to the congregation."
   },
@@ -37,9 +37,7 @@ const LeadershipPage = () => {
     <section className="py-8">
       <motion.p 
         className="text-lg text-gray-200 max-w-2xl mx-auto mb-8 text-center font-bold"
-        initial={{ opacity: 0, x: -100 }}
         whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.7, type: "spring", stiffness: 100 }}
       >
         Meet the dedicated leaders guiding our ministry with faith and vision.
       </motion.p>
@@ -47,9 +45,7 @@ const LeadershipPage = () => {
         {leaders.map((leader, index) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: index * 0.15, type: "spring" }}
             className="bg-transparent backdrop-blur-sm rounded-lg shadow-lg border border-gray-700 hover:border-purple-500 transform hover:scale-105 transition-all duration-300 text-center p-6 cursor-pointer"
           >
             <motion.div 

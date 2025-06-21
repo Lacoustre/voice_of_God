@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SocialIcon from "./Icons";
 import { Link } from "react-router-dom";
 import logo from "../assets/modified_logo.png";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
@@ -27,7 +27,7 @@ const Footer = () => {
 
     setIsSubmittingNewsletter(true);
     try {
-      const response = await fetch("https://voice-of-god.onrender.com/newsletter", {
+      const response = await fetch("http://localhost:4000/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: newsletterEmail }),
@@ -55,7 +55,7 @@ const Footer = () => {
     setIsSubmittingMessage(true);
     try {
 
-      const response = await fetch("https://voice-of-god.onrender.com/contact", {
+      const response = await fetch("http://localhost:4000/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -88,7 +88,6 @@ const Footer = () => {
     <footer id="contact" className="bg-gray-900 text-black py-16 mt-12">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between mb-16 gap-12">
-          {/* Intro */}
           <div className="mb-8 md:mb-0 md:max-w-xl">
             <h3 className="text-3xl font-semibold tracking-tight mb-6 transform transition duration-500 ease-in-out hover:scale-105 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-blue-200">
               New to Voice of God Ministries?
@@ -109,7 +108,6 @@ const Footer = () => {
             </Link>
           </div>
 
-          {/* Contact & Links */}
           <div className="flex flex-wrap gap-16 mb-8 md:mb-0">
             <div className="min-w-[160px]">
               <h4 className="font-bold text-xl mb-6 text-purple-200">Quick Links</h4>
@@ -144,14 +142,12 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Social */}
         <div className="flex justify-center items-center space-x-8 mb-12">
           <SocialIcon href="https://www.facebook.com/vogohenebaPK/" icon="facebook" label="Facebook" />
           <SocialIcon href="https://www.instagram.com/vogministries?igsh=eDV0YnJ3NTV5MzRi" icon="instagram" label="Instagram" />
           <SocialIcon href="https://www.youtube.com/@VoiceOfGodMinistries/streams" icon="youtube" label="YouTube" />
         </div>
 
-        {/* Newsletter */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
           <div className="md:w-1/3 text-left">
             <h4 className="font-bold text-xl mb-4 text-purple-200">Subscribe to Our Newsletter</h4>
@@ -165,23 +161,12 @@ const Footer = () => {
           </form>
         </div>
 
-        {/* Copyright */}
         <p className="text-center text-sm text-gray-400">
           &copy; {new Date().getFullYear()} Voice of God Ministries. All rights reserved.
         </p>
       </div>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+
     </footer>
   );
 };

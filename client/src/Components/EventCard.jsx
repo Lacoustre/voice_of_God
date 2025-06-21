@@ -16,6 +16,18 @@ const EventCard = ({ event }) => {
         return () => clearInterval(interval);
     }, [event.images]);
     
+    useEffect(() => {
+        if (showModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [showModal]);
+    
     const getGoogleMapsUrl = (location) => {
         return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
     };
@@ -50,10 +62,6 @@ const EventCard = ({ event }) => {
                             <div
                                 key={index}
                                 className="absolute inset-0"
-                                style={{
-                                    opacity: currentSlide === index ? 1 : 0,
-                                    transition: "opacity 1.2s ease-in-out"
-                                }}
                             >
                                 <img
                                     src={img}

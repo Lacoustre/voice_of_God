@@ -12,10 +12,11 @@ const services = [
     title: "Sunday Service",
     icon: <FaChurch />,
     schedule: [
-      "Morning: 10 A.M. – 11:30 A.M. EST",
+      "Morning: 10 A.M. – 12:00 P.M. EST",
       "Evening: 6 P.M. – 9 P.M. EST",
     ],
-    verse: "Psalm 98:1 - Oh, sing to the Lord a new song! For He has done marvelous things...",
+    verse:
+      "Psalm 98:1 - Oh, sing to the Lord a new song! For He has done marvelous things...",
     description:
       "Celebrate Yeshua with us every Sunday in joyful worship, heartfelt praise, and empowering Word. Let His Presence fill you with strength and victory as we honor the Sabbath together.",
     image: sunday_service,
@@ -24,10 +25,12 @@ const services = [
     title: "Prayer Line",
     icon: <FaPrayingHands />,
     schedule: [
+      "Morning - Thursday : 8:00 P.M. - 9:00 P.M. EST",
       "Dial +1(209)-399-9041, then (605)-475-4746",
       "Enter Code: 530963#",
     ],
-    verse: "Engage in warfare prayers for breakthrough and divine transformation.",
+    verse:
+      "Engage in warfare prayers for breakthrough and divine transformation.",
     description:
       "Join us remotely in God's presence for preaching, prayer, and transformation. If access fails, text 'Call me' to (605)-475-4746 to receive an automatic callback.",
     image: prayer,
@@ -55,11 +58,9 @@ const services = [
 const ServicesPage = () => {
   return (
     <section className="py-20 px-6" id="services">
-
       <div className="space-y-24 max-w-6xl mx-auto">
         {services.map((service, index) => {
           const isEven = index % 2 === 0;
-          const shortArrow = index === 1 || index === services.length - 1;
 
           return (
             <motion.div
@@ -84,12 +85,18 @@ const ServicesPage = () => {
               <div className="lg:w-[60%] w-full border border-white p-6 rounded-xl shadow-xl transition-transform duration-300 transform group-hover:scale-105 cursor-pointer z-10">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="text-2xl text-purple-400">
-                    {React.cloneElement(service.icon, { className: "text-purple-400" })}
+                    {React.cloneElement(service.icon, {
+                      className: "text-purple-400",
+                    })}
                   </div>
-                  <h3 className="text-2xl font-bold text-white">{service.title}</h3>
+                  <h3 className="text-2xl font-bold text-white">
+                    {service.title}
+                  </h3>
                 </div>
 
-                <p className="italic text-sm text-purple-300 mb-2 font-bold">{service.verse}</p>
+                <p className="italic text-sm text-purple-300 mb-2 font-bold">
+                  {service.verse}
+                </p>
 
                 <ul className="text-sm text-gray-300 mb-3 space-y-1 font-bold">
                   {service.schedule.map((time, idx) => (
@@ -100,7 +107,9 @@ const ServicesPage = () => {
                   ))}
                 </ul>
 
-                <p className="text-sm text-gray-200 leading-relaxed font-bold">{service.description}</p>
+                <p className="text-sm text-gray-200 leading-relaxed font-bold">
+                  {service.description}
+                </p>
               </div>
             </motion.div>
           );

@@ -9,8 +9,7 @@ import LeadershipPage from "../Components/Leadership";
 import CharityFoundationPage from "../Components/Donate";
 import event_1 from "../assets/event_1.JPG";
 import event_2 from "../assets/event_2.JPG";
-import event_3 from "../assets/event_3.JPG";  
-
+import event_3 from "../assets/event_3.JPG";
 
 export default function Home() {
   useEffect(() => {
@@ -25,8 +24,6 @@ export default function Home() {
     };
 
     handleHashChange();
-
-    // Add event listener for hash changes
     window.addEventListener("hashchange", handleHashChange);
 
     return () => {
@@ -34,7 +31,6 @@ export default function Home() {
     };
   }, []);
 
-  // Events sorted by date of occurrence
   const events = [
     {
       id: 4,
@@ -44,26 +40,24 @@ export default function Home() {
       verse: "By faith Noah, when warned about things not yet seen, in holy fear built an ark to save his family. – Hebrews 11:7",
       location: "Pick-up: 52 Connecticut Ave, South Windsor, CT 06074",
       images: [event_3],
-      additionalInfo: `
-    🌊 Step into the pages of Scripture as Voice of God Charity Foundation takes you on an extraordinary journey to the Sight & Sound Theatres for their spectacular 30th Anniversary Production of NOAH!
+      additionalInfo: `🌊 Step into the pages of Scripture as Voice of God Charity Foundation takes you on an extraordinary journey to the Sight & Sound Theatres for their spectacular 30th Anniversary Production of NOAH!
 
-    This unforgettable one-day trip brings the Bible to life with stunning visuals, live animals, and an ark-sized stage that immerses you in the dramatic story of Noah's obedience, faith, and deliverance. Perfect for families, couples, youth, and seniors alike!
+This unforgettable one-day trip brings the Bible to life with stunning visuals, live animals, and an ark-sized stage that immerses you in the dramatic story of Noah's obedience, faith, and deliverance. Perfect for families, couples, youth, and seniors alike!
 
-    🎟️ Package Includes:
-    - ✅ Roundtrip luxury transportation
-    - ✅ Admission to NOAH at Sight & Sound Theater
-    - ✅ Delicious lunch included
-    - ✅ Raffle prizes and more surprises onboard
+🎟️ Package Includes:
+- ✅ Roundtrip luxury transportation
+- ✅ Admission to NOAH at Sight & Sound Theater
+- ✅ Delicious lunch included
+- ✅ Raffle prizes and more surprises onboard
 
-    💵 Cost: $200 per person  
-    🚌 Departure Time: 7:00 AM sharp  
-    📍 Pick-up Point: 52 Connecticut Ave, South Windsor, CT 06074
+💵 Cost: $200 per person  
+🚌 Departure Time: 7:00 AM sharp  
+📍 Pick-up Point: 52 Connecticut Ave, South Windsor, CT 06074
 
-    📢 Seats are limited!  
-    Kindly reach out to any member of the VOG Charity team to reserve your seat today or for more information.
+📢 Seats are limited!  
+Kindly reach out to any member of the VOG Charity team to reserve your seat today or for more information.
 
-    This experience is not just a show — it's a faith-building, community-bonding journey that you'll remember for years to come. Come encounter God's faithfulness through the story of Noah like never before!
-  `
+This experience is not just a show — it's a faith-building, community-bonding journey that you'll remember for years to come. Come encounter God's faithfulness through the story of Noah like never before!`,
     },
     {
       id: 2,
@@ -86,27 +80,27 @@ export default function Home() {
       images: [event_2],
       additionalInfo: `Experience an unforgettable evening of elegance, joy, and divine fellowship at the Love Feast Gala, a signature celebration within our 2025 Annual Convention & 6th Anniversary of Voice of God Ministries. Set in the exquisite SkyHigh Events Center, this formal gathering brings together families, couples, and individuals in a beautiful setting to honor love, unity, and the goodness of God.
 
-    This year's gala will feature:
-    - Anointed hosting by Apostle Oheneba Poku
-    - Lively engagement and entertainment from MC Herbert
-    - Spirit-filled atmosphere of worship and connection
-    - A formal banquet dinner and a vibrant community celebration
-    - Uplifting music, divine encounters, and photo moments that will last a lifetime
+This year's gala will feature:
+- Anointed hosting by Apostle Oheneba Poku
+- Lively engagement and entertainment from MC Herbert
+- Spirit-filled atmosphere of worship and connection
+- A formal banquet dinner and a vibrant community celebration
+- Uplifting music, divine encounters, and photo moments that will last a lifetime
 
-    🎟️ TICKETS:
-    - Singles: $60
-    - Couples: $100
+🎟️ TICKETS:
+- Singles: $60
+- Couples: $100
 
-    👗 DRESS CODE: Formal wear (Suits, ties, gowns, and glam encouraged)
+👗 DRESS CODE: Formal wear (Suits, ties, gowns, and glam encouraged)
 
-    ✨ Whether you're attending with your spouse, friends, or coming to fellowship and connect with believers, the Love Feast Gala is designed to fill your evening with purpose, laughter, and God's love in action.
+✨ Whether you're attending with your spouse, friends, or coming to fellowship and connect with believers, the Love Feast Gala is designed to fill your evening with purpose, laughter, and God's love in action.
 
-    📌 This event is part of the larger 2025 Annual Convention themed "The Goodness of God", running from June 26th to June 29th. Reserve your seat now and come ready to dine, dance, and delight in God's presence.`,
+📌 This event is part of the larger 2025 Annual Convention themed "The Goodness of God", running from June 26th to June 29th. Reserve your seat now and come ready to dine, dance, and delight in God's presence.`,
     },
   ];
 
   return (
-    <div className="min-h-screen relative bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+    <div className="min-h-screen overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
       <Navbar />
 
       <motion.section
@@ -135,7 +129,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Events section */}
       <motion.section
         id="events"
         className="container mx-auto px-4 py-12 pt-20 mt-4"
@@ -161,8 +154,8 @@ export default function Home() {
           </motion.p>
         </div>
 
-        <div className="flex justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
+        <div className="flex justify-center px-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
             {events.map((event, index) => (
               <motion.div
                 key={event.id}
@@ -184,7 +177,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Donation section */}
       <motion.section
         id="donation"
         className="container mx-auto px-4 py-12 pt-20"

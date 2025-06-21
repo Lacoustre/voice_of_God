@@ -7,14 +7,13 @@ class EmailService {
   constructor() {
     // Configure email service with the VOG ministries email
     this.transporter = nodemailer.createTransport({
-      // Update these settings based on the email provider for INFO@THEVOGMINISTRIES.ORG
-      service: 'gmail', // Change this to match your email provider (e.g., 'outlook', 'yahoo', etc.)
-      host: 'smtp.gmail.com', // Update this to your email provider's SMTP server
+      service: 'gmail',
+      host: 'smtp.gmail.com',
       port: 465,
       secure: true,
       auth: {
-        user: process.env.EMAIL_USER || '',
-        pass: process.env.EMAIL_PASS || ''
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
     });
   }
@@ -31,7 +30,7 @@ class EmailService {
   async sendEmail({ from, fromName, subject, message }) {
     const mailOptions = {
       from: `"Voice of God Ministries" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_TO,
+      to: process.env.EMAIL_TO || 'INFO@THEVOGMINISTRIES.ORG',
       replyTo: from,
       subject: `[VOG Website] ${subject}`,
       html: message

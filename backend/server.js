@@ -4,7 +4,7 @@ require('dotenv').config();
 const emailService = require('./emailService');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.options('*', cors());

@@ -4,7 +4,7 @@ import { FaHeart, FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa"
 import donation_1 from "../assets/donation_1.JPG";
 import donation_2 from "../assets/donation_2.JPG";
 import logo from "../assets/logo.jpg";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const donationImages = [donation_1, donation_2];
@@ -106,7 +106,7 @@ const CharityFoundationPage = () => {
         </div>
       )}
 
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} pauseOnFocusLoss theme="colored" />
+
     </section>
   );
 };

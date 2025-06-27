@@ -2,7 +2,7 @@
   "name": "vog",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://lacoustre.github.io/",
+  "homepage": "https://voice-of-god-1.onrender.com/",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

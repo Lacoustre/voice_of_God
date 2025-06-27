@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors({
-  origin: ['https://thevogministries.org', 'https://www.thevogministries.org'],
+  origin: ['https://thevogministries.org'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

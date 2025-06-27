@@ -66,7 +66,7 @@ const EventCard = ({ event }) => {
                                 <img
                                     src={img}
                                     alt={`${event.title} - image ${index + 1}`}
-                                    className="object-cover h-full w-full"
+                                    className="object-fill h-full w-full"
                                 />
                                 <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                             </div>
@@ -76,7 +76,7 @@ const EventCard = ({ event }) => {
                             <img
                                 src="https://via.placeholder.com/400x200?text=Event"
                                 alt="Event placeholder"
-                                className="object-cover h-full w-full"
+                                className="object-fill h-full w-full"
                             />
                             <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                         </div>
@@ -174,7 +174,7 @@ const EventCard = ({ event }) => {
                                                 <img
                                                     src={img}
                                                     alt={`${event.title} - image ${index + 1}`}
-                                                    className="object-cover h-full w-full"
+                                                    className="object-fill h-full w-full"
                                                 />
                                                 <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                                             </div>
@@ -184,7 +184,7 @@ const EventCard = ({ event }) => {
                                             <img
                                                 src="https://via.placeholder.com/400x200?text=Event"
                                                 alt="Event placeholder"
-                                                className="object-cover h-full w-full"
+                                                className="object-fill h-full w-full"
                                             />
                                             <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                                         </div>

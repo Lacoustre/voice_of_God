@@ -33,7 +33,6 @@ const EventCard = ({ event, onStatusChange, onDelete }) => {
     if (confirm && onDelete) onDelete(event.id);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -63,7 +62,6 @@ const EventCard = ({ event, onStatusChange, onDelete }) => {
             {status}
           </button>
 
-          {/* Dropdown menu */}
           {isDropdownOpen && (
             <div className="absolute right-0 top-9 w-36 bg-white border border-gray-200 rounded-xl shadow-xl z-50 animate-fadeIn">
               {statusOptions.map((option) => (
@@ -78,7 +76,6 @@ const EventCard = ({ event, onStatusChange, onDelete }) => {
             </div>
           )}
 
-          {/* Delete button */}
           <button
             onClick={handleDelete}
             className="p-2 text-red-500 hover:bg-red-100 rounded-full transition"

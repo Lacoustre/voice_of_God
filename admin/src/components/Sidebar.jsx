@@ -7,6 +7,7 @@ const Sidebar = ({
   setActiveSection,
   sidebarOpen,
   setSidebarOpen,
+  setShowAccountModal,
 }) => {
   const SidebarContent = ({ isMobile = false }) => (
     <div className="flex flex-col h-full">
@@ -50,12 +51,8 @@ const Sidebar = ({
       {/* Account button (always pinned bottom) */}
       <div className="border-t px-4 py-4">
         <button
-          onClick={() => setActiveSection("account")}
-          className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition ${
-            activeSection === "account"
-              ? "bg-indigo-100 text-indigo-700"
-              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-          }`}
+          onClick={() => setShowAccountModal(true)}
+          className="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-gray-900"
         >
           <User className="w-5 h-5" /> Account
         </button>

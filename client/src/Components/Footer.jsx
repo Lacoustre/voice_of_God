@@ -27,7 +27,7 @@ const Footer = () => {
 
     setIsSubmittingNewsletter(true);
     try {
-      const response = await fetch("http://localhost:4000/api/newsletter", {
+      const response = await fetch("https://voice-of-god.onrender.com/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: newsletterEmail }),
@@ -55,7 +55,7 @@ const Footer = () => {
     setIsSubmittingMessage(true);
     try {
 
-      const response = await fetch("http://localhost:4000/api/contact", {
+      const response = await fetch("https://voice-of-god.onrender.com/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

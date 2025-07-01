@@ -1,24 +1,120 @@
-const emailService = require('../emailService');
-const contactTemplate = require('../templates/contactTemplate');
+const sdk = require("node-appwrite");
+require("dotenv").config();
 
-exports.handleContact = async (req, res) => {
-  const { name, email, phone, message } = req.body;
+const client = new sdk.Client()
+  .setEndpoint(process.env.APPWRITE_ENDPOINT)
+  .setProject(process.env.APPWRITE_PROJECT_ID)
+  .setKey(process.env.APPWRITE_API_KEY);
 
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Please provide name and email' });
+const databases = new sdk.Databases(client);
+
+const DATABASE_ID = process.env.APPWRITE_DATABASE_ID;
+const COLLECTION_ID = "686158d00005863e7d47"; // contact collection ID
+
+exports.getContacts = async (req, res) => {
+  try {
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+    res.status(200).json({ success: true, contacts: result.documents });
+  } catch (error) {
+    console.error("Error fetching contacts:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.createContact = async (req, res) => {
+  const { email, phone, message } = req.body;
+
+  if (!email || !message) {
+    return res.status(400).json({ success: false, error: "Email and message are required" });
   }
 
   try {
-    await emailService.sendEmail({
-      from: email,
-      fromName: name,
-      subject: `New Contact Form Message - VOG Ministries Website`,
-      message: contactTemplate({ name, email, phone, message }),
-    });
+    const result = await databases.createDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      sdk.ID.unique(),
+      {
+        email,
+        phone: phone || "",
+        message,
+        read: false
+      }
+    );
 
-    res.status(200).json({ success: true, message: 'Email sent successfully' });
+    res.status(201).json({ success: true, contact: result });
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).json({ success: false, message: 'Failed to send email', error: error.message });
+    console.error("Error creating contact:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.deleteContact = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, id);
+    res.status(200).json({ success: true, message: "Contact deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting contact:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.updateContact = async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const result = await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      id,
+      updateData
+    );
+    res.status(200).json({ success: true, contact: result });
+  } catch (error) {
+    console.error("Error updating contact:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// Legacy function for existing route
+exports.handleContact = exports.createContact;
+
+exports.sendReply = async (req, res) => {
+  const { to, message } = req.body;
+  
+  if (!to || !message) {
+    return res.status(400).json({ success: false, error: "Email and message are required" });
+  }
+
+  try {
+    const emailService = require('../emailService');
+    
+    console.log(`Sending reply email to: ${to}`);
+    
+    const emailResult = await emailService.sendEmail({
+      from: 'princenyamekehaboagye@gmail.com',
+      to: to,
+      subject: 'Reply from Voice of God Ministries',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #4F46E5;">Voice of God Ministries</h2>
+          <p>Thank you for contacting us. Here is our reply:</p>
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            ${message.replace(/\n/g, '<br>')}
+          </div>
+          <p>Blessings,<br>Voice of God Ministries Team</p>
+          <hr style="margin: 20px 0;">
+          <p style="font-size: 12px; color: #666;">52 Connecticut Avenue, South Windsor, CT 06074</p>
+        </div>
+      `
+    });
+    
+    console.log('Email sent successfully:', emailResult);
+    res.status(200).json({ success: true, message: "Reply sent successfully" });
+  } catch (error) {
+    console.error("Error sending reply email:", error);
+    res.status(500).json({ success: false, error: `Failed to send email: ${error.message}` });
   }
 };

@@ -1,4 +1,5 @@
 const sdk = require("node-appwrite");
+const { hashPassword } = require('./authController');
 require("dotenv").config();
 
 const client = new sdk.Client()
@@ -43,6 +44,8 @@ exports.createAdmin = async (req, res) => {
       sdk.Permission.delete(sdk.Role.users()),
     ];
 
+    const hashedPassword = await hashPassword(password);
+    
     const result = await databases.createDocument(
       DATABASE_ID,
       COLLECTION_ID,
@@ -54,7 +57,7 @@ exports.createAdmin = async (req, res) => {
         profile_image,
         address,
         dateofbirth,
-        password,
+        password: hashedPassword,
         phone,
       },
       permissions
@@ -131,6 +134,7 @@ exports.updateAdmin = async (req, res) => {
     if (updateData.phone) fieldsToUpdate.phone = updateData.phone;
     if (updateData.dateofbirth) fieldsToUpdate.dateofbirth = updateData.dateofbirth;
     if (updateData.address) fieldsToUpdate.address = updateData.address;
+    if (updateData.password) fieldsToUpdate.password = await hashPassword(updateData.password);
     if (updateData.profile_image !== undefined) {
       fieldsToUpdate.profile_image = updateData.profile_image;
       console.log("Profile image being updated to:", updateData.profile_image);
@@ -181,6 +185,7 @@ exports.updateCurrentUserProfile = async (req, res) => {
     if (updateData.phone) fieldsToUpdate.phone = updateData.phone;
     if (updateData.dateofbirth) fieldsToUpdate.dateofbirth = updateData.dateofbirth;
     if (updateData.address) fieldsToUpdate.address = updateData.address;
+    if (updateData.password) fieldsToUpdate.password = await hashPassword(updateData.password);
     if (updateData.profile_image !== undefined) {
       fieldsToUpdate.profile_image = updateData.profile_image;
     }

@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -18,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuthStatus();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkAuthStatus = async () => {
     const token = localStorage.getItem('authToken');
@@ -64,34 +63,36 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      // Simple login - find admin by email and password
-      const res = await fetch('http://localhost:4000/api/admin/get');
+      const res = await fetch('http://localhost:4000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
       const data = await res.json();
       
       if (res.ok) {
-        const admin = data.admins.find(a => a.email === email && a.password === password);
-        if (admin) {
-          const token = 'dummy-token-' + admin.$id;
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('userId', admin.$id);
-          setUser(admin);
-          setIsAuthenticated(true);
-          toast.success('Login successful!');
-          return { success: true };
-        } else {
-          toast.error('Invalid credentials');
-          return { success: false, error: 'Invalid credentials' };
-        }
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userId', data.user.$id);
+        setUser(data.user);
+        setIsAuthenticated(true);
+        showToast('Login successful!', 'success');
+        return { success: true };
       } else {
-        toast.error('Login failed');
-        return { success: false, error: 'Login failed' };
+        showToast(data.error || 'Login failed', 'error');
+        return { success: false, error: data.error };
       }
     } catch (error) {
-      toast.error('Login failed: ' + error.message);
+      showToast('Login failed: ' + error.message, 'error');
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
     }
+  };
+
+  const showToast = (message, type = 'success') => {
+    // This will be handled by individual components
+    console.log(`Toast: ${type} - ${message}`);
   };
 
   const logout = () => {
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     setUser(null);
     setIsAuthenticated(false);
-    toast.info('Logged out successfully');
+    showToast('Logged out successfully', 'success');
   };
 
   const updateUser = async (userData) => {
@@ -117,15 +118,15 @@ export const AuthProvider = ({ children }) => {
       if (res.ok) {
         const updatedUser = await res.json();
         setUser(updatedUser);
-        toast.success('Profile updated successfully!');
+        showToast('Profile updated successfully!', 'success');
         return { success: true };
       } else {
         const error = await res.json();
-        toast.error(error.error || 'Update failed');
+        showToast(error.error || 'Update failed', 'error');
         return { success: false, error: error.error };
       }
     } catch (error) {
-      toast.error('Update failed: ' + error.message);
+      showToast('Update failed: ' + error.message, 'error');
       return { success: false, error: error.message };
     }
   };
@@ -149,6 +150,7 @@ export const AuthProvider = ({ children }) => {
     updateUser,
     refreshUser,
     checkAuthStatus,
+    showToast,
   };
 
   return (

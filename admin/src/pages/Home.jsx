@@ -2,119 +2,126 @@ import React, { useState, useEffect } from "react";
 import {
   Users,
   Calendar,
-  Heart,
+  Mail,
+  AlertCircle,
   Home,
   Image,
-  DollarSign,
   UserCog,
   Church,
   Megaphone,
 } from "lucide-react";
+
 import EventsPage from "../pages/Event";
 import MembersPage from "../pages/Members";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import DashboardView from "../components/DashboardView";
-import event_1 from "../assets/event_1.JPG";
-import event_2 from "../assets/event_2.JPG";
-import event_3 from "../assets/event_3.JPG";
 import ServicesPage from "./Services";
 import AnnouncementsPage from "../pages/Annoucements";
 import MediaPage from "../pages/Media";
 import AdminManagement from "../pages/AdminManagement";
 import AccountModal from "./AccountModal";
+import Messages from "../components/Messages";
 
 const ChurchAdminPanel = () => {
   const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem('activeSection') || 'dashboard';
+    return localStorage.getItem("activeSection") || "dashboard";
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [rawStats, setRawStats] = useState({
+    totalMembers: null,
+    unrepliedMessages: null,
+    upcomingEvents: null,
+    unapprovedMembers: null,
+  });
+
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem('activeSection', activeSection);
+    localStorage.setItem("activeSection", activeSection);
   }, [activeSection]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/dashboard/stats");
+        const data = await res.json();
+
+        const eventsRes = await fetch("http://localhost:4000/api/events");
+        const eventsData = await eventsRes.json();
+        setEvents(eventsData);
+
+        const randomDelay = () => Math.floor(Math.random() * 3000) + 1000;
+
+        setTimeout(() => setRawStats((s) => ({ ...s, totalMembers: data.totalMembers })), randomDelay());
+        setTimeout(() => setRawStats((s) => ({ ...s, unrepliedMessages: data.unrepliedMessages })), randomDelay());
+        setTimeout(() => setRawStats((s) => ({ ...s, upcomingEvents: data.upcomingEvents })), randomDelay());
+        setTimeout(() => setRawStats((s) => ({ ...s, unapprovedMembers: data.unapprovedMembers })), randomDelay());
+
+        setTimeout(() => setLoading(false), 3500);
+      } catch (err) {
+        console.error("Failed to fetch dashboard data:", err);
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const getStatValue = (value) => {
+    return value === null ? (
+      <svg
+        className="animate-spin h-10 w-10 text-violet-600 mx-auto"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v8H4z"
+        />
+      </svg>
+    ) : (
+      value
+    );
+  };
 
   const stats = [
     {
       title: "Total Members",
-      value: "850",
+      value: getStatValue(rawStats.totalMembers),
       icon: Users,
       color: "bg-blue-500",
-      change: "+15%",
     },
     {
-      title: "Monthly Donations",
-      value: "$8,750",
-      icon: DollarSign,
-      color: "bg-green-500",
-      change: "+12%",
+      title: "Unreplied Messages",
+      value: getStatValue(rawStats.unrepliedMessages),
+      icon: Mail,
+      color: "bg-yellow-500",
     },
     {
       title: "Upcoming Events",
-      value: "3",
+      value: getStatValue(rawStats.upcomingEvents),
       icon: Calendar,
       color: "bg-purple-500",
-      change: "Convention 2025",
     },
     {
-      title: "Prayer Requests",
-      value: "47",
-      icon: Heart,
+      title: "Unapproved Members",
+      value: getStatValue(rawStats.unapprovedMembers),
+      icon: AlertCircle,
       color: "bg-red-500",
-      change: "+8",
-    },
-  ];
-
-  const events = [
-    {
-      id: 4,
-      title: "Sight & Sound Theater Trip – NOAH: 30th Anniversary Show",
-      date: "August 22, 2025",
-      time: "Departure: 7:00 AM",
-      verse:
-        "By faith Noah, when warned about things not yet seen, in holy fear built an ark to save his family. – Hebrews 11:7",
-      location: "Pick-up: 52 Connecticut Ave, South Windsor, CT 06074",
-      images: [event_3],
-      status: "Pending",
-      additionalInfo: `🌊 Step into the pages of Scripture as Voice of God Charity Foundation takes you on an extraordinary journey to the Sight & Sound Theatres for their spectacular 30th Anniversary Production of NOAH!
-
-This unforgettable one-day trip brings the Bible to life with stunning visuals, live animals, and an ark-sized stage that immerses you in the dramatic story of Noah's obedience, faith, and deliverance...
-
-💵 Cost: $200 per person  
-🚌 Departure Time: 7:00 AM sharp  
-📍 Pick-up Point: 52 Connecticut Ave, South Windsor, CT 06074
-
-📢 Seats are limited! Kindly reach out to any member of the VOG Charity team to reserve your seat today or for more information.`,
-    },
-    {
-      id: 2,
-      title: "2025 Annual Convention & 6th Anniversary",
-      date: "June 26–29, 2025",
-      time: "Daily at 6:00 PM | Sunday at 10:00 AM & 6:00 PM",
-      verse:
-        "Taste and see that the LORD is good; blessed is the one who takes refuge in him. – Psalm 34:8",
-      location: "52 Connecticut Ave, South Windsor, CT 06074",
-      images: [event_1],
-      status: "Publish",
-      additionalInfo:
-        "Join us for four powerful days of worship, prophecy, and celebration. Featuring Major Prophet Isaac Anto, Apostle Oheneba Poku, Minister Isaac Ackah, and the Adonai Worshippers. Don't miss the Love Feast Gala on Saturday at Sky High Events!",
-    },
-    {
-      id: 1,
-      title: "Love Feast Gala – 2025 Annual Convention",
-      date: "June 28, 2025",
-      time: "6:00 PM – 10:00 PM",
-      verse: "Let all that you do be done in love. – 1 Corinthians 16:14",
-      location: "SkyHigh Events, 5 National Drive, Windsor Locks, CT 06096",
-      ticketPrice: "60-100",
-      images: [event_2],
-      status: "Publish",
-      additionalInfo: `Experience an unforgettable evening of elegance, joy, and divine fellowship at the Love Feast Gala...
-
-👗 DRESS CODE: Formal wear (Suits, ties, gowns, and glam encouraged)
-
-✨ Whether you're attending with your spouse, friends, or coming to fellowship and connect with believers, the Love Feast Gala is designed to fill your evening with purpose, laughter, and God's love in action.`,
     },
   ];
 
@@ -126,17 +133,19 @@ This unforgettable one-day trip brings the Bible to life with stunning visuals, 
     { id: "annoucement", label: "Announcements", icon: Megaphone },
     { id: "media", label: "Media", icon: Image },
     { id: "admin-management", label: "Admin Management", icon: UserCog },
+      { id: "messages", label: "Messages from Website", icon: Mail },
   ];
 
   const renderContent = () => {
     const componentMap = {
-      dashboard: <DashboardView stats={stats} events={events} />,
-      events: <EventsPage events={events} />,
+      dashboard: <DashboardView stats={stats} events={events} loading={loading} />,
+      events: <EventsPage />,
       members: <MembersPage />,
       services: <ServicesPage />,
       annoucement: <AnnouncementsPage />,
-      media: <MediaPage/>,
-      "admin-management": <AdminManagement/>,
+      media: <MediaPage />,
+      "admin-management": <AdminManagement />,
+      messages: <Messages />
     };
 
     return componentMap[activeSection];
@@ -153,14 +162,17 @@ This unforgettable one-day trip brings the Bible to life with stunning visuals, 
         setShowAccountModal={setShowAccountModal}
       />
       <div className="flex-1 flex flex-col">
-        <Header activeSection={activeSection} setSidebarOpen={setSidebarOpen} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <Header
+          activeSection={activeSection}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto no-scrollbar">
           {renderContent()}
         </main>
       </div>
-      <AccountModal 
-        showAccountModal={showAccountModal} 
-        setShowAccountModal={setShowAccountModal} 
+      <AccountModal
+        showAccountModal={showAccountModal}
+        setShowAccountModal={setShowAccountModal}
       />
     </div>
   );

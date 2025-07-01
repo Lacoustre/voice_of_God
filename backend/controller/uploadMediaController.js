@@ -1,5 +1,6 @@
 const sdk = require("node-appwrite");
 const multer = require('multer');
+const { InputFile } = require('node-appwrite/file');
 
 const client = new sdk.Client()
   .setEndpoint(process.env.APPWRITE_ENDPOINT)
@@ -110,8 +111,7 @@ exports.uploadFile = [upload.single('file'), async (req, res) => {
     const uploaded = await storage.createFile(
       process.env.APPWRITE_BUCKET_ID,
       sdk.ID.unique(),
-      file.buffer,
-      file.originalname
+      InputFile.fromBuffer(file.buffer, file.originalname)
     );
 
     const imageUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${uploaded.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`;

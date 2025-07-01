@@ -1,26 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Plus, Trash2, Pencil, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { Plus, Trash2, Pencil, X, User } from "lucide-react";
 import { useApp } from "../context";
+import LoadingButton from "../components/common/LoadingButton";
+import Toast from "../components/common/Toast";
 
 const AdminManagement = () => {
-  const { 
-    admins, 
-    loading, 
-    fetchAdmins, 
-    createAdmin, 
-    updateAdmin, 
-    deleteAdmin, 
-    uploadFile 
+  const {
+    admins,
+    loading,
+    fetchAdmins,
+    createAdmin,
+    updateAdmin,
+    deleteAdmin,
+    uploadFile,
   } = useApp();
-  
+
   const [editingAdmin, setEditingAdmin] = useState(null);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const [newAdmin, setNewAdmin] = useState({
     name: "",
     email: "",
     username: "",
-    profile_image: "https://i.pravatar.cc/150?img=1",
+    profile_image: "",
     password: "",
     address: "",
     phone: "",
@@ -29,21 +30,27 @@ const AdminManagement = () => {
   const [showNewForm, setShowNewForm] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toast, setToast] = useState(null);
   const newFileInputRef = useRef();
   const editFileInputRef = useRef();
 
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+
   useEffect(() => {
     fetchAdmins();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreateAdmin = async () => {
     try {
       const file = newFileInputRef.current.files[0];
-      if (!file) return toast.error("Please upload a profile image.");
+      if (!file) return showToast("Please upload a profile image.", 'error');
 
       const uploadResult = await uploadFile(file);
       if (!uploadResult.success) {
-        return toast.error("Failed to upload image: " + uploadResult.error);
+        return showToast("Failed to upload image: " + uploadResult.error, 'error');
       }
 
       const result = await createAdmin({
@@ -52,40 +59,40 @@ const AdminManagement = () => {
       });
 
       if (result.success) {
-        toast.success("Admin created successfully!");
+        showToast("Admin created successfully!");
         setShowNewForm(false);
         setNewAdmin({
           name: "",
           email: "",
           username: "",
-          profile_image: "https://i.pravatar.cc/150?img=1",
+          profile_image: "",
           password: "",
           address: "",
           phone: "",
           dateofbirth: "",
         });
       } else {
-        toast.error("Failed to create admin: " + result.error);
+        showToast("Failed to create admin: " + result.error, 'error');
       }
     } catch (err) {
-      toast.error("Failed to create admin: " + err.message);
+      showToast("Failed to create admin: " + err.message, 'error');
     }
   };
 
   const handleProfilePicChange = async (e, isNew = false) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const result = await uploadFile(file);
     if (result.success) {
       if (isNew) {
-        setNewAdmin(prev => ({ ...prev, profile_image: result.url }));
+        setNewAdmin((prev) => ({ ...prev, profile_image: result.url }));
       } else {
-        setEditingAdmin(prev => ({ ...prev, profile_image: result.url }));
+        setEditingAdmin((prev) => ({ ...prev, profile_image: result.url }));
       }
-      toast.success("Profile image uploaded successfully!");
+      showToast("Profile image uploaded successfully!");
     } else {
-      toast.error("Failed to upload profile image: " + result.error);
+      showToast("Failed to upload profile image: " + result.error, 'error');
     }
   };
 
@@ -102,39 +109,34 @@ const AdminManagement = () => {
       };
 
       const result = await updateAdmin(editingAdmin.$id, adminData);
-      
+
       if (result.success) {
-        toast.success("Admin updated successfully!");
+        showToast("Admin updated successfully!");
         setShowEditModal(false);
         setEditingAdmin(null);
       } else {
-        toast.error("Failed to update admin: " + result.error);
+        showToast("Failed to update admin: " + result.error, 'error');
       }
     } catch (err) {
-      toast.error("Failed to update admin: " + err.message);
+      showToast("Failed to update admin: " + err.message, 'error');
     }
   };
 
   const handleDeleteAdmin = async (adminId) => {
-    const result = await deleteAdmin(adminId);
-    if (result.success) {
-      toast.success("Admin deleted successfully!");
-      setShowDeleteConfirm(null);
-    } else {
-      toast.error("Failed to delete admin: " + result.error);
+    setIsDeleting(true);
+    try {
+      const result = await deleteAdmin(adminId);
+      if (result.success) {
+        showToast("Admin deleted successfully!");
+        setShowDeleteConfirm(null);
+      } else {
+        showToast("Failed to delete admin: " + result.error, 'error');
+      }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-6 bg-white rounded-xl shadow border h-full flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="text-gray-600">Loading admins...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-6 bg-white rounded-xl shadow border h-full">
@@ -149,31 +151,39 @@ const AdminManagement = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-        {admins.map((admin, index) => (
-          <div
-            key={admin.$id || `admin-${index}`}
-            onClick={() => setSelectedAdmin(admin)}
-            className="border rounded-lg shadow-sm p-4 bg-gray-50 hover:shadow-md cursor-pointer transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <img
-                src={admin.profile_image || "https://i.pravatar.cc/150?img=1"}
-                alt={admin.name}
-                className="w-16 h-16 rounded-full object-cover border"
-                onError={(e) => {
-                  console.log("Image load error for admin:", admin.name, admin.profile_image);
-                  e.target.src = "https://i.pravatar.cc/150?img=1";
-                }}
-              />
-              <div className="text-left">
-                <p className="text-xs text-gray-500">Name</p>
-                <p className="font-semibold text-sm">{admin.name}</p>
-                <p className="text-xs text-gray-500 mt-1">Phone</p>
-                <p className="text-sm text-gray-700">{admin.phone}</p>
+        {loading ? (
+          <div className="col-span-full flex flex-col items-center gap-4 mt-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <p className="text-gray-600">Loading admins...</p>
+          </div>
+        ) :  admins.length === 0 ? (
+          <div className="col-span-full flex justify-center items-center mt-12">
+            <p className="text-gray-500">No events found.</p>
+          </div>
+        ) :
+        (
+          admins.map((admin, index) => (
+            <div
+              key={admin.$id || `admin-${index}`}
+              onClick={() => setSelectedAdmin(admin)}
+              className="border rounded-lg shadow-sm p-4 bg-gray-50 hover:shadow-md cursor-pointer transition-all"
+            >
+              <div className="flex items-center gap-4 mb-3">
+                <img
+                  src={admin.profile_image}
+                  alt={admin.name}
+                  className="w-16 h-16 rounded-full object-cover border"
+                />
+                <div className="text-left">
+                  <p className="text-xs text-gray-500">Name</p>
+                  <p className="font-semibold text-sm">{admin.name}</p>
+                  <p className="text-xs text-gray-500 mt-1">Phone</p>
+                  <p className="text-sm text-gray-700">{admin.phone}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {showNewForm && (
@@ -185,12 +195,22 @@ const AdminManagement = () => {
             <hr className="mb-6 border-gray-300" />
 
             <div className="flex flex-col items-center mb-6">
-              <img
-                src={newAdmin.profile_image}
-                alt="Preview"
-                className="w-24 h-24 rounded-full object-cover border mb-2 cursor-pointer"
-                onClick={() => newFileInputRef.current.click()}
-              />
+              {newAdmin.profile_image ? (
+                <img
+                  src={newAdmin.profile_image}
+                  alt="Preview"
+                  className="w-24 h-24 rounded-full object-cover border mb-2 cursor-pointer"
+                  onClick={() => newFileInputRef.current.click()}
+                />
+              ) : (
+                <div
+                  className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mb-2 cursor-pointer"
+                  onClick={() => newFileInputRef.current.click()}
+                >
+                  <User className="w-10 h-10 text-gray-500" />
+                </div>
+              )}
+
               <input
                 ref={newFileInputRef}
                 type="file"
@@ -247,7 +267,7 @@ const AdminManagement = () => {
 
       {selectedAdmin && (
         <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center px-4">
-          <div className="bg-white w-full max-w-3xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto font-sans relative">
+          <div className="bg-white w-full max-w-3xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto font-sans relative" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
             <div className="text-center mb-6 relative">
               <h2 className="text-2xl font-semibold text-gray-800">
                 Admin Details
@@ -264,11 +284,14 @@ const AdminManagement = () => {
             <div className="flex justify-center mb-6">
               <div className="relative w-24 h-24 rounded-full overflow-hidden">
                 <img
-                  src={selectedAdmin.profile_image || "https://i.pravatar.cc/150?img=1"}
+                  src={selectedAdmin.profile_image}
                   alt="Admin"
                   className="w-full h-full object-cover border shadow"
                   onError={(e) => {
-                    console.log("Image load error in view modal:", selectedAdmin.profile_image);
+                    console.log(
+                      "Image load error in view modal:",
+                      selectedAdmin.profile_image
+                    );
                     e.target.src = "https://i.pravatar.cc/150?img=1";
                   }}
                 />
@@ -348,12 +371,22 @@ const AdminManagement = () => {
             <hr className="mb-6 border-gray-300" />
 
             <div className="flex flex-col items-center mb-6">
-              <img
-                src={editingAdmin.profile_image || "https://i.pravatar.cc/150?img=1"}
-                alt="Preview"
-                className="w-24 h-24 rounded-full object-cover border mb-2 cursor-pointer"
-                onClick={() => editFileInputRef.current.click()}
-              />
+              {editingAdmin.profile_image ? (
+                <img
+                  src={editingAdmin.profile_image}
+                  alt="Preview"
+                  className="w-24 h-24 rounded-full object-cover border mb-2 cursor-pointer"
+                  onClick={() => editFileInputRef.current.click()}
+                />
+              ) : (
+                <div
+                  className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mb-2 cursor-pointer"
+                  onClick={() => editFileInputRef.current.click()}
+                >
+                  <User className="w-10 h-10 text-gray-500" />
+                </div>
+              )}
+
               <input
                 ref={editFileInputRef}
                 type="file"
@@ -428,15 +461,24 @@ const AdminManagement = () => {
               >
                 Cancel
               </button>
-              <button
+              <LoadingButton
+                isLoading={isDeleting}
                 onClick={() => handleDeleteAdmin(showDeleteConfirm)}
                 className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
               >
-                Delete
-              </button>
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </LoadingButton>
             </div>
           </div>
         </div>
+      )}
+      
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

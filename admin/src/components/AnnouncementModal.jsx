@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { X, Trash2, Save, Pencil } from "lucide-react";
+import LoadingButton from "./common/LoadingButton";
 
-const groupOptions = ["General", "Youth", "Women Fellowship", "Men Fellowship"];
+const groupOptions = ["General", "Youth", "Women Fellowship", "Men Fellowship", "Elders"];
 
 const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
   const [form, setForm] = useState({
@@ -11,6 +12,7 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const original = {
@@ -169,15 +171,23 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
               >
                 Cancel
               </button>
-              <button
+              <LoadingButton
+                isLoading={isDeleting}
                 className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
-                onClick={() => {
-                  onDelete(announcement.id);
-                  onClose();
+                onClick={async () => {
+                  setIsDeleting(true);
+                  try {
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    onDelete(announcement.$id || announcement.id);
+                    onClose();
+                  } finally {
+                    setIsDeleting(false);
+                  }
                 }}
               >
-                Confirm Delete
-              </button>
+                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+              </LoadingButton>
             </div>
           </div>
         </div>

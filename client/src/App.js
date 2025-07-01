@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './Pages/Home';
+import Join from './Pages/Join';
 import Donation from './Pages/Donation';
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
     <BrowserRouter basename="/voice_of_God">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/join" element={<Join />} />
         <Route path="/donation" element={<Donation />} />
       </Routes>
       <ToastContainer

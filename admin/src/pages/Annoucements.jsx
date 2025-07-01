@@ -1,56 +1,108 @@
-import React, { useState } from "react";
-import { Search, Filter, FileText, Send, Globe } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Filter, FileText, Send, Globe, Loader2 } from "lucide-react";
 import Modal from "../components/common/Modal";
 import FormField from "../components/common/FormField";
-import MemberSelector from "../components/common/MemberSelector";
 import ViewAnnouncementModal from "../components/AnnouncementModal";
+import Toast from "../components/common/Toast";
 
-const members = ["John Doe", "Jane Smith", "Michael Johnson", "Emily Brown"];
-
-const generateMockAnnouncements = () => {
-  return Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    title: `Announcement ${i + 1}`,
-    content: `This is a brief content for announcement ${i + 1}. Stay updated and follow instructions as guided by the church leadership. Please contact your leader if you need clarification.`,
-    date: `2025-06-${(i % 30) + 1}`.padStart(10, "0"),
-    category: i % 2 === 0 ? "General" : "Youth",
-  }));
-};
+const targetGroups = ["General", "Youth", "Women Fellowship", "Men Fellowship", "Elders"];
 
 const truncate = (text, maxLength) => {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 
 const AnnouncementPage = () => {
-  const [announcements, setAnnouncements] = useState(generateMockAnnouncements());
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filterCategory, setFilterCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
   const [announcementMode, setAnnouncementMode] = useState("phone");
-  const [announcementTargets, setAnnouncementTargets] = useState([]);
-  const [memberSearch, setMemberSearch] = useState("");
+  const [selectedTargetGroups, setSelectedTargetGroups] = useState([]);
+  const [formData, setFormData] = useState({ title: "", content: "", post_on_website: false });
+  const [toast, setToast] = useState(null);
 
-  const toggleAnnouncementTarget = (name) => {
-    setAnnouncementTargets((prev) =>
-      prev.includes(name) ? prev.filter((x) => x !== name) : [...prev, name]
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/announcements');
+      const data = await response.json();
+      setAnnouncements(data.data || []);
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const target_groups = announcementMode === 'phone' ? selectedTargetGroups.join(',') : 'website';
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const response = await fetch('http://localhost:4000/api/announcements/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title,
+          content: formData.content,
+          target_groups,
+          post_on_website: formData.post_on_website
+        })
+      });
+
+      if (response.ok) {
+        showToast('Announcement created successfully!');
+        await fetchAnnouncements();
+        closeModal();
+        setFormData({ title: "", content: "", post_on_website: false });
+      } else {
+        showToast('Failed to create announcement', 'error');
+      }
+    } catch (error) {
+      console.error('Error creating announcement:', error);
+      showToast('Error creating announcement', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleTargetGroup = (group) => {
+    setSelectedTargetGroups((prev) =>
+      prev.includes(group) ? prev.filter((x) => x !== group) : [...prev, group]
     );
   };
 
   const closeModal = () => {
     setShowModal(false);
     setAnnouncementMode("phone");
-    setAnnouncementTargets([]);
-    setMemberSearch("");
+    setSelectedTargetGroups([]);
+    setFormData({ title: "", content: "", post_on_website: false });
   };
 
-  const filtered = announcements
-    .filter((a) => a.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter((a) => (filterCategory ? a.category === filterCategory : true));
+  const phoneAnnouncements = announcements.filter(a => a.target_groups !== 'website');
+  const websiteAnnouncements = announcements.filter(a => a.target_groups === 'website');
+
+  const filterAnnouncements = (list) => list
+    .filter((a) => a.title?.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((a) => (filterCategory ? (a.target_groups || a.category) === filterCategory : true));
+
+  const filteredPhone = filterAnnouncements(phoneAnnouncements);
+  const filteredWebsite = filterAnnouncements(websiteAnnouncements);
 
   return (
-    <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full flex flex-col">
+    <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Announcements</h2>
         <button
@@ -92,40 +144,78 @@ const AnnouncementPage = () => {
               <option value="">All</option>
               <option value="General">General</option>
               <option value="Youth">Youth</option>
-              <option value="Women">Women Fellowship</option>
-              <option value="Men">Men Fellowship</option>
+              <option value="Women Fellowship">Women Fellowship</option>
+              <option value="Men Fellowship">Men Fellowship</option>
+              <option value="Elders">Elders</option>
             </select>
           </div>
         </div>
       )}
 
-      <div className="overflow-y-auto pr-2" style={{ maxHeight: "500px" }}>
-        <div className="space-y-4">
-          {filtered.map((a) => (
-            <div
-              key={a.id}
-              className="border rounded-md p-4 bg-gray-50 hover:shadow-sm transition cursor-pointer"
-              onClick={() => setSelectedAnnouncement(a)}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="text-lg font-semibold text-gray-800 text-left">{a.title}</h3>
-                <p className="text-xs text-gray-500">{a.date}</p>
-              </div>
-              <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
-                <p className="text-left">{truncate(a.content, 100)}</p>
-                <span className="ml-4 text-xs text-indigo-600 whitespace-nowrap">{a.category}</span>
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+          {/* Phone Announcements */}
+          <div className="border-r md:pr-4 h-full overflow-hidden">
+            <h3 className="text-xl font-semibold text-orange-800 mb-3 flex items-center gap-2">
+              <Send size={20} className="text-orange-600" />
+              Phone Announcements ({filteredPhone.length})
+            </h3>
+            <div className="h-full overflow-y-auto pr-2 custom-scroll">
+              <div className="space-y-4">
+                {filteredPhone.map((a) => (
+                  <div
+                    key={a.$id || a.id}
+                    className="border rounded-md p-4 bg-gray-50 hover:shadow-sm transition cursor-pointer"
+                    onClick={() => setSelectedAnnouncement(a)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-lg font-semibold text-gray-800 text-left">{a.title}</h3>
+                      <p className="text-xs text-gray-500">{a.$createdAt ? new Date(a.$createdAt).toLocaleDateString() : (a.date || 'No date')}</p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
+                      <p className="text-left">{truncate(a.content, 100)}</p>
+                      <span className="ml-4 text-xs text-orange-600 whitespace-nowrap">{a.target_groups || a.category}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Website Announcements */}
+          <div className="md:pl-4 h-full overflow-hidden">
+            <h3 className="text-xl font-semibold text-blue-800 mb-3 flex items-center gap-2">
+              <Globe size={20} className="text-blue-600" />
+              Website Announcements ({filteredWebsite.length})
+            </h3>
+            <div className="h-full overflow-y-auto pr-2 custom-scroll">
+              <div className="space-y-4">
+                {filteredWebsite.map((a) => (
+                  <div
+                    key={a.$id || a.id}
+                    className="border rounded-md p-4 bg-gray-50 hover:shadow-sm transition cursor-pointer"
+                    onClick={() => setSelectedAnnouncement(a)}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-lg font-semibold text-gray-800 text-left">{a.title}</h3>
+                      <p className="text-xs text-gray-500">{a.$createdAt ? new Date(a.$createdAt).toLocaleDateString() : (a.date || 'No date')}</p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
+                      <p className="text-left">{truncate(a.content, 100)}</p>
+                      <span className="ml-4 text-xs text-blue-600 whitespace-nowrap">{a.target_groups || a.category}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <Modal
-        isOpen={showModal}
-        onClose={closeModal}
-        title="Create Announcement"
-      >
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); closeModal(); }}>
+      {/* Modal */}
+      <Modal isOpen={showModal} onClose={closeModal} title="Create Announcement">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="flex gap-3">
             <label className="flex items-center gap-2">
               <input
@@ -133,7 +223,10 @@ const AnnouncementPage = () => {
                 name="method"
                 value="phone"
                 checked={announcementMode === "phone"}
-                onChange={() => setAnnouncementMode("phone")}
+                onChange={() => {
+                  setAnnouncementMode("phone");
+                  setFormData({ ...formData, post_on_website: false });
+                }}
               />
               <Send className="w-4 h-4" /> Phone
             </label>
@@ -143,7 +236,10 @@ const AnnouncementPage = () => {
                 name="method"
                 value="website"
                 checked={announcementMode === "website"}
-                onChange={() => setAnnouncementMode("website")}
+                onChange={() => {
+                  setAnnouncementMode("website");
+                  setFormData({ ...formData, post_on_website: true });
+                }}
               />
               <Globe className="w-4 h-4" /> Website
             </label>
@@ -152,36 +248,92 @@ const AnnouncementPage = () => {
             type="text"
             placeholder="Announcement Title"
             className="w-full border rounded-lg px-3 py-2"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             required
           />
           {announcementMode === "phone" && (
-            <FormField label="Select Recipients">
-              <MemberSelector
-                members={members}
-                selectedMembers={announcementTargets}
-                onToggleMember={toggleAnnouncementTarget}
-                onSelectAll={setAnnouncementTargets}
-                searchValue={memberSearch}
-                onSearchChange={setMemberSearch}
-                buttonColor="orange"
-              />
+            <FormField label="Select Target Groups">
+              <div className="grid grid-cols-2 gap-2">
+                {targetGroups.map((group) => (
+                  <label key={group} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={selectedTargetGroups.includes(group)}
+                      onChange={() => toggleTargetGroup(group)}
+                      className="rounded"
+                    />
+                    <span>{group}</span>
+                  </label>
+                ))}
+              </div>
             </FormField>
           )}
           <textarea
             placeholder="Announcement Message"
             className="w-full border rounded-lg px-3 py-2"
+            value={formData.content}
+            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
             required
           ></textarea>
-          <button className="w-full bg-orange-600 text-white py-3 rounded-lg">
-            Create
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange-600 text-white py-3 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {loading && <Loader2 size={16} className="animate-spin" />}
+            {loading ? "Creating..." : "Create"}
           </button>
         </form>
       </Modal>
 
       {selectedAnnouncement && (
         <ViewAnnouncementModal
-          announcement={selectedAnnouncement}
+          announcement={{
+            ...selectedAnnouncement,
+            date: selectedAnnouncement.$createdAt
+              ? new Date(selectedAnnouncement.$createdAt).toLocaleDateString()
+              : selectedAnnouncement.date || "No date",
+            category: selectedAnnouncement.target_groups || selectedAnnouncement.category || "General",
+          }}
           onClose={() => setSelectedAnnouncement(null)}
+          onSave={async (updatedAnnouncement) => {
+            try {
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+              showToast("Announcement updated successfully!");
+              await fetchAnnouncements();
+            } catch (error) {
+              showToast("Failed to update announcement", 'error');
+            }
+          }}
+          onDelete={async (announcementId) => {
+            try {
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+
+              const response = await fetch(`http://localhost:4000/api/announcements/${announcementId}`, {
+                method: "DELETE",
+              });
+
+              if (response.ok) {
+                showToast("Announcement deleted successfully!");
+                await fetchAnnouncements();
+                setSelectedAnnouncement(null);
+              } else {
+                showToast("Failed to delete announcement", 'error');
+              }
+            } catch (error) {
+              console.error("Error deleting announcement:", error);
+              showToast("Failed to delete announcement", 'error');
+            }
+          }}
+        />
+      )}
+      
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
     </div>

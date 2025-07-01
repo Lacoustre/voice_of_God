@@ -26,7 +26,7 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     initializeAppwrite();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const initializeAppwrite = () => {
     const client = new Client()
@@ -217,6 +217,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateMedia = async (id, target, published) => {
+    console.log('updateMedia called with:', { id, target, published });
     try {
       const response = await fetch(`${config.apiBaseUrl}/media/update`, {
         method: 'PUT',
@@ -224,10 +225,14 @@ export const AppProvider = ({ children }) => {
         body: JSON.stringify({ id, target, published }),
       });
       
+      console.log('Response status:', response.status);
+      
       if (response.ok) {
+        console.log('Update successful');
         return { success: true };
       } else {
         const error = await response.json();
+        console.error('Update failed:', error);
         return { success: false, error: error.error };
       }
     } catch (error) {
@@ -256,6 +261,27 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const updateEventStatus = async (id, status) => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/events/update-status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status }),
+      });
+      
+      if (response.ok) {
+        return { success: true };
+      } else {
+        const error = await response.json();
+        return { success: false, error: error.error };
+      }
+    } catch (error) {
+      console.error('Error updating event status:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+
   const value = {
     // State
     admins,
@@ -276,6 +302,9 @@ export const AppProvider = ({ children }) => {
     uploadMedia,
     updateMedia,
     deleteMedia,
+    
+    // Event operations
+    updateEventStatus,
     
     // Appwrite instances
     appwriteClient,

@@ -7,18 +7,45 @@ import logo from "../assets/logo.jpg";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const donationImages = [donation_1, donation_2];
+const fallbackDonationImages = [donation_1, donation_2];
 
 const CharityFoundationPage = () => {
+  const [donationImages, setDonationImages] = useState(fallbackDonationImages);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % donationImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    const fetchDonationImages = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/media/media');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.donation && data.donation.length > 0) {
+            const publishedImages = data.donation.filter(item => item.published).map(item => item.image_url);
+            if (publishedImages.length > 0) {
+              setDonationImages(publishedImages);
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Using fallback donation images');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDonationImages();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % donationImages.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [donationImages.length, loading]);
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % donationImages.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + donationImages.length) % donationImages.length);
@@ -46,16 +73,24 @@ const CharityFoundationPage = () => {
       <motion.div className="max-w-5xl mx-auto mb-12" initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, type: "spring", stiffness: 100 }}>
         <div className="rounded-2xl overflow-hidden shadow-xl relative">
           <div className="relative h-[400px] w-full">
-            {donationImages.map((img, index) => (
-              <img key={index} src={img} alt={`Donation ${index + 1}`} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentSlide ? "opacity-100" : "opacity-0"}`} />
-            ))}
-            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"><FaChevronLeft /></button>
-            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"><FaChevronRight /></button>
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-              {donationImages.map((_, index) => (
-                <button key={index} onClick={() => setCurrentSlide(index)} className={`h-2 rounded-full ${currentSlide === index ? "w-8 bg-white" : "w-2 bg-white/50"} transition-all`} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex items-center justify-center h-full bg-gray-800">
+                <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <>
+                {donationImages.map((img, index) => (
+                  <img key={index} src={img} alt={`Donation ${index + 1}`} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentSlide ? "opacity-100" : "opacity-0"}`} />
+                ))}
+                <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"><FaChevronLeft /></button>
+                <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"><FaChevronRight /></button>
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                  {donationImages.map((_, index) => (
+                    <button key={index} onClick={() => setCurrentSlide(index)} className={`h-2 rounded-full ${currentSlide === index ? "w-8 bg-white" : "w-2 bg-white/50"} transition-all`} />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </motion.div>

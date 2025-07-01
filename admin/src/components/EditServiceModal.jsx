@@ -1,18 +1,18 @@
 import React, { useState, useRef } from "react";
 import { X, Trash2, Save, Upload } from "lucide-react";
+import LoadingButton from "./common/LoadingButton";
 
 const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
-  const [form, setForm] = useState(
-    service || {
-      title: "",
-      day: "",
-      time: "",
-      description: "",
-      image: "",
-    }
-  );
+  const [form, setForm] = useState({
+    title: service?.title || "",
+    description: service?.description || "",
+    verse: service?.verse || "",
+    image: service?.image || "",
+    schedule: service?.schedule?.length > 0 ? service.schedule : [""],
+  });
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleChange = (key, value) => {
@@ -27,15 +27,22 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
     const file = e.target.files[0];
     if (file) {
       const previewURL = URL.createObjectURL(file);
-      setForm((prev) => ({ ...prev, image: previewURL }));
+      setForm((prev) => ({ ...prev, image: previewURL, imageFile: file }));
       setIsChanged(true);
     }
   };
 
-  const handleDelete = () => {
-    setShowConfirmDelete(false);
-    onDelete?.(service?.id);
-    onClose();
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onDelete?.(service?.$id || service?.id);
+      setShowConfirmDelete(false);
+      onClose();
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -65,20 +72,52 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
               />
             </div>
             <div>
-              <label className="block font-medium mb-1 text-left">Day</label>
-              <input
+              <label className="block font-medium mb-1 text-left">Bible Verse</label>
+              <textarea
+                rows={3}
                 className="w-full border rounded px-3 py-1.5"
-                value={form.day}
-                onChange={(e) => handleChange("day", e.target.value)}
+                placeholder="Enter Bible verse..."
+                value={form.verse}
+                onChange={(e) => handleChange("verse", e.target.value)}
               />
             </div>
             <div>
-              <label className="block font-medium mb-1 text-left">Time</label>
-              <input
-                className="w-full border rounded px-3 py-1.5"
-                value={form.time}
-                onChange={(e) => handleChange("time", e.target.value)}
-              />
+              <label className="block font-medium mb-1 text-left">Schedule</label>
+              <div className="space-y-2">
+                {form.schedule.map((schedule, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      className="flex-1 border rounded px-3 py-1.5"
+                      value={schedule}
+                      placeholder="e.g. Weekly, Monthly, Special Event"
+                      onChange={(e) => {
+                        const newSchedules = [...form.schedule];
+                        newSchedules[index] = e.target.value;
+                        handleChange("schedule", newSchedules);
+                      }}
+                    />
+                    {form.schedule.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newSchedules = form.schedule.filter((_, i) => i !== index);
+                          handleChange("schedule", newSchedules);
+                        }}
+                        className="px-3 py-1.5 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => handleChange("schedule", [...form.schedule, ""])}
+                  className="px-3 py-1.5 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                >
+                  Add Schedule
+                </button>
+              </div>
             </div>
             <div>
               <label className="block font-medium mb-1 text-left">Description</label>
@@ -159,12 +198,13 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
               >
                 Cancel
               </button>
-              <button
+              <LoadingButton
+                isLoading={isDeleting}
                 className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
                 onClick={handleDelete}
               >
-                Confirm Delete
-              </button>
+                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+              </LoadingButton>
             </div>
           </div>
         </div>

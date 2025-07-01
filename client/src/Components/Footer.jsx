@@ -5,6 +5,7 @@ import logo from "../assets/modified_logo.png";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { Heart } from "lucide-react";
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -17,36 +18,9 @@ const Footer = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [phone, setPhone] = useState("");
-  const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = useState(false);
-  const [isSubmittingNewsletter, setIsSubmittingNewsletter] = useState(false);
 
-  const handleNewsletterSubmit = async (e) => {
-    e.preventDefault();
-    if (isSubmittingNewsletter) return;
 
-    setIsSubmittingNewsletter(true);
-    try {
-      const response = await fetch("http://localhost:4000/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: newsletterEmail }),
-      });
-
-      if (response.ok) {
-        toast.success("Thank you for subscribing to our newsletter!");
-        setNewsletterEmail("");
-      } else {
-        const errorData = await response.json();
-        toast.error(`Subscription failed: ${errorData.message || "Please try again"}`);
-      }
-    } catch (error) {
-      console.error("Error subscribing to newsletter:", error);
-      toast.error("Connection error. Please try again later.");
-    } finally {
-      setIsSubmittingNewsletter(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +33,6 @@ const Footer = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: "Website Contact Form",
           email,
           phone,
           message,
@@ -131,9 +104,10 @@ const Footer = () => {
               <form onSubmit={handleSubmit} className="mt-6">
                 <div className="flex flex-col space-y-4">
                   <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
-                  <input type="text" placeholder="Your phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
+                  <input type="tel" placeholder="Your phone" value={phone} onChange={(e) => setPhone(e.target.value.replace(/[^0-9+\-\s()]/g, ''))} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
                   <textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" rows="4" required />
-                  <button type="submit" disabled={isSubmittingMessage} className="p-2 px-4 border border-white-600 bg-gray-600 text-white rounded-lg hover:bg-gray-900 hover:border-purple-700 transition-all duration-300 shadow-md">
+                  <button type="submit" disabled={isSubmittingMessage} className="p-2 px-4 border border-white-600 bg-gray-600 text-white rounded-lg hover:bg-gray-900 hover:border-purple-700 transition-all duration-300 shadow-md flex items-center justify-center gap-2">
+                    {isSubmittingMessage && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
                     {isSubmittingMessage ? "Sending..." : "Send Message"}
                   </button>
                 </div>
@@ -148,17 +122,11 @@ const Footer = () => {
           <SocialIcon href="https://www.youtube.com/@VoiceOfGodMinistries/streams" icon="youtube" label="YouTube" />
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
-          <div className="md:w-1/3 text-left">
-            <h4 className="font-bold text-xl mb-4 text-purple-200">Subscribe to Our Newsletter</h4>
-            <p className="text-gray-200 mb-4 font-bold">Stay updated with our latest events and announcements</p>
-          </div>
-          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 w-full md:w-2/3 max-w-md">
-            <input type="email" placeholder="Enter email to join our newsletter" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)} className="p-2 text-center rounded-lg bg-gray-600 text-white placeholder-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 flex-grow" required />
-            <button type="submit" disabled={isSubmittingNewsletter} className="p-2 px-4 border border-white-600 bg-gray-600 text-white rounded-lg hover:bg-gray-900 hover:border-purple-700 transition-all duration-300 shadow-md">
-              {isSubmittingNewsletter ? "Submitting..." : "Subscribe"}
-            </button>
-          </form>
+        <div className="text-center mb-8">
+          <Link to="/join" onClick={scrollToTop} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200">
+            <Heart size={20} />
+            Join Our Church Family
+          </Link>
         </div>
 
         <p className="text-center text-sm text-gray-400">

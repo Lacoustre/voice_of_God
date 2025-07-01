@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import church_1 from "../assets/church_photo_1.JPEG";
 import church_2 from "../assets/church_photo_2.JPEG";
 import church_3 from "../assets/church_photo_3.jpg";
@@ -11,27 +11,54 @@ import church_9 from "../assets/church_photo_9.JPG";
 import church_10 from "../assets/church_photo_10.JPG";
 
 export default function CarouselComponent() {
-  const carouselImages = [
-    church_1,
-    church_2,
-    church_3,
-    church_4,
-    church_5,
-    church_6,
-    church_7,
-    church_8,
-    church_9,
-    church_10,
+  const fallbackImages = [
+    church_1, church_2, church_3, church_4, church_5,
+    church_6, church_7, church_8, church_9, church_10,
   ];
-  const [currentSlide, setCurrentSlide] = React.useState(0);
+  
+  const [carouselImages, setCarouselImages] = useState(fallbackImages);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % carouselImages.length);
-    }, 3000); 
+  useEffect(() => {
+    const fetchCarouselImages = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/media/media');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.top && data.top.length > 0) {
+            const publishedImages = data.top.filter(item => item.published).map(item => item.image_url);
+            if (publishedImages.length > 0) {
+              setCarouselImages(publishedImages);
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Using fallback carousel images');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [carouselImages.length]);
+    fetchCarouselImages();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prevSlide) => (prevSlide + 1) % carouselImages.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [carouselImages.length, loading]);
+
+  if (loading) {
+    return (
+      <div className="relative overflow-hidden h-64 sm:h-96 md:h-screen w-full flex items-center justify-center bg-gray-900">
+        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative overflow-hidden h-64 sm:h-96 md:h-screen w-full">
@@ -48,7 +75,7 @@ export default function CarouselComponent() {
         >
           <img
             src={image}
-            alt={`Metamorphosis Supportive Women ${index + 1}`}
+            alt={`Church Image ${index + 1}`}
             className="w-full h-full object-cover object-top"
           />
         </div>

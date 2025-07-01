@@ -1,42 +1,58 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Plus, X } from "lucide-react";
 import EditEventModal from "../components/EditEventModal";
+import Toast from "../components/common/Toast";
 
 const EventCard = ({ event, onClick }) => {
+  const getImageUrl = () => {
+    return event?.images?.[0] || "https://placehold.co/300x200?text=No+Image";
+  };
+
   return (
     <div
       className="cursor-pointer border rounded-xl bg-white hover:shadow-md transition overflow-hidden flex flex-col"
       onClick={onClick}
     >
-
-      <div className="w-full h-80 overflow-hidden rounded-t-xl">
+      <div className="w-full h-80 overflow-hidden rounded-t-xl bg-gray-100">
         <img
-          src={event.images?.[0]}
-          alt="event"
-          className="w-full h-full object-fill"
+          src={getImageUrl()}
+          alt={event?.title || "Event"}
+          className="w-full h-full object-cover"
         />
       </div>
 
-      <div className="p-4 flex flex-col space-y-2">
-        <h3 className="text-lg font-semibold text-gray-800 leading-snug">
-          {event.title}
+      <div className="p-4 flex flex-col space-y-2 text-left">
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-gray-800">
+          {event?.title || "Untitled Event"}
         </h3>
 
-        <p className="text-sm text-gray-500">{event.date}</p>
-
-        <p className="text-sm text-indigo-600 italic text-justify leading-relaxed">
-          {event.verse}
+        <p className="text-sm text-gray-600">
+          <span className="font-semibold">Date:</span>{" "}
+          {event?.date
+            ? new Date(event.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "Not specified"}
         </p>
+
+        {event?.verse && (
+          <p className="text-sm text-gray-700">
+            <span className="font-semibold">Verse:</span>{" "}
+            <span className="italic text-indigo-600">{event.verse}</span>
+          </p>
+        )}
       </div>
     </div>
   );
 };
 
-
-
-const EventsPage = ({ events }) => {
+const EventsPage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -49,7 +65,16 @@ const EventsPage = ({ events }) => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [toast, setToast] = useState(null);
   const locationRef = useRef(null);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const API_BASE_URL =
+    process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api";
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -59,13 +84,150 @@ const EventsPage = ({ events }) => {
     };
 
     if (showLocationDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showLocationDropdown]);
+
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`${API_BASE_URL}/media/upload-file`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!data.success) throw new Error(data.error);
+    return data.url;
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  },[]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/events`);
+      const data = await res.json();
+      if (!data.success) throw new Error("Failed to fetch events");
+      setEvents(data.events);
+    } catch (err) {
+      showToast("Failed to fetch events", "error");
+      console.error("Error fetching events:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createEvent = async () => {
+    try {
+      setSubmitting(true);
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      const imageUrls = [];
+      for (let file of formData.images) {
+        const url = await uploadImage(file);
+        imageUrls.push(url);
+      }
+
+      const response = await fetch(`${API_BASE_URL}/events`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          date: formData.date,
+          time: formData.time,
+          verse: formData.verse,
+          location: formData.location,
+          additionalInfo: formData.additionalInfo,
+          images: imageUrls,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data) throw new Error(data.error || "Create failed");
+
+      setEvents((prev) => [...prev, data]);
+      showToast("Event created!");
+      resetForm();
+    } catch (error) {
+      showToast(error.message || "Failed to create event", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const updateEvent = async (id, updatedData) => {
+    try {
+      // Extract existing image URLs
+      const existingURLs = updatedData.images
+        .filter(
+          (img) =>
+            typeof img === "string" || (img?.url && typeof img.url === "string")
+        )
+        .map((img) => (typeof img === "string" ? img : img.url));
+
+      // Upload new image files
+      const newFiles = updatedData.images.filter((img) => img instanceof File);
+      const uploadedURLs = await Promise.all(newFiles.map(uploadImage));
+
+      // Merge all URLs (must all be strings)
+      const allImageURLs = [...existingURLs, ...uploadedURLs];
+
+      const payload = {
+        ...updatedData,
+        images: allImageURLs, // send only strings
+      };
+
+      const res = await fetch(`${API_BASE_URL}/events/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Update failed");
+      }
+
+      setEvents((prev) =>
+        prev.map((ev) =>
+          ev.$id === id || ev.id === id ? { ...ev, ...payload } : ev
+        )
+      );
+
+      showToast("Event updated!");
+    } catch (err) {
+      showToast(err.message || "Failed to update event", "error");
+      console.error("Update error:", err);
+    }
+  };
+
+  const deleteEvent = async (id) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/events/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Delete failed");
+
+      setEvents((prev) => prev.filter((ev) => ev.$id !== id));
+      showToast("Event deleted!");
+    } catch (err) {
+      showToast("Failed to delete event", "error");
+      console.error(err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await createEvent();
+  };
 
   const resetForm = () => {
     setFormData({
@@ -77,6 +239,7 @@ const EventsPage = ({ events }) => {
       images: [],
       additionalInfo: "",
     });
+    imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
     setImagePreviews([]);
     setLocationSuggestions([]);
     setShowLocationDropdown(false);
@@ -88,21 +251,19 @@ const EventsPage = ({ events }) => {
     const totalImages = formData.images.length + selectedFiles.length;
 
     if (totalImages > 10) {
-      alert("You can only upload up to 10 images.");
+      showToast("You can only upload up to 10 images.", "error");
       return;
     }
-
-    const newPreviews = selectedFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
 
     setFormData((prev) => ({
       ...prev,
       images: [...prev.images, ...selectedFiles],
     }));
 
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
+    setImagePreviews((prev) => [
+      ...prev,
+      ...selectedFiles.map((file) => URL.createObjectURL(file)),
+    ]);
   };
 
   const handleRemoveImage = (index) => {
@@ -114,7 +275,7 @@ const EventsPage = ({ events }) => {
 
     setImagePreviews((prev) => {
       const newPreviews = [...prev];
-      URL.revokeObjectURL(newPreviews[index].preview);
+      URL.revokeObjectURL(newPreviews[index]);
       newPreviews.splice(index, 1);
       return newPreviews;
     });
@@ -149,14 +310,11 @@ const EventsPage = ({ events }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Event Data:", formData);
-    resetForm();
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full overflow-y-auto">
+    <div
+      className="bg-white rounded-xl shadow border border-gray-100 p-6"
+    >
+      <div className="hide-scrollbar">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Upcoming Events</h2>
         <button
@@ -168,18 +326,40 @@ const EventsPage = ({ events }) => {
         </button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {events.map((event) => (
-          <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)} />
-        ))}
+     <div className="flex flex-col h-[650px] overflow-y-auto pr-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    {loading ? (
+      <div className="col-span-full flex flex-col items-center gap-4 mt-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <p className="text-gray-600">Loading events...</p>
       </div>
+    ) : events.length === 0 ? (
+      <div className="col-span-full flex justify-center items-center mt-12">
+        <p className="text-gray-500">No events found.</p>
+      </div>
+    ) : (
+      events.map((event) => (
+        <EventCard
+          key={event.$id}
+          event={event}
+          onClick={() => setSelectedEvent(event)}
+        />
+      ))
+    )}
+  </div>
+</div>
+
 
       {selectedEvent && (
         <EditEventModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
-          onSave={(updatedEvent) => {
-            console.log("Save event", updatedEvent);
+          onSave={async (updatedEvent) => {
+            await updateEvent(updatedEvent.$id, updatedEvent);
+            setSelectedEvent(null);
+          }}
+          onDelete={async (id) => {
+            await deleteEvent(id);
             setSelectedEvent(null);
           }}
         />
@@ -245,7 +425,10 @@ const EventsPage = ({ events }) => {
                   className="w-full border px-4 py-2 rounded-md"
                 />
                 {showLocationDropdown && (
-                  <ul className="absolute left-0 right-0 bg-white border border-gray-200 mt-1 rounded-xl max-h-48 overflow-y-auto shadow-lg z-50">
+                  <ul
+                    className="absolute left-0 right-0 bg-white border border-gray-200 mt-1 rounded-xl max-h-48 overflow-y-auto shadow-lg z-50"
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                  >
                     {locationSuggestions.map((suggestion, index) => (
                       <li
                         key={index}
@@ -301,10 +484,11 @@ const EventsPage = ({ events }) => {
                   {imagePreviews.map((img, index) => (
                     <div key={index} className="relative group">
                       <img
-                        src={img.preview}
+                        src={img}
                         alt={`preview-${index}`}
                         className="w-full h-20 object-cover rounded border"
                       />
+
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(index)}
@@ -336,15 +520,51 @@ const EventsPage = ({ events }) => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                  disabled={submitting}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
                 >
-                  Save
+                  {submitting ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        />
+                      </svg>
+                      Creating...
+                    </span>
+                  ) : (
+                    "Create"
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      </div>
     </div>
   );
 };

@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
 import EventCard from "./EventCard";
+import Toast from "../components/common/Toast";
 
-const EventsList = ({ events }) => {
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api";
+
+const EventsList = () => {
+  const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -17,6 +25,36 @@ const EventsList = ({ events }) => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/events`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || "Failed to fetch events");
+
+      const now = new Date();
+      const upcoming = data.events
+        .filter(e => new Date(e.date) >= now)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      let topThree = [...upcoming.slice(0, 3)];
+
+      if (topThree.length < 3) {
+        const past = data.events
+          .filter(e => new Date(e.date) < now)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        topThree = [...topThree, ...past.slice(0, 3 - topThree.length)];
+      }
+
+      setEvents(topThree);
+    } catch (error) {
+      setToast({ message: "Error fetching events", type: "error" });
+    }
+  };
 
   const resetForm = () => {
     setFormData({
@@ -39,11 +77,11 @@ const EventsList = ({ events }) => {
     const totalImages = formData.images.length + selectedFiles.length;
 
     if (totalImages > 10) {
-      alert("You can only upload up to 10 images.");
+      setToast({ message: "You can only upload up to 10 images.", type: "error" });
       return;
     }
 
-    const newPreviews = selectedFiles.map((file) => ({
+    const previews = selectedFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
@@ -52,8 +90,7 @@ const EventsList = ({ events }) => {
       ...prev,
       images: [...prev.images, ...selectedFiles],
     }));
-
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
+    setImagePreviews((prev) => [...prev, ...previews]);
   };
 
   const handleRemoveImage = (index) => {
@@ -64,19 +101,16 @@ const EventsList = ({ events }) => {
     });
 
     setImagePreviews((prev) => {
-      const newPreviews = [...prev];
-      URL.revokeObjectURL(newPreviews[index].preview);
-      newPreviews.splice(index, 1);
-      return newPreviews;
+      const previews = [...prev];
+      URL.revokeObjectURL(previews[index].preview);
+      previews.splice(index, 1);
+      return previews;
     });
   };
 
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (name === "location" && value.trim().length > 2) {
       try {
@@ -86,11 +120,9 @@ const EventsList = ({ events }) => {
           )}&format=json&addressdetails=1&limit=5`
         );
         const data = await res.json();
-        const suggestions = data.map((place) => place.display_name);
-        setLocationSuggestions(suggestions);
-        setShowLocationDropdown(suggestions.length > 0);
-      } catch (err) {
-        console.error("Error fetching location suggestions:", err);
+        setLocationSuggestions(data.map((place) => place.display_name));
+        setShowLocationDropdown(data.length > 0);
+      } catch {
         setLocationSuggestions([]);
         setShowLocationDropdown(false);
       }
@@ -100,15 +132,57 @@ const EventsList = ({ events }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Event Data:", formData);
-    resetForm();
+    setSubmitting(true);
+
+    try {
+      await new Promise((res) => setTimeout(res, 3000));
+
+      const imageUrls = [];
+      for (let file of formData.images) {
+        const data = new FormData();
+        data.append("file", file);
+
+        const res = await fetch(`${API_BASE_URL}/media/upload-file`, {
+          method: "POST",
+          body: data,
+        });
+
+        const result = await res.json();
+        if (!res.ok || !result.success) {
+          throw new Error(result.error || "Image upload failed");
+        }
+        imageUrls.push(result.url);
+      }
+
+      const response = await fetch(`${API_BASE_URL}/events`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          images: imageUrls,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Event creation failed");
+      }
+
+      setToast({ message: "Event created successfully!", type: "success" });
+      fetchEvents();
+      resetForm();
+    } catch (err) {
+      setToast({ message: err.message || "Error creating event", type: "error" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Recent Events</h3>
         <button
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
@@ -118,15 +192,15 @@ const EventsList = ({ events }) => {
         </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1 scrollbar-hide">
         {events.map((event) => (
           <EventCard
-            key={event.id}
+            key={event.$id}
             event={event}
-            onStatusChange={(id, newStatus) =>
-              console.log("Status changed:", id, newStatus)
+            onDelete={(deletedId) =>
+              setEvents((prev) => prev.filter((e) => e.$id !== deletedId))
             }
-            onDelete={(id) => console.log("Deleted event:", id)}
+            setToast={setToast}
           />
         ))}
       </div>
@@ -152,7 +226,6 @@ const EventsList = ({ events }) => {
                 className="w-full border px-4 py-2 rounded-md"
                 required
               />
-
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="date"
@@ -171,7 +244,6 @@ const EventsList = ({ events }) => {
                   required
                 />
               </div>
-
               <input
                 type="text"
                 name="verse"
@@ -180,8 +252,6 @@ const EventsList = ({ events }) => {
                 onChange={handleInputChange}
                 className="w-full border px-4 py-2 rounded-md"
               />
-
-              {/* Location input with improved dropdown */}
               <div className="relative">
                 <input
                   type="text"
@@ -192,7 +262,7 @@ const EventsList = ({ events }) => {
                   className="w-full border px-4 py-2 rounded-md"
                 />
                 {showLocationDropdown && (
-                  <ul className="absolute left-0 right-0 bg-white border border-gray-200 mt-1 rounded-xl max-h-48 overflow-y-auto shadow-lg z-50">
+                  <ul className="absolute left-0 right-0 bg-white border mt-1 rounded-xl max-h-48 overflow-y-auto shadow-lg z-50">
                     {locationSuggestions.map((suggestion, index) => (
                       <li
                         key={index}
@@ -203,37 +273,14 @@ const EventsList = ({ events }) => {
                           }));
                           setShowLocationDropdown(false);
                         }}
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-indigo-50 transition cursor-pointer"
+                        className="px-4 py-2 hover:bg-indigo-50 cursor-pointer text-sm text-gray-700"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 text-indigo-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M17.657 16.657L13.414 12.414A4 4 0 1116.657 9.17l4.243 4.243a1 1 0 01-1.414 1.414l-1.829-1.829z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        <span className="text-sm text-gray-700">
-                          {suggestion}
-                        </span>
+                        {suggestion}
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-
               <input
                 type="file"
                 name="images"
@@ -242,7 +289,6 @@ const EventsList = ({ events }) => {
                 onChange={handleImageChange}
                 className="w-full"
               />
-
               {imagePreviews.length > 0 && (
                 <div className="grid grid-cols-5 gap-2">
                   {imagePreviews.map((img, index) => (
@@ -256,7 +302,6 @@ const EventsList = ({ events }) => {
                         type="button"
                         onClick={() => handleRemoveImage(index)}
                         className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700"
-                        title="Remove"
                       >
                         <X size={14} />
                       </button>
@@ -264,7 +309,6 @@ const EventsList = ({ events }) => {
                   ))}
                 </div>
               )}
-
               <textarea
                 name="additionalInfo"
                 placeholder="Additional Info"
@@ -272,26 +316,50 @@ const EventsList = ({ events }) => {
                 onChange={handleInputChange}
                 className="w-full border px-4 py-2 rounded-md"
               />
-
               <div className="flex justify-end gap-4">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-4 py-2 rounded-md border"
-                >
+                <button type="button" onClick={resetForm} className="px-4 py-2 rounded-md border">
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
+                  disabled={submitting}
                 >
-                  Save
+                  {submitting ? (
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        />
+                      </svg>
+                      Creating...
+                    </span>
+                  ) : (
+                    "Create"
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 };

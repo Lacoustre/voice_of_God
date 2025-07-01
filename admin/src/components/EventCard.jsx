@@ -1,90 +1,121 @@
-import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
-const EventCard = ({ event, onStatusChange, onDelete }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [status, setStatus] = useState(event.status);
-  const dropdownRef = useRef(null);
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api";
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Active":
-      case "Publish":
-        return "bg-green-100 text-green-800";
-      case "Unpublish":
-        return "bg-red-100 text-red-700";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-600";
+const EventCard = ({ event, onDelete, setToast }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+const handleDelete = async () => {
+  setIsDeleting(true);
+
+  try {
+    await new Promise((res) => setTimeout(res, 3000));
+
+    const res = await fetch(`${API_BASE_URL}/events/${event.$id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json().catch(() => ({})); 
+
+    if (!res.ok || data?.success === false) {
+      throw new Error(data?.error || "Failed to delete event.");
     }
-  };
 
-  const statusOptions = ["Publish", "Unpublish", "Pending"];
-
-  const handleStatusSelect = (newStatus) => {
-    setStatus(newStatus);
-    setIsDropdownOpen(false);
-    if (onStatusChange) onStatusChange(event.id, newStatus);
-  };
-
-  const handleDelete = () => {
-    const confirm = window.confirm("Are you sure you want to delete this event?");
-    if (confirm && onDelete) onDelete(event.id);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (onDelete) onDelete(event.$id);
+    setToast({ message: "Event deleted successfully", type: "success" });
+  } catch (err) {
+    console.error(err);
+    setToast({ message: err.message || "Delete failed", type: "error" });
+  } finally {
+    setIsDeleting(false);
+    setShowConfirm(false);
+  }
+};
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all relative">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <div className="text-left">
-          <h4 className="text-base font-semibold text-gray-900">{event.title}</h4>
-          <p className="text-sm text-gray-600">
-            {event.date} at {event.time}
-          </p>
-        </div>
+    <div className="relative bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all text-left cursor-pointer">
+      {/* Trash Icon */}
+      <button
+        onClick={() => setShowConfirm(true)}
+        className="absolute top-3 right-3 text-red-500 hover:text-red-700"
+        title="Delete event"
+      >
+        <Trash2 size={18} />
+      </button>
 
-        <div className="flex items-center gap-3 relative" ref={dropdownRef}>
-          {/* Status badge */}
-          <button
-            onClick={() => setIsDropdownOpen((prev) => !prev)}
-            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(status)} focus:outline-none`}
-          >
-            {status}
-          </button>
-
-          {isDropdownOpen && (
-            <div className="absolute right-0 top-9 w-36 bg-white border border-gray-200 rounded-xl shadow-xl z-50 animate-fadeIn">
-              {statusOptions.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => handleStatusSelect(option)}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition"
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <button
-            onClick={handleDelete}
-            className="p-2 text-red-500 hover:bg-red-100 rounded-full transition"
-            title="Delete Event"
-          >
-            <Trash2 size={16} />
-          </button>
-        </div>
+      {/* Event Content */}
+      <div className="space-y-2">
+        <p className="text-sm text-gray-800">
+          <span className="font-semibold">Title:</span> {event.title}
+        </p>
+        <p className="text-sm text-gray-700">
+          <span className="font-semibold">Date:</span>{" "}
+          {new Date(event.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}{" "}
+          at{" "}
+          {new Date(`${event.date}T${event.time}`).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })}
+        </p>
       </div>
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">Confirm Deletion</h3>
+            <hr className="border-t border-gray-300" />
+            <p className="text-sm text-gray-600">
+              Are you sure you want to permanently delete this event?
+            </p>
+
+            <div className="flex justify-center gap-3 mt-4">
+              <button
+                className="px-4 py-2 rounded border text-gray-600 hover:bg-gray-100"
+                onClick={() => setShowConfirm(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 flex items-center justify-center gap-2"
+              >
+                {isDeleting && (
+                  <svg
+                    className="animate-spin h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
+                  </svg>
+                )}
+                {isDeleting ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Image, Trash2, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Image, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import Modal from "../components/common/Modal";
-import { toast } from "react-toastify";
+import LoadingButton from "../components/common/LoadingButton";
+import Toast from "../components/common/Toast";
 import { useAuth } from "../context/AuthContext";
 import { useApp } from "../context/AppContext";
 
@@ -15,23 +16,25 @@ const MediaSection = ({ title, type, data, onTogglePublish, onDelete }) => {
         setOpenDropdownId(null);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    if (openDropdownId) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [openDropdownId]);
 
   return (
-    <div>
-      <h3 className="text-2xl font-bold text-indigo-800 mb-4 flex items-center gap-2">
+    <div className="w-full">
+      <h3 className="text-xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
         <Image size={20} className="text-indigo-600" />
-        {type === "top" ? "Top Carousel Showcase" : "Donation Carousel Highlights"} ({data.length})
+        {title} ({data.length})
       </h3>
 
-      <div className="overflow-y-auto max-h-[420px] pr-1 custom-scroll">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="h-[650px] overflow-y-auto pr-2 mt-6 scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.map((item) => (
             <div
               key={item.$id}
-              className="relative bg-white border rounded-lg shadow hover:shadow-md transition overflow-hidden"
+              className="relative bg-white border rounded-lg shadow hover:shadow-md transition overflow-hidden w-full"
             >
               <img
                 src={item.image_url}
@@ -39,19 +42,19 @@ const MediaSection = ({ title, type, data, onTogglePublish, onDelete }) => {
                 className="w-full h-48 object-cover"
               />
 
-              <div className="absolute top-2 left-2" ref={dropdownRef}>
-                <div className="relative">
+              <div className="absolute top-2 left-2">
+                <div className="relative" ref={openDropdownId === item.$id ? dropdownRef : null}>
                   <button
                     onClick={() =>
                       setOpenDropdownId(openDropdownId === item.$id ? null : item.$id)
                     }
                     className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                      item.pusblished
+                      item.published
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
                     }`}
                   >
-                    {item.pusblished ? "Published" : "Unpublished"}
+                    {item.published ? "Published" : "Unpublished"}
                     {openDropdownId === item.$id ? (
                       <ChevronUp size={14} className="inline ml-1" />
                     ) : (
@@ -61,17 +64,15 @@ const MediaSection = ({ title, type, data, onTogglePublish, onDelete }) => {
 
                   {openDropdownId === item.$id && (
                     <div className="absolute mt-1 z-10 w-28 bg-white border rounded shadow">
-                      {[true, false]
-                        .filter((val) => val !== item.pusblished)
-                        .map((status) => (
-                          <button
-                            key={String(status)}
-                            onClick={() => onTogglePublish(item, type)}
-                            className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100"
-                          >
-                            {status ? "Published" : "Unpublished"}
-                          </button>
-                        ))}
+                      <button
+                        onClick={() => {
+                          onTogglePublish(item, type);
+                          setOpenDropdownId(null);
+                        }}
+                        className="w-full text-left px-3 py-1 text-sm hover:bg-gray-100"
+                      >
+                        {item.published ? "Unpublish" : "Publish"}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -97,6 +98,7 @@ const MediaSection = ({ title, type, data, onTogglePublish, onDelete }) => {
   );
 };
 
+
 const MediaPage = () => {
   const { user } = useAuth();
   const { uploadFile, fetchMedia, uploadMedia, updateMedia, deleteMedia } = useApp();
@@ -107,16 +109,20 @@ const MediaPage = () => {
   const [uploadedMedia, setUploadedMedia] = useState({ top: [], donation: [] });
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-
   const [confirmDelete, setConfirmDelete] = useState({ show: false, item: null, type: null });
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
 
   useEffect(() => {
     fetchUploadedMedia();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUploadedMedia = async () => {
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 3000));
     const result = await fetchMedia();
     if (result.success) {
       setUploadedMedia(result.data);
@@ -124,15 +130,41 @@ const MediaPage = () => {
     setLoading(false);
   };
 
-  const handleTogglePublish = async (item, target) => {
-    setActionLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    const result = await updateMedia(item.$id, target, !item.pusblished);
+  const refreshMedia = async () => {
+    const result = await fetchMedia();
     if (result.success) {
-      toast.success(`Media ${!item.pusblished ? "published" : "unpublished"}`);
-      await fetchUploadedMedia();
-    } else {
-      toast.error("Failed to update media");
+      setUploadedMedia(result.data);
+    }
+  };
+
+  const handleTogglePublish = async (item, target) => {
+    console.log('handleTogglePublish called:', { item: item.$id, target, currentPublished: item.published });
+    setActionLoading(true);
+    const newPublishedState = !item.published;
+    
+    try {
+      const result = await updateMedia(item.$id, target, newPublishedState);
+      console.log('updateMedia result:', result);
+      
+      if (result.success) {
+        showToast(`Media ${newPublishedState ? "published" : "unpublished"}`);
+        // Immediately update local state to reflect the change
+        setUploadedMedia(prev => ({
+          ...prev,
+          [target]: prev[target].map(mediaItem => 
+            mediaItem.$id === item.$id 
+              ? { ...mediaItem, published: newPublishedState }
+              : mediaItem
+          )
+        }));
+        console.log('Local state updated');
+      } else {
+        console.error('Update failed:', result.error);
+        showToast(`Failed to update media: ${result.error || 'Unknown error'}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error in handleTogglePublish:', error);
+      showToast(`Error updating media: ${error.message}`, 'error');
     }
     setActionLoading(false);
   };
@@ -146,17 +178,16 @@ const MediaPage = () => {
   };
 
   const handleConfirmedDelete = async () => {
-    setActionLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsDeleting(true);
     const { item, type } = confirmDelete;
     const result = await deleteMedia(item.$id, type);
     if (result.success) {
-      toast.success("Media deleted successfully");
-      await fetchUploadedMedia();
+      showToast("Media deleted successfully");
+      await refreshMedia();
     } else {
-      toast.error("Failed to delete media");
+      showToast("Failed to delete media", 'error');
     }
-    setActionLoading(false);
+    setIsDeleting(false);
     closeConfirmDelete();
   };
 
@@ -182,7 +213,6 @@ const MediaPage = () => {
   const handleUploadSubmit = async (e) => {
     e.preventDefault();
     setActionLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
 
     for (const item of mediaImages) {
       const fileResult = await uploadFile(item.file);
@@ -194,16 +224,16 @@ const MediaPage = () => {
         );
 
         if (mediaResult.success) {
-          toast.success("Media uploaded successfully!");
+          showToast("Media uploaded successfully!");
         } else {
-          toast.error("Failed to upload media.");
+          showToast("Failed to upload media.", 'error');
         }
       } else {
-        toast.error("Failed to upload file.");
+        showToast("Failed to upload file.", 'error');
       }
     }
 
-    await fetchUploadedMedia();
+    await refreshMedia();
     setActionLoading(false);
     closeModal();
   };
@@ -221,31 +251,34 @@ const MediaPage = () => {
       </div>
 
       {loading ? (
-        <div className="flex flex-col justify-center items-center h-64 text-lg text-gray-500">
-          <Loader2 className="animate-spin h-8 w-8 mb-2" />
-          Loading media...
+        <div className="flex flex-col items-center gap-4 mt-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <p className="text-gray-600">Loading media...</p>
         </div>
       ) : (
-        <div className="space-y-10">
-          <MediaSection
-            title="Top Carousel"
-            type="top"
-            data={uploadedMedia.top}
-            onTogglePublish={handleTogglePublish}
-            onDelete={openConfirmDelete}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border-r md:pr-4">
+            <MediaSection
+              title="Top Carousel"
+              type="top"
+              data={uploadedMedia.top}
+              onTogglePublish={handleTogglePublish}
+              onDelete={openConfirmDelete}
+            />
+          </div>
 
-          <MediaSection
-            title="Donation Carousel"
-            type="donation"
-            data={uploadedMedia.donation}
-            onTogglePublish={handleTogglePublish}
-            onDelete={openConfirmDelete}
-          />
+          <div className="md:pl-4">
+            <MediaSection
+              title="Donation Carousel"
+              type="donation"
+              data={uploadedMedia.donation}
+              onTogglePublish={handleTogglePublish}
+              onDelete={openConfirmDelete}
+            />
+          </div>
         </div>
       )}
 
-      {/* Upload Modal */}
       <Modal isOpen={showUpload} onClose={closeModal} title="Upload Media">
         <form className="space-y-4" onSubmit={handleUploadSubmit}>
           <div className="flex gap-3">
@@ -301,13 +334,12 @@ const MediaPage = () => {
             className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center gap-2"
             disabled={actionLoading}
           >
-            {actionLoading && <Loader2 className="animate-spin h-4 w-4" />}
-            Upload
+            {actionLoading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
+            {actionLoading ? "Uploading..." : "Upload Media"}
           </button>
         </form>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
       {confirmDelete.show && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center space-y-4">
@@ -323,17 +355,24 @@ const MediaPage = () => {
               >
                 Cancel
               </button>
-              <button
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 flex items-center justify-center gap-2"
+              <LoadingButton
+                isLoading={isDeleting}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
                 onClick={handleConfirmedDelete}
-                disabled={actionLoading}
               >
-                {actionLoading && <Loader2 className="animate-spin h-4 w-4" />}
-                Confirm Delete
-              </button>
+                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+              </LoadingButton>
             </div>
           </div>
         </div>
+      )}
+      
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

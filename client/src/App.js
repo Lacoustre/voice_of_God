@@ -8,7 +8,7 @@ import Donation from './Pages/Donation';
 
 const App = () => {
   return (
-    <BrowserRouter basename="/voice_of_God">
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/join" element={<Join />} />

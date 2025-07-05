@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import church_1 from "../assets/church_photo_1.JPEG";
 import church_2 from "../assets/church_photo_2.JPEG";
+import church_3 from "../assets/church_photo_3.jpg";
+import church_4 from "../assets/church_photo_4.jpg";
 import church_5 from "../assets/church_photo_5.JPG";
 import church_6 from "../assets/church_photo_6.JPG";
 import church_7 from "../assets/church_photo_7.jpeg";
+import church_8 from "../assets/church_photo_8.JPG";
 import church_9 from "../assets/church_photo_9.JPG";
+import church_10 from "../assets/church_photo_10.JPG";
 
 export default function CarouselComponent() {
   const fallbackImages = [
-    church_1, church_2, church_5, church_6, church_7, church_9,
+    church_1, church_2, church_3, church_4, church_5,
+    church_6, church_7, church_8, church_9, church_10,
   ];
   
   const [carouselImages, setCarouselImages] = useState(fallbackImages);

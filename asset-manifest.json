@@ -1,38 +1,15 @@
 {
   "files": {
-    "main.css": "/voice_of_God/static/css/main.417910e4.css",
-    "main.js": "/voice_of_God/static/js/main.da737299.js",
-    "static/media/church_photo_3.jpg": "/voice_of_God/static/media/church_photo_3.ce82d964a0104c054aa2.jpg",
-    "static/media/church_photo_4.jpg": "/voice_of_God/static/media/church_photo_4.a49ef534ee0bfdf8a6cd.jpg",
-    "static/media/friday_night_prayers.jpeg": "/voice_of_God/static/media/friday_night_prayers.c25cb1e04804724f6665.jpeg",
-    "static/media/event_1.JPG": "/voice_of_God/static/media/event_1.92f08e537e8833fe2de5.JPG",
-    "static/media/donation_2.JPG": "/voice_of_God/static/media/donation_2.9e35d74039d3690420c3.JPG",
-    "static/media/donation_1.JPG": "/voice_of_God/static/media/donation_1.2bac495cb6c0e33dc238.JPG",
-    "static/media/event_2.JPG": "/voice_of_God/static/media/event_2.cba52a32aa44e16cb03f.JPG",
-    "static/media/church_photo_2.JPEG": "/voice_of_God/static/media/church_photo_2.a5fe4cb852c1945554cd.JPEG",
-    "static/media/church_photo_1.JPEG": "/voice_of_God/static/media/church_photo_1.ef28a3dc9259fcac68cc.JPEG",
-    "static/media/event_3.JPG": "/voice_of_God/static/media/event_3.3d155c805f75020cd10f.JPG",
-    "static/media/bible_teaching.jpg": "/voice_of_God/static/media/bible_teaching.d52ee882c64e73ee1cda.jpg",
-    "static/media/church_photo_7.jpeg": "/voice_of_God/static/media/church_photo_7.de224aea334aef1a75f4.jpeg",
-    "static/media/church_photo_10.JPG": "/voice_of_God/static/media/church_photo_10.6ec1691ad21cf5124a97.JPG",
-    "static/media/sunday_service.jpg": "/voice_of_God/static/media/sunday_service.b7a90c432a6bad631f07.jpg",
-    "static/media/church_photo_9.JPG": "/voice_of_God/static/media/church_photo_9.3438e5a93df6a860ae37.JPG",
-    "static/media/church_photo_6.JPG": "/voice_of_God/static/media/church_photo_6.b528216e474e228d8724.JPG",
-    "static/media/modified_logo.png": "/voice_of_God/static/media/modified_logo.382d65b12855a3e13d13.png",
-    "static/media/church_photo_5.JPG": "/voice_of_God/static/media/church_photo_5.4b227582d1a86f6974d9.JPG",
-    "static/media/church_photo_8.JPG": "/voice_of_God/static/media/church_photo_8.4f8d3b5e891fd0c8019e.JPG",
-    "static/media/prayer.jpg": "/voice_of_God/static/media/prayer.9aaf6e6b59ed0d950f2e.jpg",
-    "static/media/Apostle_PK.jpg": "/voice_of_God/static/media/Apostle_PK.92e4ddcf5145c91b6074.jpg",
-    "static/media/Pastor_Alfred.jpg": "/voice_of_God/static/media/Pastor_Alfred.fc52404d59769f216249.jpg",
-    "static/media/logo.jpg": "/voice_of_God/static/media/logo.d0a83a9cf3a0c948bd5f.jpg",
-    "static/media/Pastor_David.jpg": "/voice_of_God/static/media/Pastor_David.8a25e4dee79f13a77b30.jpg",
-    "static/media/Pastor_Geina.jpg": "/voice_of_God/static/media/Pastor_Geina.c25937df6aaca823429d.jpg",
-    "index.html": "/voice_of_God/index.html",
-    "main.417910e4.css.map": "/voice_of_God/static/css/main.417910e4.css.map",
-    "main.da737299.js.map": "/voice_of_God/static/js/main.da737299.js.map"
+    "main.css": "/YOUR_REPOSITORY_NAME/static/css/main.c10133c2.css",
+    "main.js": "/YOUR_REPOSITORY_NAME/static/js/main.42b6bbe7.js",
+    "static/media/modified_logo.png": "/YOUR_REPOSITORY_NAME/static/media/modified_logo.382d65b12855a3e13d13.png",
+    "static/media/prayer.jpg": "/YOUR_REPOSITORY_NAME/static/media/prayer.9aaf6e6b59ed0d950f2e.jpg",
+    "index.html": "/YOUR_REPOSITORY_NAME/index.html",
+    "main.c10133c2.css.map": "/YOUR_REPOSITORY_NAME/static/css/main.c10133c2.css.map",
+    "main.42b6bbe7.js.map": "/YOUR_REPOSITORY_NAME/static/js/main.42b6bbe7.js.map"
   },
   "entrypoints": [
-    "static/css/main.417910e4.css",
-    "static/js/main.da737299.js"
+    "static/css/main.c10133c2.css",
+    "static/js/main.42b6bbe7.js"
   ]
 }

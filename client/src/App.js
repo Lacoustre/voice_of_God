@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './Pages/Home';
@@ -12,6 +12,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="/join" element={<Join />} />
         <Route path="/donation" element={<Donation />} />
         <Route path="/qr" element={<QRCodePage />} />

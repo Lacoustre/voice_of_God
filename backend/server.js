@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const contactRoutes = require('./routes/contactRoute');
@@ -43,6 +44,21 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/carousel", carouselRoutes);
+
+// Debug: Check if build directory exists
+const buildPath = path.join(__dirname, '../client/build');
+console.log('Build path:', buildPath);
+console.log('Build directory exists:', require('fs').existsSync(buildPath));
+
+// Serve static files from React build
+app.use(express.static(buildPath));
+
+// Handle React routing - send all non-API requests to React app
+app.get('*', (req, res) => {
+  const indexPath = path.join(buildPath, 'index.html');
+  console.log('Serving index.html from:', indexPath);
+  res.sendFile(indexPath);
+});
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);

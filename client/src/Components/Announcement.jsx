@@ -12,7 +12,7 @@ const AnnouncementSection = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/announcements');
+        const response = await fetch('https://voice-of-god.onrender.com/api/announcements');
         const data = await response.json();
         if (data.data && Array.isArray(data.data)) {
           setAnnouncements(data.data);
@@ -46,7 +46,7 @@ const AnnouncementSection = () => {
   const sendPhoneMessages = async (announcementId, targetGroups) => {
     setSendingPhone(true);
     try {
-      const response = await fetch(`http://localhost:4000/api/announcements/${announcementId}/send-phone`, {
+      const response = await fetch(`https://voice-of-god.onrender.com/api/announcements/${announcementId}/send-phone`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

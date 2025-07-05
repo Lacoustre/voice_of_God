@@ -37,7 +37,7 @@ export default function Home() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/events");
+        const response = await fetch("https://voice-of-god.onrender.com/api/events");
         const data = await response.json();
         setEvents(data.events);
       } catch (error) {

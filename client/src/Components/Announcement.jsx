@@ -12,7 +12,7 @@ const AnnouncementSection = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/announcements');
+        const response = await fetch('https://voice-of-god.onrender.com/api/announcements');
         const data = await response.json();
         if (data.data && Array.isArray(data.data)) {
           setAnnouncements(data.data);

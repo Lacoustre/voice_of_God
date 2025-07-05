@@ -32,6 +32,7 @@ const MembersPage = () => {
   const [approveAllLoading, setApproveAllLoading] = useState(false);
   const [declineAllLoading, setDeclineAllLoading] = useState(false);
   const [approvingMemberId, setApprovingMemberId] = useState(null);
+  const [decliningMemberId, setDecliningMemberId] = useState(null);
   const [updatingMemberId, setUpdatingMemberId] = useState(null);
   const [deletingMemberId, setDeletingMemberId] = useState(null);
   const fileInputRef = useRef(null);
@@ -58,7 +59,11 @@ const MembersPage = () => {
 
   const handleApprovalChange = async (member, approved) => {
     try {
-      setApprovingMemberId(member.$id || member.id);
+      if (approved) {
+        setApprovingMemberId(member.$id || member.id);
+      } else {
+        setDecliningMemberId(member.$id || member.id);
+      }
       await new Promise(resolve => setTimeout(resolve, 3000));
       const updateData = { ...member, approved };
       await updateMember(member.$id || member.id, updateData);
@@ -73,6 +78,7 @@ const MembersPage = () => {
       showToast('Failed to update member status', 'error');
     } finally {
       setApprovingMemberId(null);
+      setDecliningMemberId(null);
     }
   };
 
@@ -411,7 +417,7 @@ const MembersPage = () => {
                         <div className="absolute top-full left-0 mt-1 bg-white border rounded shadow-lg z-10 min-w-24">
                           <button
                             onClick={() => handleApprovalChange(member, true)}
-                            disabled={approvingMemberId === (member.$id || member.id)}
+                            disabled={approvingMemberId === (member.$id || member.id) || decliningMemberId === (member.$id || member.id)}
                             className="w-full text-left px-3 py-2 text-xs hover:bg-green-50 text-green-700 disabled:opacity-50 flex items-center gap-2"
                           >
                             {approvingMemberId === (member.$id || member.id) ? (
@@ -421,10 +427,10 @@ const MembersPage = () => {
                           </button>
                           <button
                             onClick={() => handleApprovalChange(member, false)}
-                            disabled={approvingMemberId === (member.$id || member.id)}
+                            disabled={approvingMemberId === (member.$id || member.id) || decliningMemberId === (member.$id || member.id)}
                             className="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-700 disabled:opacity-50 flex items-center gap-2"
                           >
-                            {approvingMemberId === (member.$id || member.id) ? (
+                            {decliningMemberId === (member.$id || member.id) ? (
                               <div className="animate-spin h-3 w-3 border border-red-700 border-t-transparent rounded-full" />
                             ) : null}
                             Decline

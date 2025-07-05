@@ -58,6 +58,16 @@ const MembersPage = () => {
   };
 
   const handleApprovalChange = async (member, approved) => {
+    // Check if action is valid
+    if (approved && member.approved) {
+      showToast('Member is already approved', 'info');
+      return;
+    }
+    if (!approved && !member.approved) {
+      showToast('Member is already declined', 'info');
+      return;
+    }
+
     try {
       if (approved) {
         setApprovingMemberId(member.$id || member.id);
@@ -67,11 +77,11 @@ const MembersPage = () => {
       await new Promise(resolve => setTimeout(resolve, 3000));
       const updateData = { ...member, approved };
       await updateMember(member.$id || member.id, updateData);
-      setMembers(prev => prev.map(m => 
-        (m.$id === member.$id || m.id === member.id) 
-          ? { ...m, approved } 
-          : m
-      ));
+      setMembers(prev => prev.map(m => {
+        const memberId = m.$id || m.id;
+        const targetId = member.$id || member.id;
+        return memberId === targetId ? { ...m, approved } : m;
+      }));
       showToast(`Member ${approved ? 'approved' : 'declined'} successfully!`);
       setOpenDropdownId(null);
     } catch (err) {
@@ -96,7 +106,11 @@ const MembersPage = () => {
       for (const member of unapprovedMembers) {
         await updateMember(member.$id || member.id, { ...member, approved: true });
       }
-      setMembers(prev => prev.map(m => ({ ...m, approved: true })));
+      setMembers(prev => prev.map(m => 
+        unapprovedMembers.some(um => (um.$id === m.$id || um.id === m.id)) 
+          ? { ...m, approved: true } 
+          : m
+      ));
       showToast(`${unapprovedMembers.length} members approved successfully!`);
     } catch (err) {
       showToast('Failed to approve all members', 'error');
@@ -119,7 +133,11 @@ const MembersPage = () => {
       for (const member of approvedMembers) {
         await updateMember(member.$id || member.id, { ...member, approved: false });
       }
-      setMembers(prev => prev.map(m => ({ ...m, approved: false })));
+      setMembers(prev => prev.map(m => 
+        approvedMembers.some(am => (am.$id === m.$id || am.id === m.id)) 
+          ? { ...m, approved: false } 
+          : m
+      ));
       showToast(`${approvedMembers.length} members declined successfully!`);
     } catch (err) {
       showToast('Failed to decline all members', 'error');
@@ -287,7 +305,7 @@ const MembersPage = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleApproveAll}
-            disabled={approveAllLoading}
+            disabled={approveAllLoading || members.filter(m => !m.approved).length === 0}
             className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition text-sm"
           >
             {approveAllLoading ? (
@@ -295,11 +313,11 @@ const MembersPage = () => {
             ) : (
               <CheckCircle size={16} />
             )}
-            {approveAllLoading ? 'Approving...' : 'Approve All'}
+            {approveAllLoading ? 'Approving...' : `Approve All (${members.filter(m => !m.approved).length})`}
           </button>
           <button
             onClick={handleDeclineAll}
-            disabled={declineAllLoading}
+            disabled={declineAllLoading || members.filter(m => m.approved).length === 0}
             className="inline-flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 transition text-sm"
           >
             {declineAllLoading ? (
@@ -307,7 +325,7 @@ const MembersPage = () => {
             ) : (
               <X size={16} />
             )}
-            {declineAllLoading ? 'Declining...' : 'Decline All'}
+            {declineAllLoading ? 'Declining...' : `Decline All (${members.filter(m => m.approved).length})`}
           </button>
           <button
             onClick={() => setShowAddModal(true)}

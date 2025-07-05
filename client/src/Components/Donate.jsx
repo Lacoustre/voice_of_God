@@ -22,7 +22,7 @@ const CharityFoundationPage = () => {
   useEffect(() => {
     const fetchDonationImages = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/media/media');
+        const response = await fetch('https://voice-of-god.onrender.com/api/media/media');
         if (response.ok) {
           const data = await response.json();
           if (data.donation && data.donation.length > 0) {

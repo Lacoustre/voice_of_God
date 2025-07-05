@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useAuth, useApp } from '../context';
+import { useAuth, useApp, useUtils } from '../context';
+import { validateEmail, validatePhone, formatPhoneNumber } from '../utils/validation';
+import Toast from './common/Toast';
 
 const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
   const { user, updateUser } = useAuth();
   const { uploadFile } = useApp();
+  const { toast, showToast } = useUtils();
   const [accountDetails, setAccountDetails] = useState({
     name: '',
     email: '',
@@ -43,9 +46,32 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
   };
 
   const handleSaveChanges = async () => {
+    if (!accountDetails.name.trim()) {
+      showToast('Please enter your full name', 'error');
+      return;
+    }
+    
+    if (!validateEmail(accountDetails.email)) {
+      showToast('Please enter a valid email address', 'error');
+      return;
+    }
+    
+    if (accountDetails.phone && !validatePhone(accountDetails.phone)) {
+      showToast('Please enter a valid phone number', 'error');
+      return;
+    }
+    
+    if (accountDetails.password && accountDetails.password.length < 6) {
+      showToast('Password must be at least 6 characters', 'error');
+      return;
+    }
+    
     const result = await updateUser(accountDetails);
     if (result.success) {
+      showToast('Account updated successfully', 'success');
       setShowAccountModal(false);
+    } else {
+      showToast(result.error || 'Failed to update account', 'error');
     }
   };
 
@@ -89,7 +115,11 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
               <input
                 type={type || "text"}
                 value={accountDetails[key] || ""}
-                onChange={(e) => setAccountDetails({ ...accountDetails, [key]: e.target.value })}
+                onChange={(e) => {
+                  const value = key === 'phone' ? formatPhoneNumber(e.target.value) : e.target.value;
+                  setAccountDetails({ ...accountDetails, [key]: value });
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveChanges()}
                 className="w-full border px-3 py-2 rounded"
               />
             </div>
@@ -110,6 +140,14 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
             Save Changes
           </button>
         </div>
+        
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => {}} 
+          />
+        )}
       </div>
     </div>
   );

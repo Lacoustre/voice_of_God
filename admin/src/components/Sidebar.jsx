@@ -1,5 +1,5 @@
 import { X, User } from "lucide-react";
-import logo from "../assets/logo.jpg";
+import logo from "../assets/modified_logo.png";
 
 const Sidebar = ({
   menuItems,

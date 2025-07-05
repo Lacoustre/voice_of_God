@@ -5,6 +5,7 @@ import logo from "../assets/modified_logo.png";
 import background_image from "../assets/prayer.jpg";
 import { useAuth } from "../context";
 import Toast from "../components/common/Toast";
+import { validateEmail } from "../utils/validation";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -24,10 +25,21 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateEmail(email)) {
+      setToast({ message: 'Please enter a valid email address', type: 'error' });
+      return;
+    }
+    
+    if (password.length < 6) {
+      setToast({ message: 'Password must be at least 6 characters', type: 'error' });
+      return;
+    }
+    
     setSigningIn(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       const result = await login(email, password);
       if (result.success) {
         navigate("/");
@@ -86,6 +98,7 @@ const SignIn = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
                   className="bg-transparent outline-none w-full text-sm"
                   placeholder="you@example.com"
                 />
@@ -101,6 +114,7 @@ const SignIn = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
                   className="bg-transparent outline-none w-full text-sm pr-7"
                   placeholder="••••••••"
                 />

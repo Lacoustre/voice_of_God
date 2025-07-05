@@ -10,7 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useUtils } from "../context";
-import Toast from "./common/Toast";
+import Toast from "../components/common/Toast";
 
 const MessagesPage = () => {
   const { toast, showToast, formatDate, handleAsyncOperation, apiRequest } = useUtils();
@@ -66,12 +66,14 @@ const MessagesPage = () => {
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       // Send email reply
+      const originalMessage = messages.find(m => m.id === msgId)?.message;
       await apiRequest('/contact/reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: email,
-          message: replyText
+          message: replyText,
+          originalMessage: originalMessage
         })
       });
       
@@ -117,15 +119,21 @@ const MessagesPage = () => {
 
   const handleDelete = async (msgId) => {
     setActionLoading(prev => ({ ...prev, [`delete-${msgId}`]: true }));
-    await handleAsyncOperation(
-      async () => {
-        await apiRequest(`/contact/${msgId}`, { method: 'DELETE' });
-        setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
-        setDeleteConfirm(null);
-      },
-      () => setActionLoading(prev => ({ ...prev, [`delete-${msgId}`]: false })),
-      "Message deleted successfully"
-    );
+    try {
+      showToast("Deleting message...", "info");
+      
+      // Show loading animation for 3 seconds
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      await apiRequest(`/contact/${msgId}`, { method: 'DELETE' });
+      setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
+      setDeleteConfirm(null);
+      showToast("Message deleted successfully", "success");
+    } catch (error) {
+      showToast("Failed to delete message", "error");
+    } finally {
+      setActionLoading(prev => ({ ...prev, [`delete-${msgId}`]: false }));
+    }
   };
 
   const filteredMessages = messages.filter((msg) => {
@@ -246,6 +254,12 @@ const MessagesPage = () => {
                     rows={3}
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        handleSendReply(msg.id, msg.email);
+                      }
+                    }}
                   />
                   <div className="flex gap-2">
                     <button

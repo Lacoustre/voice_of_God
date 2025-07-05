@@ -46,6 +46,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
             placeholder="Title"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
           />
           <input
             type="date"
@@ -55,6 +56,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
               form.date ? new Date(form.date).toISOString().split("T")[0] : ""
             }
             onChange={(e) => setForm({ ...form, date: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
           />
 
           <input
@@ -63,6 +65,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
             placeholder="Time"
             value={form.time}
             onChange={(e) => setForm({ ...form, time: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
           />
           <input
             type="text"
@@ -70,6 +73,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
             placeholder="Verse"
             value={form.verse}
             onChange={(e) => setForm({ ...form, verse: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
           />
           <input
             type="text"
@@ -77,6 +81,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
             placeholder="Location"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
+            onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
           />
           <textarea
             rows="4"
@@ -146,6 +151,19 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
               className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition disabled:bg-gray-400"
               disabled={isSaving}
               onClick={async () => {
+                if (!form.title.trim()) {
+                  setToast({ message: 'Please enter event title', type: 'error' });
+                  return;
+                }
+                if (!form.date) {
+                  setToast({ message: 'Please select event date', type: 'error' });
+                  return;
+                }
+                if (!form.time.trim()) {
+                  setToast({ message: 'Please enter event time', type: 'error' });
+                  return;
+                }
+                
                 setIsSaving(true);
                 await new Promise((res) => setTimeout(res, 3000));
                 await onSave(form);

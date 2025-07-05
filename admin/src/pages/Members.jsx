@@ -31,6 +31,9 @@ const MembersPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [approveAllLoading, setApproveAllLoading] = useState(false);
   const [declineAllLoading, setDeclineAllLoading] = useState(false);
+  const [approvingMemberId, setApprovingMemberId] = useState(null);
+  const [updatingMemberId, setUpdatingMemberId] = useState(null);
+  const [deletingMemberId, setDeletingMemberId] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -55,6 +58,8 @@ const MembersPage = () => {
 
   const handleApprovalChange = async (member, approved) => {
     try {
+      setApprovingMemberId(member.$id || member.id);
+      await new Promise(resolve => setTimeout(resolve, 3000));
       const updateData = { ...member, approved };
       await updateMember(member.$id || member.id, updateData);
       setMembers(prev => prev.map(m => 
@@ -66,6 +71,8 @@ const MembersPage = () => {
       setOpenDropdownId(null);
     } catch (err) {
       showToast('Failed to update member status', 'error');
+    } finally {
+      setApprovingMemberId(null);
     }
   };
 
@@ -181,6 +188,7 @@ const MembersPage = () => {
   const handleSave = async () => {
     try {
       setSubmitting(true);
+      await new Promise(resolve => setTimeout(resolve, 3000));
       let imageUrl = newMember.profile_image;
       
       if (newMember.imageFile) {
@@ -403,14 +411,22 @@ const MembersPage = () => {
                         <div className="absolute top-full left-0 mt-1 bg-white border rounded shadow-lg z-10 min-w-24">
                           <button
                             onClick={() => handleApprovalChange(member, true)}
-                            className="w-full text-left px-3 py-2 text-xs hover:bg-green-50 text-green-700"
+                            disabled={approvingMemberId === (member.$id || member.id)}
+                            className="w-full text-left px-3 py-2 text-xs hover:bg-green-50 text-green-700 disabled:opacity-50 flex items-center gap-2"
                           >
+                            {approvingMemberId === (member.$id || member.id) ? (
+                              <div className="animate-spin h-3 w-3 border border-green-700 border-t-transparent rounded-full" />
+                            ) : null}
                             Approve
                           </button>
                           <button
                             onClick={() => handleApprovalChange(member, false)}
-                            className="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-700"
+                            disabled={approvingMemberId === (member.$id || member.id)}
+                            className="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-700 disabled:opacity-50 flex items-center gap-2"
                           >
+                            {approvingMemberId === (member.$id || member.id) ? (
+                              <div className="animate-spin h-3 w-3 border border-red-700 border-t-transparent rounded-full" />
+                            ) : null}
                             Decline
                           </button>
                         </div>
@@ -441,8 +457,12 @@ const MembersPage = () => {
         <ViewMemberModal
           member={selectedMember}
           onClose={() => setSelectedMember(null)}
+          isUpdating={updatingMemberId === (selectedMember.$id || selectedMember.id)}
+          isDeleting={deletingMemberId === (selectedMember.$id || selectedMember.id)}
           onUpdate={async (memberData) => {
             try {
+              setUpdatingMemberId(selectedMember.$id || selectedMember.id);
+              await new Promise(resolve => setTimeout(resolve, 3000));
               let imageUrl = memberData.profile_image;
               
               if (memberData.imageFile) {
@@ -466,16 +486,22 @@ const MembersPage = () => {
             } catch (err) {
               showToast('Failed to update member', 'error');
               console.error('Error updating member:', err);
+            } finally {
+              setUpdatingMemberId(null);
             }
           }}
           onDelete={async (id) => {
             try {
+              setDeletingMemberId(id);
+              await new Promise(resolve => setTimeout(resolve, 3000));
               await deleteMember(id);
               setMembers(prev => prev.filter(m => m.$id !== id && m.id !== id));
               showToast('Member deleted successfully!');
             } catch (err) {
               showToast('Failed to delete member', 'error');
               console.error('Error deleting member:', err);
+            } finally {
+              setDeletingMemberId(null);
             }
           }}
         />
@@ -622,7 +648,14 @@ const MembersPage = () => {
             disabled={submitting}
             className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition duration-200"
           >
-            {submitting ? 'Adding...' : 'Add Member'}
+            {submitting ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                Adding...
+              </div>
+            ) : (
+              'Add Member'
+            )}
           </button>
         </form>
       </Modal>

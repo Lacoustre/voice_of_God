@@ -9,7 +9,7 @@ const client = new sdk.Client()
 const databases = new sdk.Databases(client);
 
 const DATABASE_ID = process.env.APPWRITE_DATABASE_ID;
-const COLLECTION_ID = "686158d00005863e7d47"; // contact collection ID
+const COLLECTION_ID = "686158d00005863e7d47";
 
 exports.getContacts = async (req, res) => {
   try {
@@ -82,7 +82,7 @@ exports.updateContact = async (req, res) => {
 exports.handleContact = exports.createContact;
 
 exports.sendReply = async (req, res) => {
-  const { to, message } = req.body;
+  const { to, message, originalMessage } = req.body;
   
   if (!to || !message) {
     return res.status(400).json({ success: false, error: "Email and message are required" });
@@ -94,19 +94,35 @@ exports.sendReply = async (req, res) => {
     console.log(`Sending reply email to: ${to}`);
     
     const emailResult = await emailService.sendEmail({
-      from: 'princenyamekehaboagye@gmail.com',
       to: to,
       subject: 'Reply from Voice of God Ministries',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #4F46E5;">Voice of God Ministries</h2>
-          <p>Thank you for contacting us. Here is our reply:</p>
-          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      message: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <img src="https://i.imgur.com/placeholder-logo.png" alt="Voice of God Ministries" style="max-width: 120px; height: auto;" />
+            <h2 style="color: #4F46E5; margin-top: 15px;">Voice of God Ministries</h2>
+          </div>
+          
+          <p style="color: #333; font-size: 16px;">Thank you for contacting us. Here is our reply:</p>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4F46E5;">
             ${message.replace(/\n/g, '<br>')}
           </div>
-          <p>Blessings,<br>Voice of God Ministries Team</p>
-          <hr style="margin: 20px 0;">
-          <p style="font-size: 12px; color: #666;">52 Connecticut Avenue, South Windsor, CT 06074</p>
+          
+          ${originalMessage ? `
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;"><strong>Your original message:</strong></p>
+            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; color: #555; font-style: italic;">
+              ${originalMessage.replace(/\n/g, '<br>')}
+            </div>
+          </div>
+          ` : ''}
+          
+          <div style="margin-top: 30px; text-align: center;">
+            <p style="color: #333; font-size: 16px;">Blessings,<br><strong>Voice of God Ministries Team</strong></p>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+            <p style="font-size: 12px; color: #666;">52 Connecticut Avenue, South Windsor, CT 06074</p>
+          </div>
         </div>
       `
     });

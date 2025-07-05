@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Trash2, Save, Pencil } from "lucide-react";
 import LoadingButton from "./common/LoadingButton";
 
-const groupOptions = ["General", "Youth", "Women Fellowship", "Men Fellowship", "Elders"];
+const groupOptions = ["General", "Youth", "Women's Fellowship", "Men's Fellowship", "Elders"];
 
 const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
   const [form, setForm] = useState({
@@ -13,6 +13,7 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
   const [isChanged, setIsChanged] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const original = {
@@ -60,6 +61,7 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
               <input
                 value={form.title}
                 onChange={(e) => handleChange("title", e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                 className="w-full border rounded px-3 py-2 text-sm"
               />
             ) : (
@@ -74,6 +76,7 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
                 rows={4}
                 value={form.content}
                 onChange={(e) => handleChange("content", e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && e.ctrlKey && e.preventDefault()}
                 className="w-full border rounded px-3 py-2 text-sm"
               ></textarea>
             ) : (
@@ -136,21 +139,60 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
                 <Pencil size={16} /> Edit
               </button>
             ) : (
-              <button
-                onClick={() => {
-                  onSave({ ...form, category: form.category });
-                  setIsEditing(false);
-                  setIsChanged(false);
+              <LoadingButton
+                isLoading={isSaving}
+                onClick={async () => {
+                  if (!form.title.trim()) {
+                    alert('Please enter announcement title');
+                    return;
+                  }
+                  if (!form.content.trim()) {
+                    alert('Please enter announcement content');
+                    return;
+                  }
+                  if (form.category.length === 0) {
+                    alert('Please select at least one target group');
+                    return;
+                  }
+                  
+                  setIsSaving(true);
+                  try {
+                    const response = await fetch(`http://localhost:4000/api/announcements/${announcement.$id || announcement.id}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        title: form.title,
+                        content: form.content,
+                        category: form.category
+                      })
+                    });
+                    
+                    if (response.ok) {
+                      onSave({ ...form, category: form.category });
+                      setIsEditing(false);
+                      setIsChanged(false);
+                    } else {
+                      alert('Failed to update announcement');
+                    }
+                  } catch (error) {
+                    console.error('Error updating announcement:', error);
+                    alert('Error updating announcement');
+                  } finally {
+                    setIsSaving(false);
+                  }
                 }}
-                disabled={!isChanged}
-                className={`flex items-center gap-2 text-sm px-3 py-2 rounded ${
-                  isChanged
+                disabled={!isChanged || isSaving}
+                className={`text-sm px-3 py-2 rounded ${
+                  isChanged && !isSaving
                     ? "bg-indigo-600 text-white hover:bg-indigo-700"
                     : "bg-gray-200 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                <Save size={16} /> Save
-              </button>
+                <div className="flex items-center gap-2">
+                  <Save size={16} />
+                  {isSaving ? 'Saving...' : 'Save'}
+                </div>
+              </LoadingButton>
             )}
           </div>
         </div>
@@ -178,7 +220,7 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
                   setIsDeleting(true);
                   try {
                     // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    await new Promise(resolve => setTimeout(resolve, 3000));
                     onDelete(announcement.$id || announcement.id);
                     onClose();
                   } finally {

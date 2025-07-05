@@ -30,7 +30,7 @@ exports.createMember = async (req, res) => {
         address: address || "",
         groups: groups || [],
         role,
-        approved: approved || false
+        approved: false
       }
     );
 

@@ -5,7 +5,7 @@ import FormField from "../components/common/FormField";
 import ViewAnnouncementModal from "../components/AnnouncementModal";
 import Toast from "../components/common/Toast";
 
-const targetGroups = ["General", "Youth", "Women Fellowship", "Men Fellowship", "Elders"];
+const targetGroups = ["General", "Youth", "Women's Fellowship", "Men's Fellowship", "Elders"];
 
 const truncate = (text, maxLength) => {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
@@ -91,8 +91,8 @@ const AnnouncementPage = () => {
     setFormData({ title: "", content: "", post_on_website: false });
   };
 
-  const phoneAnnouncements = announcements.filter(a => a.target_groups !== 'website');
-  const websiteAnnouncements = announcements.filter(a => a.target_groups === 'website');
+  const phoneAnnouncements = announcements.filter(a => a.target_groups !== 'website' && !a.post_on_website);
+  const websiteAnnouncements = announcements.filter(a => a.target_groups === 'website' || a.post_on_website);
 
   const filterAnnouncements = (list) => list
     .filter((a) => a.title?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -144,8 +144,8 @@ const AnnouncementPage = () => {
               <option value="">All</option>
               <option value="General">General</option>
               <option value="Youth">Youth</option>
-              <option value="Women Fellowship">Women Fellowship</option>
-              <option value="Men Fellowship">Men Fellowship</option>
+              <option value="Women's Fellowship">Women's Fellowship</option>
+              <option value="Men's Fellowship">Men's Fellowship</option>
               <option value="Elders">Elders</option>
             </select>
           </div>
@@ -173,9 +173,8 @@ const AnnouncementPage = () => {
                       <h3 className="text-lg font-semibold text-gray-800 text-left">{a.title}</h3>
                       <p className="text-xs text-gray-500">{a.$createdAt ? new Date(a.$createdAt).toLocaleDateString() : (a.date || 'No date')}</p>
                     </div>
-                    <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
+                    <div className="text-sm text-gray-600">
                       <p className="text-left">{truncate(a.content, 100)}</p>
-                      <span className="ml-4 text-xs text-orange-600 whitespace-nowrap">{a.target_groups || a.category}</span>
                     </div>
                   </div>
                 ))}
@@ -201,9 +200,8 @@ const AnnouncementPage = () => {
                       <h3 className="text-lg font-semibold text-gray-800 text-left">{a.title}</h3>
                       <p className="text-xs text-gray-500">{a.$createdAt ? new Date(a.$createdAt).toLocaleDateString() : (a.date || 'No date')}</p>
                     </div>
-                    <div className="flex flex-wrap items-center justify-between text-sm text-gray-600">
+                    <div className="text-sm text-gray-600">
                       <p className="text-left">{truncate(a.content, 100)}</p>
-                      <span className="ml-4 text-xs text-blue-600 whitespace-nowrap">{a.target_groups || a.category}</span>
                     </div>
                   </div>
                 ))}

@@ -16,18 +16,16 @@ class EmailService {
 
   /**
    * @param {Object} options
-   * @param {string} options.from
-   * @param {string} options.fromName
+   * @param {string} options.to - Recipient email address
    * @param {string} options.subject
    * @param {string} options.message
    * @returns {Promise}
    */
-  async sendEmail({ from, fromName, subject, message }) {
+  async sendEmail({ to, subject, message }) {
     const mailOptions = {
       from: `"Voice of God Ministries" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_TO || "INFO@THEVOGMINISTRIES.ORG",
-      replyTo: from,
-      subject: `[VOG Website] ${subject}`,
+      to: to,
+      subject: subject,
       html: message,
     };
 

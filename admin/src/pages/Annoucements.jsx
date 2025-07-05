@@ -34,7 +34,7 @@ const AnnouncementPage = () => {
 
   const fetchAnnouncements = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/announcements');
+      const response = await fetch('https://voice-of-god.onrender.com/api/announcements');
       const data = await response.json();
       setAnnouncements(data.data || []);
     } catch (error) {
@@ -51,7 +51,7 @@ const AnnouncementPage = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      const response = await fetch('http://localhost:4000/api/announcements/create', {
+      const response = await fetch('https://voice-of-god.onrender.com/api/announcements/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -308,7 +308,7 @@ const AnnouncementPage = () => {
             try {
               await new Promise((resolve) => setTimeout(resolve, 2000));
 
-              const response = await fetch(`http://localhost:4000/api/announcements/${announcementId}`, {
+              const response = await fetch(`https://voice-of-god.onrender.com/api/announcements/${announcementId}`, {
                 method: "DELETE",
               });
 

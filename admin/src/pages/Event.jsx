@@ -70,7 +70,7 @@ const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const API_BASE_URL =
-    process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api";
+    process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });

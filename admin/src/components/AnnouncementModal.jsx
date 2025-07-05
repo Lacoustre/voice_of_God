@@ -157,7 +157,7 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
                   
                   setIsSaving(true);
                   try {
-                    const response = await fetch(`http://localhost:4000/api/announcements/${announcement.$id || announcement.id}`, {
+                    const response = await fetch(`https://voice-of-god.onrender.com/api/announcements/${announcement.$id || announcement.id}`, {
                       method: 'PUT',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({

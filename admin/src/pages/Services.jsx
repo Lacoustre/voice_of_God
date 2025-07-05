@@ -7,7 +7,7 @@ import FormField from "../components/common/FormField";
 import Toast from "../components/common/Toast";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:4000/api";
+  process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
 
 const ServiceCard = ({ service, onClick }) => (
   <div

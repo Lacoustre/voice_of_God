@@ -21,7 +21,7 @@ export const AppProvider = ({ children }) => {
     appwriteEndpoint: "https://nyc.cloud.appwrite.io/v1",
     appwriteProjectId: "6857de38002bc7cb276f",
     storageBucketId: "68583ca10032bfb6ffe5",
-    apiBaseUrl: "http://localhost:4000/api",
+    apiBaseUrl: "https://voice-of-god.onrender.com/api",
   };
 
   useEffect(() => {

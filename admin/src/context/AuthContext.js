@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   const fetchUserData = async (userId) => {
     try {
       const token = localStorage.getItem('authToken');
-      const res = await fetch(`http://localhost:4000/api/admin/${userId}`, {
+      const res = await fetch(`https://voice-of-god.onrender.com/api/admin/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      const res = await fetch('http://localhost:4000/api/auth/login', {
+      const res = await fetch('https://voice-of-god.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
   const updateUser = async (userData) => {
     try {
       const token = localStorage.getItem('authToken');
-      const res = await fetch('http://localhost:4000/api/admin/profile/update', {
+      const res = await fetch('https://voice-of-god.onrender.com/api/admin/profile/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

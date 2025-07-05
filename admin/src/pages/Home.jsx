@@ -47,10 +47,10 @@ const ChurchAdminPanel = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/dashboard/stats");
+        const res = await fetch("https://voice-of-god.onrender.com/api/dashboard/stats");
         const data = await res.json();
 
-        const eventsRes = await fetch("http://localhost:4000/api/events");
+        const eventsRes = await fetch("https://voice-of-god.onrender.com/api/events");
         const eventsData = await eventsRes.json();
         setEvents(eventsData);
 

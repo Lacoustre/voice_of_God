@@ -15,6 +15,7 @@ const App = () => {
         <Route path="/join" element={<Join />} />
         <Route path="/donation" element={<Donation />} />
         <Route path="/qr" element={<QRCodePage />} />
+        <Route path="*" element={<Home />} />
       </Routes>
       <ToastContainer
         position="top-right"

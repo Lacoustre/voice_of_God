@@ -4,6 +4,7 @@ import {
   Upload, X, ChevronDown, Users, Heart, Star
 } from "lucide-react";
 import Toast from "../Components/Toast";
+import { validateEmail, validatePhone, formatPhoneNumber } from "../utils/validation";
 
 const API_BASE_URL = 'http://localhost:4000/api';
 
@@ -90,10 +91,25 @@ const MemberRegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!member.name.trim()) {
+      showToast("Please enter your full name", "error");
+      return;
+    }
+    
+    if (!validateEmail(member.email)) {
+      showToast("Please enter a valid email address", "error");
+      return;
+    }
+    
+    if (!validatePhone(member.phone)) {
+      showToast("Please enter a valid phone number (at least 10 digits)", "error");
+      return;
+    }
+    
     try {
       setLoading(true);
       
-      // Show loading for 3 seconds
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       let imageUrl = member.profile_image;
@@ -109,7 +125,7 @@ const MemberRegistrationPage = () => {
         role: member.role,
         groups: member.groups,
         profile_image: imageUrl,
-        approved: member.approved
+        approved: false
       };
 
       const response = await fetch(`${API_BASE_URL}/members`, {
@@ -121,7 +137,7 @@ const MemberRegistrationPage = () => {
       const result = await response.json();
       if (!result.success) throw new Error(result.error);
 
-      showToast("Welcome to our church family! Registration successful! 🎉");
+      showToast("Registration submitted successfully! Your membership is pending approval. 🙏");
       setMember({
         name: "", phone: "", email: "", address: "",
         role: "", groups: [], profile_image: null, approved: false
@@ -213,6 +229,7 @@ const MemberRegistrationPage = () => {
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 bg-white/50"
                     value={member.name}
                     onChange={(e) => setMember({ ...member, name: e.target.value })}
+                    onKeyDown={(e) => e.key === 'Enter' && isStep1Valid && setStep(2)}
                     required
                   />
                 </FormField>
@@ -224,7 +241,8 @@ const MemberRegistrationPage = () => {
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 bg-white/50"
                       placeholder="+1 (555) 123-4567"
                       value={member.phone}
-                      onChange={(e) => setMember({ ...member, phone: e.target.value.replace(/[^0-9+\-\s()]/g, '') })}
+                      onChange={(e) => setMember({ ...member, phone: formatPhoneNumber(e.target.value) })}
+                      onKeyDown={(e) => e.key === 'Enter' && isStep1Valid && setStep(2)}
                       required
                     />
                   </FormField>
@@ -235,6 +253,7 @@ const MemberRegistrationPage = () => {
                       placeholder="sarah@example.com"
                       value={member.email}
                       onChange={(e) => setMember({ ...member, email: e.target.value })}
+                      onKeyDown={(e) => e.key === 'Enter' && isStep1Valid && setStep(2)}
                       required
                     />
                   </FormField>
@@ -247,6 +266,7 @@ const MemberRegistrationPage = () => {
                     placeholder="123 Faith Street, Hope City, HC 12345"
                     value={member.address}
                     onChange={(e) => setMember({ ...member, address: e.target.value })}
+                    onKeyDown={(e) => e.key === 'Enter' && isStep1Valid && setStep(2)}
                   />
                 </FormField>
 
@@ -261,6 +281,7 @@ const MemberRegistrationPage = () => {
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 bg-white/50 appearance-none"
                       value={member.role}
                       onChange={(e) => setMember({ ...member, role: e.target.value })}
+                      onKeyDown={(e) => e.key === 'Enter' && isStep1Valid && setStep(2)}
                       required
                     >
                       <option value="">Choose your calling...</option>
@@ -405,25 +426,7 @@ const MemberRegistrationPage = () => {
                   </div>
                 </FormField>
 
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-                  <div className="flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      id="approve"
-                      checked={member.approved}
-                      onChange={(e) => setMember({ ...member, approved: e.target.checked })}
-                      className="mt-1 w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                    />
-                    <div className="flex-1">
-                      <label htmlFor="approve" className="text-sm font-medium text-gray-900 cursor-pointer">
-                        Fast-track my membership
-                      </label>
-                      <p className="text-xs text-gray-600 mt-1">
-                        I've read and agree to the church guidelines and would like immediate access to member benefits.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+
 
                 <div className="flex gap-4">
                   <button

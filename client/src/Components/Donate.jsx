@@ -4,8 +4,7 @@ import { FaHeart, FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa"
 import donation_1 from "../assets/donation_1.JPG";
 import donation_2 from "../assets/donation_2.JPG";
 import logo from "../assets/logo.jpg";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Toast from "./Toast";
 
 const fallbackDonationImages = [donation_1, donation_2];
 
@@ -14,6 +13,11 @@ const CharityFoundationPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
 
   useEffect(() => {
     const fetchDonationImages = async () => {
@@ -52,7 +56,7 @@ const CharityFoundationPage = () => {
 
   const handleCopyZelle = () => {
     navigator.clipboard.writeText("+1 (860) 967-5647");
-    toast.success("Zelle phone number copied!");
+    showToast("Zelle phone number copied!");
   };
 
   return (
@@ -140,8 +144,14 @@ const CharityFoundationPage = () => {
           </motion.div>
         </div>
       )}
-
-
+      
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </section>
   );
 };

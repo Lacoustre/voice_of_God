@@ -7,6 +7,7 @@ import ServicesPage from "../Components/Services";
 import SectionTitle from "../Components/SectionTitle";
 import LeadershipPage from "../Components/Leadership";
 import CharityFoundationPage from "../Components/Donate";
+import AnnouncementSection from "../Components/Announcement";
 
 export default function Home() {
   const [events, setEvents] = useState([]);
@@ -16,10 +17,12 @@ export default function Home() {
     const handleHashChange = () => {
       const hash = window.location.hash;
       if (hash) {
-        const element = document.querySelector(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+        setTimeout(() => {
+          const element = document.querySelector(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
       }
     };
 
@@ -49,7 +52,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
-      <Navbar />
+      {/* Navbar moved slightly up */}
+      <div className="-mt-10 z-50 relative">
+        <Navbar />
+      </div>
+
+      <AnnouncementSection />
 
       <motion.section
         id="leadership"
@@ -86,20 +94,6 @@ export default function Home() {
       >
         <div className="text-center mb-12">
           <SectionTitle title="Upcoming Events" />
-          <motion.p
-            className="text-lg text-gray-200 max-w-2xl mx-auto font-bold"
-            initial={{ opacity: 0, x: -100 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{
-              duration: 0.7,
-              type: "spring",
-              stiffness: 70,
-              delay: 0.2,
-            }}
-          >
-            Join us for these special gatherings as we worship, learn, and grow
-            together in faith.
-          </motion.p>
         </div>
 
         <div className="flex justify-center px-2">

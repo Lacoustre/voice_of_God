@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Home from './Pages/Home';
 import Join from './Pages/Join';
 import Donation from './Pages/Donation';
+import QRCodePage from './Pages/QRCode';
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/join" element={<Join />} />
         <Route path="/donation" element={<Donation />} />
+        <Route path="/qr" element={<QRCodePage />} />
       </Routes>
       <ToastContainer
         position="top-right"

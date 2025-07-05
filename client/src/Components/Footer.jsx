@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import SocialIcon from "./Icons";
 import { Link } from "react-router-dom";
 import logo from "../assets/modified_logo.png";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Toast from "./Toast";
+import { validateEmail, validatePhone, formatPhoneNumber } from "../utils/validation";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { Heart } from "lucide-react";
 
@@ -19,6 +19,11 @@ const Footer = () => {
   const [message, setMessage] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
 
 
 
@@ -26,9 +31,25 @@ const Footer = () => {
     e.preventDefault();
     if (isSubmittingMessage) return;
 
+    if (!validateEmail(email)) {
+      showToast("Please enter a valid email address", "error");
+      return;
+    }
+
+    if (!validatePhone(phone)) {
+      showToast("Please enter a valid phone number", "error");
+      return;
+    }
+
+    if (!message.trim()) {
+      showToast("Please enter a message", "error");
+      return;
+    }
+
     setIsSubmittingMessage(true);
     try {
-
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
       const response = await fetch("http://localhost:4000/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,18 +61,18 @@ const Footer = () => {
       });
 
       if (response.ok) {
-        toast.success("Thank you! Your message has been sent successfully!");
+        showToast("Thank you! Your message has been sent successfully!");
         setEmail("");
         setPhone("");
         setMessage("");
       } else {
         const errorData = await response.json();
         console.error("Server error:", errorData);
-        toast.error(`Message could not be sent: ${errorData.message || "Please try again later"}`);
+        showToast(`Message could not be sent: ${errorData.message || "Please try again later"}`, "error");
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("An error occurred. Please try again.");
+      showToast("An error occurred. Please try again.", "error");
     } finally {
       setIsSubmittingMessage(false);
     }
@@ -103,9 +124,9 @@ const Footer = () => {
 
               <form onSubmit={handleSubmit} className="mt-6">
                 <div className="flex flex-col space-y-4">
-                  <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
-                  <input type="tel" placeholder="Your phone" value={phone} onChange={(e) => setPhone(e.target.value.replace(/[^0-9+\-\s()]/g, ''))} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
-                  <textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" rows="4" required />
+                  <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
+                  <input type="tel" placeholder="Your phone" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" required />
+                  <textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && e.ctrlKey && handleSubmit(e)} className="p-2 rounded-lg bg-gray-700 text-white text-center placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" rows="4" required />
                   <button type="submit" disabled={isSubmittingMessage} className="p-2 px-4 border border-white-600 bg-gray-600 text-white rounded-lg hover:bg-gray-900 hover:border-purple-700 transition-all duration-300 shadow-md flex items-center justify-center gap-2">
                     {isSubmittingMessage && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
                     {isSubmittingMessage ? "Sending..." : "Send Message"}
@@ -133,8 +154,14 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} Voice of God Ministries. All rights reserved.
         </p>
       </div>
-
-
+      
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </footer>
   );
 };

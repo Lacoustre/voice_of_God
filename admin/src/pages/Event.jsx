@@ -110,7 +110,7 @@ const EventsPage = () => {
     fetchEvents();
   },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fetchEvents = async () => {
+const fetchEvents = async () => {
   try {
     const res = await fetch(`${API_BASE_URL}/api/events`);
 
@@ -118,24 +118,20 @@ const EventsPage = () => {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
 
-    const contentType = res.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Expected JSON response but received something else.');
-    }
-
-    const data = await res.json();
+    const data = await res.json(); 
     if (!data.success || !Array.isArray(data.events)) {
-      throw new Error("Failed to fetch events");
+      throw new Error("Invalid events response");
     }
 
     setEvents(data.events);
   } catch (err) {
-    showToast("Failed to fetch events", "error");
     console.error("Error fetching events:", err);
+    showToast("Failed to fetch events", "error");
   } finally {
     setLoading(false);
   }
 };
+
 
 
   const createEvent = async () => {

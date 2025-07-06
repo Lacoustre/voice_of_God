@@ -21,7 +21,7 @@ const PORT = process.env.PORT;
 
 // CORS configuration
 const corsOptions = {
-  origin: ['https://thevogministries.org', 'https://admin-c4rg.onrender.com'],
+  origin: ['https://thevogministries.org', 'https://admin-c4rg.onrender.com', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],

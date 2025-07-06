@@ -41,14 +41,24 @@ exports.uploadMedia = async (req, res) => {
 
 exports.getMedia = async (req, res) => {
   try {
+    // Check if the request is from admin panel (includes auth token)
+    const isAdmin = req.headers.authorization ? true : false;
+    const publishedOnly = req.query.publishedOnly === 'true' || !isAdmin;
+    
+    console.log(`Fetching media - Admin: ${isAdmin}, Published only: ${publishedOnly}`);
+    
+    // For admin panel without publishedOnly flag, get all media items
+    // For client-side or with publishedOnly flag, only get published items
     const [topMedia, donationMedia] = await Promise.all([
       databases.listDocuments(
         process.env.APPWRITE_DATABASE_ID,
-        process.env.TOP_CAROUSEL_COLLECTION_ID
+        process.env.TOP_CAROUSEL_COLLECTION_ID,
+        publishedOnly ? [sdk.Query.equal('published', true)] : []
       ),
       databases.listDocuments(
         process.env.APPWRITE_DATABASE_ID,
-        process.env.DONATION_CAROUSEL_COLLECTION_ID
+        process.env.DONATION_CAROUSEL_COLLECTION_ID,
+        publishedOnly ? [sdk.Query.equal('published', true)] : []
       )
     ]);
 

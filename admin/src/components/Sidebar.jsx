@@ -29,7 +29,7 @@ const Sidebar = ({
       </div>
 
       {/* Main nav */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+      <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
         {menuItems.map((item) => (
           <button
             key={item.id}
@@ -37,7 +37,7 @@ const Sidebar = ({
               setActiveSection(item.id);
               if (isMobile) setSidebarOpen(false);
             }}
-            className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition ${
+            className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition ${
               activeSection === item.id
                 ? "bg-indigo-100 text-indigo-700"
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
@@ -52,7 +52,7 @@ const Sidebar = ({
       <div className="border-t px-4 py-4">
         <button
           onClick={() => setShowAccountModal(true)}
-          className="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+          className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-gray-900"
         >
           <User className="w-5 h-5" /> Account
         </button>
@@ -70,7 +70,7 @@ const Sidebar = ({
       {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
-          <div className="w-64 bg-white shadow-lg flex flex-col">
+          <div className="w-48 bg-white shadow-lg flex flex-col">
             <SidebarContent isMobile />
           </div>
           <div className="flex-1" onClick={() => setSidebarOpen(false)} />

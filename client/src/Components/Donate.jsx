@@ -26,9 +26,10 @@ const CharityFoundationPage = () => {
         if (response.ok) {
           const data = await response.json();
           if (data.donation && data.donation.length > 0) {
-            const publishedImages = data.donation.filter(item => item.published).map(item => item.image_url);
-            if (publishedImages.length > 0) {
-              setDonationImages(publishedImages);
+            // Server now filters by published status, but we'll keep the client-side filter as a safeguard
+            const imageUrls = data.donation.map(item => item.image_url);
+            if (imageUrls.length > 0) {
+              setDonationImages(imageUrls);
             }
           }
         }

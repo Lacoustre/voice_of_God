@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/static/css/main.88424645.css",
+    "main.js": "/static/js/main.4c49417b.js",
+    "static/media/church_photo_3.jpg": "/static/media/church_photo_3.ce82d964a0104c054aa2.jpg",
+    "static/media/church_photo_4.jpg": "/static/media/church_photo_4.a49ef534ee0bfdf8a6cd.jpg",
+    "static/media/donation_2.JPG": "/static/media/donation_2.9e35d74039d3690420c3.JPG",
+    "static/media/donation_1.JPG": "/static/media/donation_1.2bac495cb6c0e33dc238.JPG",
+    "static/media/church_photo_2.JPEG": "/static/media/church_photo_2.a5fe4cb852c1945554cd.JPEG",
+    "static/media/church_photo_1.JPEG": "/static/media/church_photo_1.ef28a3dc9259fcac68cc.JPEG",
+    "static/media/church_photo_7.jpeg": "/static/media/church_photo_7.de224aea334aef1a75f4.jpeg",
+    "static/media/church_photo_10.JPG": "/static/media/church_photo_10.6ec1691ad21cf5124a97.JPG",
+    "static/media/church_photo_9.JPG": "/static/media/church_photo_9.3438e5a93df6a860ae37.JPG",
+    "static/media/church_photo_6.JPG": "/static/media/church_photo_6.b528216e474e228d8724.JPG",
+    "static/media/modified_logo.png": "/static/media/modified_logo.382d65b12855a3e13d13.png",
+    "static/media/church_photo_5.JPG": "/static/media/church_photo_5.4b227582d1a86f6974d9.JPG",
+    "static/media/church_photo_8.JPG": "/static/media/church_photo_8.4f8d3b5e891fd0c8019e.JPG",
+    "static/media/Apostle_PK.jpg": "/static/media/Apostle_PK.92e4ddcf5145c91b6074.jpg",
+    "static/media/Pastor_Alfred.jpg": "/static/media/Pastor_Alfred.fc52404d59769f216249.jpg",
+    "static/media/logo.jpg": "/static/media/logo.d0a83a9cf3a0c948bd5f.jpg",
+    "static/media/Pastor_David.jpg": "/static/media/Pastor_David.8a25e4dee79f13a77b30.jpg",
+    "static/media/Pastor_Geina.jpg": "/static/media/Pastor_Geina.c25937df6aaca823429d.jpg",
+    "index.html": "/index.html",
+    "main.88424645.css.map": "/static/css/main.88424645.css.map",
+    "main.4c49417b.js.map": "/static/js/main.4c49417b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.88424645.css",
+    "static/js/main.4c49417b.js"
+  ]
+}

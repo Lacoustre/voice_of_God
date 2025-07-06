@@ -10,6 +10,6 @@ const {
 router.post("/", createEvent);
 router.put("/:id", updateEvent);
 router.delete("/:id", deleteEvent);
-router.get("/events", getEvents);
+router.get("/", getEvents);
 
 module.exports = router;

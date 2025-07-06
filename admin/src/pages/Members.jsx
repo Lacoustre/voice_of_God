@@ -5,7 +5,7 @@ import Modal from "../components/common/Modal";
 import FormField from "../components/common/FormField";
 import Toast from "../components/common/Toast";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
 
 const MembersPage = () => {
   const [members, setMembers] = useState([]);

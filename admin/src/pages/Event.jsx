@@ -112,7 +112,7 @@ const EventsPage = () => {
 
   const fetchEvents = async (retryCount = 0) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/events`);
+      const res = await fetch(`${API_BASE_URL}/api/events`);
       
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -150,7 +150,7 @@ const EventsPage = () => {
         imageUrls.push(url);
       }
 
-      const response = await fetch(`${API_BASE_URL}/events`, {
+      const response = await fetch(`${API_BASE_URL}/api/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -199,7 +199,7 @@ const EventsPage = () => {
         images: allImageURLs, // send only strings
       };
 
-      const res = await fetch(`${API_BASE_URL}/events/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -226,7 +226,7 @@ const EventsPage = () => {
 
   const deleteEvent = async (id) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/events/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Delete failed");

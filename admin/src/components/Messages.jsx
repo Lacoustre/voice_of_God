@@ -30,7 +30,7 @@ const MessagesPage = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const data = await apiRequest('/contact');
+      const data = await apiRequest('/api/contact');
       const formattedMessages = data.contacts.map(contact => {
         return {
           id: contact.$id,
@@ -67,7 +67,7 @@ const MessagesPage = () => {
       
       // Send email reply
       const originalMessage = messages.find(m => m.id === msgId)?.message;
-      await apiRequest('/contact/reply', {
+      await apiRequest('/api/contact/reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ const MessagesPage = () => {
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       // Delete message after successful email send
-      await apiRequest(`/contact/${msgId}`, { method: 'DELETE' });
+      await apiRequest(`/api/contact/${msgId}`, { method: 'DELETE' });
       
       // Remove from list after successful operations
       setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
@@ -103,7 +103,7 @@ const MessagesPage = () => {
     setActionLoading(prev => ({ ...prev, [`read-${msgId}`]: true }));
     await handleAsyncOperation(
       async () => {
-        await apiRequest(`/contact/${msgId}`, {
+        await apiRequest(`/api/contact/${msgId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ read: true })
@@ -125,7 +125,7 @@ const MessagesPage = () => {
       // Show loading animation for 3 seconds
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      await apiRequest(`/contact/${msgId}`, { method: 'DELETE' });
+      await apiRequest(`/api/contact/${msgId}`, { method: 'DELETE' });
       setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
       setDeleteConfirm(null);
       showToast("Message deleted successfully", "success");

@@ -42,8 +42,21 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserData = async (userId) => {
     try {
+      // Skip fetching user data if userId is not valid
+      if (!userId) {
+        console.log('No userId provided, skipping user data fetch');
+        return null;
+      }
+      
       const token = localStorage.getItem('authToken');
-      const res = await fetch(`https://voice-of-god.onrender.com/api/admin/${userId}`, {
+      if (!token) {
+        console.log('No auth token found, skipping user data fetch');
+        return null;
+      }
+      
+      // Use the profile/update endpoint instead of the direct ID endpoint
+      // This is more reliable as it doesn't require the specific admin ID
+      const res = await fetch(`https://voice-of-god.onrender.com/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -51,6 +64,7 @@ export const AuthProvider = ({ children }) => {
         const userData = await res.json();
         return userData;
       } else {
+        console.log(`Failed to fetch user data: ${res.status}`);
         return null;
       }
     } catch (error) {

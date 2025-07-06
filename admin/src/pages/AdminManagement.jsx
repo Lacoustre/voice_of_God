@@ -40,8 +40,10 @@ const AdminManagement = () => {
   };
 
   useEffect(() => {
-    fetchAdmins();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (typeof fetchAdmins === 'function') {
+      fetchAdmins();
+    }
+  }, [fetchAdmins]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreateAdmin = async () => {
     try {

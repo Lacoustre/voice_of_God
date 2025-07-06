@@ -5,6 +5,8 @@ const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
+  const [admins, setAdmins] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
   const API_BASE_URL =
     process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
@@ -167,6 +169,108 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Admin management functions
+  const fetchAdmins = async () => {
+    setLoading(true);
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_BASE_URL}/api/admin/get`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setAdmins(data.admins || []);
+      setLoading(false);
+      return { success: true, admins: data.admins || [] };
+    } catch (error) {
+      console.error("Error fetching admins:", error);
+      setAdmins([]);
+      setLoading(false);
+      return { success: false, error: error.message, admins: [] };
+    }
+  };
+
+  const createAdmin = async (adminData) => {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_BASE_URL}/api/admin/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(adminData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Refresh the admin list
+      fetchAdmins();
+      return { success: true, admin: data };
+    } catch (error) {
+      console.error("Error creating admin:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const updateAdmin = async (id, adminData) => {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_BASE_URL}/api/admin/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(adminData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Refresh the admin list
+      fetchAdmins();
+      return { success: true, admin: data };
+    } catch (error) {
+      console.error("Error updating admin:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const deleteAdmin = async (id) => {
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_BASE_URL}/api/admin/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      // Refresh the admin list
+      fetchAdmins();
+      return { success: true };
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const value = {
     fetchMedia,
     uploadFile,
@@ -174,6 +278,13 @@ export const AppProvider = ({ children }) => {
     updateMedia,
     deleteMedia,
     testEmailService,
+    // Admin management
+    fetchAdmins,
+    createAdmin,
+    updateAdmin,
+    deleteAdmin,
+    admins,
+    loading,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

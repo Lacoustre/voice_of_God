@@ -55,4 +55,41 @@ exports.login = async (req, res) => {
   }
 };
 
-
+// Get current user info
+exports.getCurrentUser = async (req, res) => {
+  try {
+    // The user ID should be available from the auth middleware
+    const userId = req.user?.$id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    
+    // Get admin from database
+    const admin = await databases.getDocument(
+      process.env.APPWRITE_DATABASE_ID,
+      '6857e27c003209cdf7ef',
+      userId
+    );
+    
+    if (!admin) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Return user info without sensitive data
+    res.status(200).json({
+      $id: admin.$id,
+      email: admin.email,
+      name: admin.name,
+      username: admin.username,
+      profile_image: admin.profile_image,
+      phone: admin.phone,
+      address: admin.address,
+      dateofbirth: admin.dateofbirth,
+      role: admin.role
+    });
+  } catch (err) {
+    console.error('Error getting current user:', err);
+    res.status(500).json({ error: "Failed to get user information" });
+  }
+};

@@ -30,47 +30,43 @@ const EventsList = () => {
     fetchEvents();
   }, []);
 
-  const fetchEvents = async (retryCount = 0) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/events`);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      
-      const contentType = res.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        // Retry once for Render cold starts
-        if (retryCount === 0) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          return fetchEvents(1);
-        }
-        throw new Error('Server returned non-JSON response');
-      }
-      
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Failed to fetch events");
+const fetchEvents = async () => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/events`);
 
-      const now = new Date();
-      const upcoming = data.events
-        .filter(e => new Date(e.date) >= now)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      let topThree = [...upcoming.slice(0, 3)];
-
-      if (topThree.length < 3) {
-        const past = data.events
-          .filter(e => new Date(e.date) < now)
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
-        topThree = [...topThree, ...past.slice(0, 3 - topThree.length)];
-      }
-
-      setEvents(topThree);
-    } catch (error) {
-      setToast({ message: "Error fetching events", type: "error" });
-      console.error("Error fetching events:", error);
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-  };
+
+    const data = await res.json();
+
+    if (!data.success || !Array.isArray(data.events)) {
+      throw new Error(data.error || "Invalid events response");
+    }
+
+    const now = new Date();
+
+    const upcoming = data.events
+      .filter(e => new Date(e.date) >= now)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    let topThree = [...upcoming.slice(0, 3)];
+
+    if (topThree.length < 3) {
+      const past = data.events
+        .filter(e => new Date(e.date) < now)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      topThree = [...topThree, ...past.slice(0, 3 - topThree.length)];
+    }
+
+    setEvents(topThree);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    setToast({ message: "Error fetching events", type: "error" });
+  }
+};
+
 
   const resetForm = () => {
     setFormData({

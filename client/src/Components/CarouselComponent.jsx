@@ -27,10 +27,10 @@ export default function CarouselComponent() {
         if (response.ok) {
           const data = await response.json();
           if (data.top && data.top.length > 0) {
-            // Server now filters by published status, but we'll keep the client-side filter as a safeguard
-            const imageUrls = data.top.map(item => item.image_url);
-            if (imageUrls.length > 0) {
-              setCarouselImages(imageUrls);
+            // Make sure we only use published items
+            const publishedImages = data.top.filter(item => item.published).map(item => item.image_url);
+            if (publishedImages.length > 0) {
+              setCarouselImages(publishedImages);
             }
           }
         }

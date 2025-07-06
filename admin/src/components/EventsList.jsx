@@ -32,7 +32,7 @@ const EventsList = () => {
 
   const fetchEvents = async (retryCount = 0) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/events`);
+      const res = await fetch(`${API_BASE_URL}/api/events`);
       
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -160,7 +160,7 @@ const EventsList = () => {
         const data = new FormData();
         data.append("file", file);
 
-        const res = await fetch(`${API_BASE_URL}/media/upload-file`, {
+        const res = await fetch(`${API_BASE_URL}/api/media/upload-file`, {
           method: "POST",
           body: data,
         });
@@ -172,7 +172,7 @@ const EventsList = () => {
         imageUrls.push(result.url);
       }
 
-      const response = await fetch(`${API_BASE_URL}/events`, {
+      const response = await fetch(`${API_BASE_URL}/api/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

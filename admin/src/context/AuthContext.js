@@ -22,13 +22,28 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     const token = localStorage.getItem('authToken');
     const userId = localStorage.getItem('userId');
+    const storedUserData = localStorage.getItem('userData');
     
     if (token && userId) {
       setIsAuthenticated(true);
+      
+      // First try to use stored user data for immediate UI update
+      if (storedUserData) {
+        try {
+          const parsedUserData = JSON.parse(storedUserData);
+          setUser(parsedUserData);
+        } catch (e) {
+          console.error('Error parsing stored user data:', e);
+        }
+      }
+      
+      // Then try to fetch fresh user data
       try {
         const userData = await fetchUserData(userId);
         if (userData) {
           setUser(userData);
+          // Update stored user data
+          localStorage.setItem('userData', JSON.stringify(userData));
         }
       } catch (error) {
         console.log('Failed to fetch user data, but keeping authenticated');
@@ -54,9 +69,9 @@ export const AuthProvider = ({ children }) => {
         return null;
       }
       
-      // Use the profile/update endpoint instead of the direct ID endpoint
-      // This is more reliable as it doesn't require the specific admin ID
-      const res = await fetch(`https://voice-of-god.onrender.com/api/auth/me`, {
+      // Use the direct admin endpoint with the ID
+      // This is more reliable as we know the exact ID
+      const res = await fetch(`https://voice-of-god.onrender.com/api/admin/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -65,10 +80,28 @@ export const AuthProvider = ({ children }) => {
         return userData;
       } else {
         console.log(`Failed to fetch user data: ${res.status}`);
+        // If we get a 401 or 404, we'll try to use the stored user data
+        const storedUserData = localStorage.getItem('userData');
+        if (storedUserData) {
+          try {
+            return JSON.parse(storedUserData);
+          } catch (e) {
+            console.error('Error parsing stored user data:', e);
+          }
+        }
         return null;
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+      // Try to use stored user data as fallback
+      const storedUserData = localStorage.getItem('userData');
+      if (storedUserData) {
+        try {
+          return JSON.parse(storedUserData);
+        } catch (e) {
+          console.error('Error parsing stored user data:', e);
+        }
+      }
       return null;
     }
   };
@@ -88,6 +121,8 @@ export const AuthProvider = ({ children }) => {
       if (res.ok) {
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('userId', data.user.$id);
+        // Store user data in localStorage for offline access
+        localStorage.setItem('userData', JSON.stringify(data.user));
         setUser(data.user);
         setIsAuthenticated(true);
         showToast('Login successful!', 'success');
@@ -112,6 +147,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userData');
     setUser(null);
     setIsAuthenticated(false);
     showToast('Logged out successfully', 'success');

@@ -38,6 +38,13 @@ const fetchEvents = async () => {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
 
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      const text = await res.text();
+      console.error("Unexpected non-JSON response:", text.slice(0, 100));
+      throw new Error("Server did not return JSON.");
+    }
+
     const data = await res.json();
 
     if (!data.success || !Array.isArray(data.events)) {
@@ -66,6 +73,8 @@ const fetchEvents = async () => {
     setToast({ message: "Error fetching events", type: "error" });
   }
 };
+
+
 
 
   const resetForm = () => {

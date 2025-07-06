@@ -32,7 +32,7 @@ const EventsList = () => {
 
 const fetchEvents = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/events`);
+    const res = await fetch(`${API_BASE_URL}/events/`);
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

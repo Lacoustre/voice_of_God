@@ -19,9 +19,8 @@ const carouselRoutes = require('./routes/carouselRoute');
 const app = express();
 const PORT = process.env.PORT;
 
-// CORS configuration
 const corsOptions = {
-  origin: ['https://thevogministries.org', 'https://admin-c4rg.onrender.com', 'http://localhost:3000'],
+  origin: ['https://thevogministries.org', 'https://admin-c4rg.onrender.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],

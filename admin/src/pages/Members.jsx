@@ -5,7 +5,7 @@ import Modal from "../components/common/Modal";
 import FormField from "../components/common/FormField";
 import Toast from "../components/common/Toast";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
 const MembersPage = () => {
   const [members, setMembers] = useState([]);
@@ -149,7 +149,7 @@ const MembersPage = () => {
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/members`);
+      const response = await fetch(`${API_BASE_URL}/members`);
       const data = await response.json();
       if (data.success) {
         setMembers(data.members);
@@ -166,7 +166,7 @@ const MembersPage = () => {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await fetch(`${API_BASE_URL}/api/members/upload-image`, {
+    const response = await fetch(`${API_BASE_URL}/members/upload-image`, {
       method: 'POST',
       body: formData,
     });
@@ -177,7 +177,7 @@ const MembersPage = () => {
   };
 
   const createMember = async (memberData) => {
-    const response = await fetch(`${API_BASE_URL}/api/members`, {
+    const response = await fetch(`${API_BASE_URL}/members`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(memberData),
@@ -189,7 +189,7 @@ const MembersPage = () => {
   };
 
   const updateMember = async (id, memberData) => {
-    const response = await fetch(`${API_BASE_URL}/api/members/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/members/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(memberData),
@@ -201,7 +201,7 @@ const MembersPage = () => {
   };
 
   const deleteMember = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/api/members/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/members/${id}`, {
       method: 'DELETE',
     });
     

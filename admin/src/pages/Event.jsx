@@ -70,7 +70,7 @@ const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const API_BASE_URL =
-    process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
+    process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -112,7 +112,7 @@ const EventsPage = () => {
 
   const fetchEvents = async (retryCount = 0) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/events`);
+      const res = await fetch(`${API_BASE_URL}/events`);
       
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -150,7 +150,7 @@ const EventsPage = () => {
         imageUrls.push(url);
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/events`, {
+      const response = await fetch(`${API_BASE_URL}/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -199,7 +199,7 @@ const EventsPage = () => {
         images: allImageURLs, // send only strings
       };
 
-      const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/events/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -226,7 +226,7 @@ const EventsPage = () => {
 
   const deleteEvent = async (id) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/events/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Delete failed");

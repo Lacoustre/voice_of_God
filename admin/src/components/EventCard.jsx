@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
 const EventCard = ({ event, onDelete, setToast }) => {
   const [showConfirm, setShowConfirm] = useState(false);

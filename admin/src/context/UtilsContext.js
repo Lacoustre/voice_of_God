@@ -13,7 +13,7 @@ export const useUtils = () => {
 export const UtilsProvider = ({ children }) => {
   const [toast, setToast] = useState(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });

@@ -4,7 +4,7 @@ import EventCard from "./EventCard";
 import Toast from "../components/common/Toast";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
+  process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -32,6 +32,7 @@ const EventsList = () => {
 
   const fetchEvents = async (retryCount = 0) => {
     try {
+      console.log(`Fetching events from: ${API_BASE_URL}/events`);
       const res = await fetch(`${API_BASE_URL}/events`);
       
       if (!res.ok) {
@@ -42,9 +43,12 @@ const EventsList = () => {
       if (!contentType || !contentType.includes('application/json')) {
         // Retry once for Render cold starts
         if (retryCount === 0) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          console.log('Non-JSON response received, retrying after delay...');
+          await new Promise(resolve => setTimeout(resolve, 3000));
           return fetchEvents(1);
         }
+        const text = await res.text();
+        console.error('Non-JSON response:', text.substring(0, 100) + '...');
         throw new Error('Server returned non-JSON response');
       }
       
@@ -153,25 +157,38 @@ const EventsList = () => {
     setSubmitting(true);
 
     try {
-      await new Promise((res) => setTimeout(res, 3000));
+      // Remove artificial delay that was causing issues
+      // await new Promise((res) => setTimeout(res, 3000));
 
       const imageUrls = [];
       for (let file of formData.images) {
         const data = new FormData();
         data.append("file", file);
 
+        console.log(`Uploading file to: ${API_BASE_URL}/media/upload-file`);
         const res = await fetch(`${API_BASE_URL}/media/upload-file`, {
           method: "POST",
           body: data,
         });
 
-        const result = await res.json();
-        if (!res.ok || !result.success) {
-          throw new Error(result.error || "Image upload failed");
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Upload error response:', errorText);
+          throw new Error(`Image upload failed: ${res.status} ${res.statusText}`);
         }
-        imageUrls.push(result.url);
+        
+        try {
+          const result = await res.json();
+          if (!result.success) {
+            throw new Error(result.error || "Image upload failed");
+          }
+          imageUrls.push(result.url);
+        } catch (jsonError) {
+          throw new Error(`Invalid response format: ${jsonError.message}`);
+        }
       }
 
+      console.log(`Creating event at: ${API_BASE_URL}/events`);
       const response = await fetch(`${API_BASE_URL}/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -181,9 +198,19 @@ const EventsList = () => {
         }),
       });
 
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || "Event creation failed");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Event creation error:', errorText);
+        throw new Error(`Event creation failed: ${response.status} ${response.statusText}`);
+      }
+      
+      try {
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.error || "Event creation failed");
+        }
+      } catch (jsonError) {
+        throw new Error(`Invalid response format: ${jsonError.message}`);
       }
 
       setToast({ message: "Event created successfully!", type: "success" });

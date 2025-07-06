@@ -62,7 +62,7 @@ export const AppProvider = ({ children }) => {
   const uploadMedia = async (image_url, uploaded_by, target, published = false) => {
     try {
       const token = getAuthToken();
-      const response = await fetch(`${API_BASE_URL}/api/media/media`, {
+      const response = await fetch(`${API_BASE_URL}/api/media/upload`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export const AppProvider = ({ children }) => {
   const updateMedia = async (id, target, published) => {
     try {
       const token = getAuthToken();
-      const response = await fetch(`${API_BASE_URL}/api/media/media`, {
+      const response = await fetch(`${API_BASE_URL}/api/media/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +119,7 @@ export const AppProvider = ({ children }) => {
   const deleteMedia = async (id, target) => {
     try {
       const token = getAuthToken();
-      const response = await fetch(`${API_BASE_URL}/api/media/media`, {
+      const response = await fetch(`${API_BASE_URL}/api/media/delete`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

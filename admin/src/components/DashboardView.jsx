@@ -1,7 +1,6 @@
 import StatCard from "./StatCard";
 import EventsList from "./EventsList";
 import QuickActions from "./QuickActions";
-import EmailServiceTest from "./EmailServiceTest";
 
 const DashboardView = ({ stats, events, loading }) => {
   return (
@@ -35,9 +34,6 @@ const DashboardView = ({ stats, events, loading }) => {
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow p-4">
             <QuickActions />
-          </div>
-          <div className="bg-white rounded-xl shadow p-4">
-            <EmailServiceTest />
           </div>
         </div>
       </div>

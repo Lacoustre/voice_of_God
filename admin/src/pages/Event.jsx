@@ -110,34 +110,33 @@ const EventsPage = () => {
     fetchEvents();
   },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fetchEvents = async (retryCount = 0) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/events`);
-      
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      
-      const contentType = res.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        // Retry once for Render cold starts
-        if (retryCount === 0) {
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          return fetchEvents(1);
-        }
-        throw new Error('Server returned non-JSON response');
-      }
-      
-      const data = await res.json();
-      if (!data.success) throw new Error("Failed to fetch events");
-      setEvents(data.events);
-    } catch (err) {
-      showToast("Failed to fetch events", "error");
-      console.error("Error fetching events:", err);
-    } finally {
-      setLoading(false);
+  const fetchEvents = async () => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/events`);
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-  };
+
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Expected JSON response but received something else.');
+    }
+
+    const data = await res.json();
+    if (!data.success || !Array.isArray(data.events)) {
+      throw new Error("Failed to fetch events");
+    }
+
+    setEvents(data.events);
+  } catch (err) {
+    showToast("Failed to fetch events", "error");
+    console.error("Error fetching events:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const createEvent = async () => {
     try {

@@ -20,6 +20,7 @@ import Modal from "./common/Modal";
 import FormField from "./common/FormField";
 import Toast from "../components/common/Toast";
 import { useUtils } from "../context";
+import AddEventModal from "./AddEventModal";
 
 
 
@@ -41,16 +42,7 @@ const QuickActions = () => {
     approved: false
   });
   
-  const [newEvent, setNewEvent] = useState({
-    title: "",
-    date: "",
-    time: "",
-    verse: "",
-    location: "",
-    additionalInfo: "",
-    images: [],
-    imageFiles: []
-  });
+  const [showEventModal, setShowEventModal] = useState(false);
   
   const [newAnnouncement, setNewAnnouncement] = useState({
     title: "",
@@ -82,7 +74,6 @@ const QuickActions = () => {
   const closeModal = () => {
     setActiveModal(null);
     setNewMember({ name: "", phone: "", email: "", profile_image: null, address: "", groups: [], role: "", imageFile: null, approved: false });
-    setNewEvent({ title: "", date: "", time: "", verse: "", location: "", additionalInfo: "", images: [], imageFiles: [] });
     setNewAnnouncement({ title: "", content: "", target_groups: "General", post_on_website: false, announcementMode: "phone", selectedTargetGroups: [] });
     setNewService({ title: "", description: "", verse: "", schedule: [""], image: null, imageFile: null });
     setNewMedia({ mediaImages: [], mediaTarget: "top" });
@@ -97,32 +88,7 @@ const QuickActions = () => {
     }
   };
   
-  const handleEventImageUpload = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    const totalImages = newEvent.imageFiles.length + selectedFiles.length;
-    
-    if (totalImages > 10) {
-      showToast('You can only upload up to 10 images.', 'error');
-      return;
-    }
-    
-    setNewEvent(prev => ({
-      ...prev,
-      imageFiles: [...prev.imageFiles, ...selectedFiles],
-      images: [...prev.images, ...selectedFiles.map(file => URL.createObjectURL(file))]
-    }));
-  };
-  
-  const handleRemoveEventImage = (index) => {
-    setNewEvent(prev => {
-      const newImageFiles = [...prev.imageFiles];
-      const newImages = [...prev.images];
-      URL.revokeObjectURL(newImages[index]);
-      newImageFiles.splice(index, 1);
-      newImages.splice(index, 1);
-      return { ...prev, imageFiles: newImageFiles, images: newImages };
-    });
-  };
+  // Event handling is now done by AddEventModal component
   
   const handleServiceImageUpload = (e) => {
     const file = e.target.files[0];
@@ -189,36 +155,7 @@ const QuickActions = () => {
     );
   };
   
-  const handleAddEvent = async (e) => {
-    e.preventDefault();
-    await handleAsyncOperation(
-      async () => {
-        const imageUrls = [];
-        for (let file of newEvent.imageFiles) {
-          const url = await uploadImage(file);
-          imageUrls.push(url);
-        }
-        
-        const eventData = {
-          title: newEvent.title,
-          date: newEvent.date,
-          time: newEvent.time,
-          verse: newEvent.verse,
-          location: newEvent.location,
-          additionalInfo: newEvent.additionalInfo,
-          images: imageUrls
-        };
-        
-        await apiRequest('/events', {
-          method: 'POST',
-          body: JSON.stringify(eventData)
-        });
-        closeModal();
-      },
-      setSubmitting,
-      'Event created successfully!'
-    );
-  };
+  // Event creation is now handled by AddEventModal component
   
   const handleAddAnnouncement = async (e) => {
     e.preventDefault();
@@ -444,113 +381,7 @@ const QuickActions = () => {
       );
     }
     
-    if (activeModal === "event") {
-      return (
-        <form className="space-y-4" onSubmit={handleAddEvent}>
-          <FormField label="Event Title" icon={Calendar} required>
-            <input
-              type="text"
-              placeholder="Sunday Service"
-              className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={newEvent.title}
-              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-              required
-            />
-          </FormField>
-
-          <FormField label="Bible Verse" icon={User}>
-            <input
-              type="text"
-              placeholder="John 3:16"
-              className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={newEvent.verse}
-              onChange={(e) => setNewEvent({ ...newEvent, verse: e.target.value })}
-            />
-          </FormField>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Date" icon={Calendar} required>
-              <input
-                type="date"
-                className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={newEvent.date}
-                onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                required
-              />
-            </FormField>
-            <FormField label="Time" icon={Calendar} required>
-              <input
-                type="time"
-                className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={newEvent.time}
-                onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
-                required
-              />
-            </FormField>
-          </div>
-
-          <FormField label="Location" icon={MapPin} required>
-            <input
-              type="text"
-              placeholder="Church Main Hall"
-              className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={newEvent.location}
-              onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-              required
-            />
-          </FormField>
-
-          <FormField label="Upload Images" icon={Image}>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleEventImageUpload}
-              className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            {newEvent.images.length > 0 && (
-              <div className="grid grid-cols-5 gap-2 mt-2">
-                {newEvent.images.map((img, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={img}
-                      alt={`preview-${index}`}
-                      className="w-full h-20 object-cover rounded border"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveEventImage(index)}
-                      className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </FormField>
-
-          <FormField label="Additional Info" icon={Briefcase} required>
-            <textarea
-              placeholder="Event details and additional information..."
-              className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24 resize-none"
-              value={newEvent.additionalInfo}
-              onChange={(e) => setNewEvent({ ...newEvent, additionalInfo: e.target.value })}
-              required
-            />
-          </FormField>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition duration-200 flex items-center justify-center gap-2"
-          >
-            {submitting && <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />}
-            {submitting ? 'Creating...' : 'Create Event'}
-          </button>
-        </form>
-      );
-    }
+    // Event modal is now handled by AddEventModal component
     
     if (activeModal === "service") {
       return (
@@ -836,7 +667,7 @@ const QuickActions = () => {
         </button>
         
         <button
-          onClick={() => openModal("event")}
+          onClick={() => setShowEventModal(true)}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg flex items-center gap-2 text-sm font-medium transition duration-200"
         >
           <Calendar className="w-4 h-4" /> Create Event
@@ -871,6 +702,12 @@ const QuickActions = () => {
       >
         {renderModalContent()}
       </Modal>
+      
+      <AddEventModal 
+        isOpen={showEventModal} 
+        onClose={() => setShowEventModal(false)} 
+        onEventAdded={() => showToast('Event created successfully!', 'success')} 
+      />
       
       {toast && (
         <Toast

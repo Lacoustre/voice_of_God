@@ -127,17 +127,23 @@ const EventsPage = () => {
         }
         throw new Error('Server returned non-JSON response');
       }
-      
-      const data = await res.json();
-      if (!data.success) throw new Error("Failed to fetch events");
-      setEvents(data.events);
-    } catch (err) {
-      showToast("Failed to fetch events", "error");
-      console.error("Error fetching events:", err);
-    } finally {
-      setLoading(false);
     }
-  };
+
+    const data = await res.json(); 
+    if (!data.success || !Array.isArray(data.events)) {
+      throw new Error("Invalid events response");
+    }
+
+    setEvents(data.events);
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    showToast("Failed to fetch events", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   const createEvent = async () => {
     try {

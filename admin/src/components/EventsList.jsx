@@ -4,7 +4,7 @@ import EventCard from "./EventCard";
 import Toast from "../components/common/Toast";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com/api";
+  process.env.REACT_APP_API_BASE_URL;
 
 const EventsList = () => {
   const [events, setEvents] = useState([]);
@@ -32,7 +32,7 @@ const EventsList = () => {
 
 const fetchEvents = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/events/`);
+    const res = await fetch(`${API_BASE_URL}/api/events/`);
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -165,7 +165,7 @@ const fetchEvents = async () => {
         const data = new FormData();
         data.append("file", file);
 
-        const res = await fetch(`${API_BASE_URL}/media/upload-file`, {
+        const res = await fetch(`${API_BASE_URL}/api/media/upload-file`, {
           method: "POST",
           body: data,
         });
@@ -177,7 +177,7 @@ const fetchEvents = async () => {
         imageUrls.push(result.url);
       }
 
-      const response = await fetch(`${API_BASE_URL}/events`, {
+      const response = await fetch(`${API_BASE_URL}/api/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

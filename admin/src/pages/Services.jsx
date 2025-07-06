@@ -75,7 +75,7 @@ const ServicesPage = () => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/services`);
+      const response = await fetch(`${API_BASE_URL}/api/services`);
       const data = await response.json();
       if (data.success) {
         setServices(data.services);
@@ -92,7 +92,7 @@ const ServicesPage = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`${API_BASE_URL}/services/upload-image`, {
+    const response = await fetch(`${API_BASE_URL}/api/services/upload-image`, {
       method: "POST",
       body: formData,
     });
@@ -103,7 +103,7 @@ const ServicesPage = () => {
   };
 
   const createService = async (serviceData) => {
-    const response = await fetch(`${API_BASE_URL}/services`, {
+    const response = await fetch(`${API_BASE_URL}/api/services`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(serviceData),
@@ -115,7 +115,7 @@ const ServicesPage = () => {
   };
 
   const updateService = async (id, serviceData) => {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/services/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(serviceData),
@@ -127,7 +127,7 @@ const ServicesPage = () => {
   };
 
   const deleteService = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/services/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/services/${id}`, {
       method: "DELETE",
     });
 

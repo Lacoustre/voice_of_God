@@ -32,6 +32,21 @@ const EventCard = ({ event }) => {
         return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
     };
     
+    // Format date from ISO string to readable format
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        } catch (error) {
+            return dateString; // Return original if parsing fails
+        }
+    };
+    
     const createCalendarEvent = (event) => {
         // Format date for calendar
         const eventDate = event.date.replace('–', ' to ');
@@ -114,7 +129,7 @@ const EventCard = ({ event }) => {
                         >
                             {event.title}
                         </motion.h3>
-                        <p className="text-sm opacity-80 italic mb-2 font-bold">{event.date} | {event.time}</p>
+                        <p className="text-sm opacity-80 italic mb-2 font-bold">{formatDate(event.date)} | {event.time}</p>
                         <p className="text-sm opacity-90 italic font-bold">"{event.verse}"</p>
                     </div>
 
@@ -205,7 +220,7 @@ const EventCard = ({ event }) => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                     <div className="flex items-center gap-3">
                                         <FaCalendarAlt className="text-purple-400" />
-                                        <span>{event.date}</span>
+                                        <span>{formatDate(event.date)}</span>
                                         <button 
                                             onClick={(e) => {
                                                 e.stopPropagation();

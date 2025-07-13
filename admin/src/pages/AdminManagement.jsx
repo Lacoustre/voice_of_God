@@ -346,7 +346,11 @@ const AdminManagement = () => {
               <div>
                 <label className="block font-medium mb-1">Date of Birth</label>
                 <div className="bg-gray-100 px-3 py-2 rounded-md">
-                  {selectedAdmin.dateofbirth}
+                  {selectedAdmin.dateofbirth ? new Date(selectedAdmin.dateofbirth).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'Not specified'}
                 </div>
               </div>
               <div>

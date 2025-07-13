@@ -6,7 +6,7 @@ import {
 import Toast from "../Components/Toast";
 import { validateEmail, validatePhone, formatPhoneNumber } from "../utils/validation";
 
-const API_BASE_URL = 'https://voice-of-god.onrender.com/api';
+const API_BASE_URL = "https://voice-of-god.onrender.com/api";
 
 
 

@@ -40,21 +40,26 @@ const AdminManagement = () => {
   };
 
   useEffect(() => {
-    if (typeof fetchAdmins === 'function') {
-      console.log('Calling fetchAdmins function');
-      fetchAdmins().then(result => {
-        if (!result.success) {
-          console.error('Failed to fetch admins:', result.error);
-          showToast('Failed to load admins: ' + result.error, 'error');
+    // Using a ref to prevent infinite loop
+    const fetchData = async () => {
+      if (typeof fetchAdmins === 'function') {
+        try {
+          const result = await fetchAdmins();
+          if (!result.success) {
+            console.error('Failed to fetch admins:', result.error);
+            showToast('Failed to load admins: ' + result.error, 'error');
+          }
+        } catch (err) {
+          console.error('Exception in fetchAdmins:', err);
+          showToast('Error loading admins: ' + err.message, 'error');
         }
-      }).catch(err => {
-        console.error('Exception in fetchAdmins:', err);
-        showToast('Error loading admins: ' + err.message, 'error');
-      });
-    } else {
-      console.error('fetchAdmins is not a function');
-    }
-  }, [fetchAdmins]); // eslint-disable-line react-hooks/exhaustive-deps
+      } else {
+        console.error('fetchAdmins is not a function');
+      }
+    };
+    
+    fetchData();
+  }, []); // Empty dependency array to run only once on mount
 
   const handleCreateAdmin = async () => {
     try {

@@ -226,8 +226,11 @@ export const AppProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      // Refresh the admin list
-      fetchAdmins();
+      
+      // Update the local state directly instead of calling fetchAdmins
+      const newAdmin = data;
+      setAdmins(prevAdmins => [...prevAdmins, newAdmin]);
+      
       return { success: true, admin: data };
     } catch (error) {
       console.error("Error creating admin:", error);
@@ -252,8 +255,14 @@ export const AppProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      // Refresh the admin list
-      fetchAdmins();
+      
+      // Update the local state directly instead of calling fetchAdmins
+      setAdmins(prevAdmins => 
+        prevAdmins.map(admin => 
+          admin.$id === id ? { ...admin, ...adminData } : admin
+        )
+      );
+      
       return { success: true, admin: data };
     } catch (error) {
       console.error("Error updating admin:", error);
@@ -275,8 +284,9 @@ export const AppProvider = ({ children }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // Refresh the admin list
-      fetchAdmins();
+      // Update the local state directly instead of calling fetchAdmins
+      setAdmins(prevAdmins => prevAdmins.filter(admin => admin.$id !== id));
+      
       return { success: true };
     } catch (error) {
       console.error("Error deleting admin:", error);

@@ -1,4 +1,5 @@
 const sdk = require("node-appwrite");
+const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 const client = new sdk.Client()
@@ -8,9 +9,20 @@ const client = new sdk.Client()
 
 const databases = new sdk.Databases(client);
 
+// Password hashing function
+exports.hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
+
+// Password verification function
+exports.verifyPassword = async (plainPassword, hashedPassword) => {
+  return await bcrypt.compare(plainPassword, hashedPassword);
+};
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  console.log('Login attempt:', { email, password });
+  console.log('Login attempt for email:', email);
 
   try {
     // Get admin from database
@@ -27,18 +39,22 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
     
-    console.log('Admin found:', { email: admin.email, storedPassword: admin.password });
+    // Secure password verification using bcrypt
+    const isPasswordValid = await exports.verifyPassword(password, admin.password);
     
-    // Simple plain text password comparison
-    if (password !== admin.password) {
-      console.log('Password mismatch:', { entered: password, stored: admin.password });
+    if (!isPasswordValid) {
+      console.log('Password verification failed for:', email);
       return res.status(401).json({ error: "Invalid credentials" });
     }
     
-    console.log('Login successful');
+    console.log('Login successful for:', email);
     
-    // Create session token (simplified)
-    const token = 'admin-token-' + admin.$id + '-' + Date.now();
+    // Create session token with JWT or a more secure method
+    // For now, we'll use a more secure format that doesn't expose the user ID directly
+    const tokenSecret = process.env.TOKEN_SECRET || 'default-secret-key';
+    const timestamp = Date.now();
+    const tokenData = `${admin.$id}-${timestamp}-${tokenSecret}`;
+    const token = Buffer.from(tokenData).toString('base64');
     
     res.status(200).json({ 
       token, 
@@ -46,12 +62,14 @@ exports.login = async (req, res) => {
         $id: admin.$id,
         email: admin.email,
         name: admin.name,
-        role: admin.role
+        username: admin.username,
+        profile_image: admin.profile_image,
+        role: admin.role || 'admin'
       }
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(401).json({ error: "Invalid credentials" });
+    res.status(500).json({ error: "Authentication failed" });
   }
 };
 

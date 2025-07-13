@@ -20,37 +20,41 @@ const authenticateUser = async (req, res, next) => {
 
     console.log('Token received:', token.substring(0, 10) + '...');
 
-    // For our custom token system, extract the user ID from the token
-    // Format: 'admin-token-{userId}-{timestamp}'
-    const tokenParts = token.split('-');
-    
-    // More flexible token validation
-    if (tokenParts.length < 3) {
-      console.log('Invalid token format: not enough parts');
-      return res.status(401).json({ error: "Invalid token format" });
-    }
-
-    // Extract userId - it could be in different positions depending on the token format
+    // Handle both token formats for backward compatibility
     let userId;
-    if (tokenParts[0] === 'admin' && tokenParts[1] === 'token') {
-      userId = tokenParts[2];
-    } else {
-      // Try to find a valid UUID format in the token parts
-      userId = tokenParts.find(part => 
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(part) || 
-        /^[0-9a-f]{32}$/i.test(part)
-      );
+    
+    // Try to decode base64 token first (new format)
+    try {
+      const decodedToken = Buffer.from(token, 'base64').toString();
+      const tokenParts = decodedToken.split('-');
+      if (tokenParts.length >= 2) {
+        userId = tokenParts[0]; // First part is userId in new format
+        console.log('Extracted userId from new token format:', userId);
+      }
+    } catch (decodeError) {
+      console.log('Not a base64 token, trying legacy format');
+    }
+    
+    // If userId is still not found, try legacy format
+    if (!userId) {
+      const tokenParts = token.split('-');
       
-      if (!userId) {
-        console.log('Could not extract userId from token');
-        // For now, let's try to continue with the request without validation
-        // This is a temporary fix to allow the admin page to load
-        req.user = { $id: 'unknown' };
-        return next();
+      if (tokenParts[0] === 'admin' && tokenParts[1] === 'token' && tokenParts.length >= 3) {
+        userId = tokenParts[2];
+        console.log('Extracted userId from legacy token format:', userId);
+      } else {
+        // Try to find a valid UUID format in the token parts
+        userId = tokenParts.find(part => 
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(part) || 
+          /^[0-9a-f]{32}$/i.test(part)
+        );
       }
     }
     
-    console.log('Extracted userId from token:', userId);
+    if (!userId) {
+      console.log('Could not extract userId from token');
+      return res.status(401).json({ error: "Invalid token format" });
+    }
     
     // Get the user from the database
     try {
@@ -61,25 +65,20 @@ const authenticateUser = async (req, res, next) => {
       );
       
       console.log('User found in database:', user.$id);
-      req.user = { $id: user.$id };
+      req.user = { 
+        $id: user.$id,
+        email: user.email,
+        name: user.name,
+        role: user.role || 'admin'
+      };
       next();
     } catch (dbError) {
       console.error('Error fetching user from database:', dbError);
-      
-      // For now, let's try to continue with the request without validation
-      // This is a temporary fix to allow the admin page to load
-      console.log('Proceeding without user validation as a temporary fix');
-      req.user = { $id: userId || 'unknown' };
-      next();
+      return res.status(401).json({ error: "User not found or invalid token" });
     }
   } catch (error) {
     console.error('Authentication error:', error);
-    
-    // For now, let's try to continue with the request without validation
-    // This is a temporary fix to allow the admin page to load
-    console.log('Proceeding without authentication as a temporary fix');
-    req.user = { $id: 'unknown' };
-    next();
+    return res.status(401).json({ error: "Authentication failed" });
   }
 };
 

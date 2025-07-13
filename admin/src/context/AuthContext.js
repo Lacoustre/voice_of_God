@@ -213,7 +213,7 @@ export const AuthProvider = ({ children }) => {
 
   const requestPasswordReset = async (email) => {
     try {
-      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/request', {
+      const res = await fetch('/api/password-reset/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -222,7 +222,7 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
       
       if (res.ok) {
-        showToast('If your email is registered, you will receive a reset code', 'success');
+        showToast('Reset code sent to your email', 'success');
         return { success: true };
       } else {
         showToast(data.error || 'Failed to request password reset', 'error');
@@ -236,7 +236,7 @@ export const AuthProvider = ({ children }) => {
   
   const resetPassword = async (email, code, newPassword) => {
     try {
-      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/reset', {
+      const res = await fetch('/api/password-reset/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code, newPassword })

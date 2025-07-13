@@ -77,7 +77,7 @@ exports.requestReset = async (req, res) => {
     
     return res.status(200).json({ 
       success: true, 
-      message: "If your email is registered, you will receive a reset code" 
+      message: "Reset code sent to your email" 
     });
   } catch (error) {
     console.error("Password reset request error:", error);

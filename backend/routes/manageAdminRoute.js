@@ -11,9 +11,9 @@ const {
 
 router.post("/create", createAdmin);
 router.get("/get", getAdmins);
+router.put("/profile/update", updateCurrentUserProfile);
 router.get("/:id", getAdminById);
 router.delete("/:id", deleteAdmin);
 router.put("/:id", updateAdmin);
-router.put("/profile/update", updateCurrentUserProfile);
 
 module.exports = router;

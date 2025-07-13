@@ -22,41 +22,108 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     const token = localStorage.getItem('authToken');
     const userId = localStorage.getItem('userId');
+    const storedUserData = localStorage.getItem('userData');
+    const lastFetchTime = localStorage.getItem('lastUserFetchTime');
+    const now = Date.now();
     
     if (token && userId) {
       setIsAuthenticated(true);
-      try {
-        const userData = await fetchUserData(userId);
-        if (userData) {
-          setUser(userData);
+      
+      // Always use stored user data for immediate UI update
+      if (storedUserData) {
+        try {
+          const parsedUserData = JSON.parse(storedUserData);
+          setUser(parsedUserData);
+          setLoading(false); // Set loading to false immediately after setting user
+        } catch (e) {
+          console.error('Error parsing stored user data:', e);
         }
-      } catch (error) {
-        console.log('Failed to fetch user data, but keeping authenticated');
+      }
+      
+      // Only fetch fresh data if it's been more than 30 minutes since last fetch
+      // or if we don't have stored user data
+      const shouldFetchFresh = !lastFetchTime || 
+                              (now - parseInt(lastFetchTime)) > 30 * 60 * 1000 || 
+                              !storedUserData;
+      
+      if (shouldFetchFresh) {
+        try {
+          const userData = await fetchUserData(userId);
+          if (userData) {
+            setUser(userData);
+            // Update stored user data and last fetch time
+            localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('lastUserFetchTime', now.toString());
+          }
+        } catch (error) {
+          console.log('Failed to fetch user data, but keeping authenticated');
+        }
       }
     } else {
       setIsAuthenticated(false);
+      setLoading(false);
     }
     
+    // Ensure loading is set to false even if there was an error
     setLoading(false);
   };
 
   const fetchUserData = async (userId) => {
     try {
-      const token = localStorage.getItem('authToken');
-      const res = await fetch(`https://voice-of-god.onrender.com/api/admin/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // Skip fetching user data if userId is not valid
+      if (!userId) {
+        console.log('No userId provided, skipping user data fetch');
+        return getUserDataFromStorage();
+      }
       
-      if (res.ok) {
-        const userData = await res.json();
-        return userData;
-      } else {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.log('No auth token found, skipping user data fetch');
+        return getUserDataFromStorage();
+      }
+      
+      // Use hardcoded user data if we have it in storage
+      // This is a temporary solution until the backend is fixed
+      const storedUserData = getUserDataFromStorage();
+      if (storedUserData) {
+        console.log('Using stored user data instead of API call');
+        return storedUserData;
+      }
+      
+      // If we don't have stored data, try the API as a last resort
+      try {
+        const res = await fetch(`https://voice-of-god.onrender.com/api/admin/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (res.ok) {
+          const userData = await res.json();
+          return userData;
+        } else {
+          console.log(`Failed to fetch user data: ${res.status}`);
+          return null;
+        }
+      } catch (apiError) {
+        console.error('API error fetching user data:', apiError);
         return null;
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
-      return null;
+      console.error('Error in fetchUserData:', error);
+      return getUserDataFromStorage();
     }
+  };
+  
+  // Helper function to get user data from storage
+  const getUserDataFromStorage = () => {
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      try {
+        return JSON.parse(storedUserData);
+      } catch (e) {
+        console.error('Error parsing stored user data:', e);
+      }
+    }
+    return null;
   };
 
   const login = async (email, password) => {
@@ -74,6 +141,8 @@ export const AuthProvider = ({ children }) => {
       if (res.ok) {
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('userId', data.user.$id);
+        // Store user data in localStorage for offline access
+        localStorage.setItem('userData', JSON.stringify(data.user));
         setUser(data.user);
         setIsAuthenticated(true);
         showToast('Login successful!', 'success');
@@ -98,6 +167,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userData');
     setUser(null);
     setIsAuthenticated(false);
     showToast('Logged out successfully', 'success');

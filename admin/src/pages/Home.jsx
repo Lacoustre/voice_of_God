@@ -47,12 +47,33 @@ const ChurchAdminPanel = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("https://voice-of-god.onrender.com/api/dashboard/stats");
+        const res = await fetch("https://voice-of-god.onrender.com/dashboard/stats");
         const data = await res.json();
 
-        const eventsRes = await fetch("https://voice-of-god.onrender.com/api/events");
+        const eventsRes = await fetch("https://voice-of-god.onrender.com/events");
         const eventsData = await eventsRes.json();
-        setEvents(eventsData);
+        
+        if (eventsData.success && Array.isArray(eventsData.events)) {
+          // Process events to ensure dates are valid
+          const now = new Date();
+          const upcoming = eventsData.events
+            .filter(e => new Date(e.date) >= now)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+          let topThree = [...upcoming.slice(0, 3)];
+
+          if (topThree.length < 3) {
+            const past = eventsData.events
+              .filter(e => new Date(e.date) < now)
+              .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            topThree = [...topThree, ...past.slice(0, 3 - topThree.length)];
+          }
+          
+          setEvents(topThree);
+        } else {
+          setEvents([]);
+        }
 
         const randomDelay = () => Math.floor(Math.random() * 3000) + 1000;
 

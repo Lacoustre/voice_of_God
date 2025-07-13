@@ -26,6 +26,7 @@ const CharityFoundationPage = () => {
         if (response.ok) {
           const data = await response.json();
           if (data.donation && data.donation.length > 0) {
+            // Make sure we only use published items
             const publishedImages = data.donation.filter(item => item.published).map(item => item.image_url);
             if (publishedImages.length > 0) {
               setDonationImages(publishedImages);

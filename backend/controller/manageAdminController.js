@@ -10,7 +10,7 @@ const client = new sdk.Client()
 const databases = new sdk.Databases(client);
 
 const DATABASE_ID = process.env.APPWRITE_DATABASE_ID;
-const COLLECTION_ID = process.env.APPWRITE_ADMINS_COLLECTION_ID;
+const COLLECTION_ID = '6857e27c003209cdf7ef'; // Admins collection ID
 
 exports.createAdmin = async (req, res) => {
   const {

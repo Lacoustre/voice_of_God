@@ -40,8 +40,10 @@ const AdminManagement = () => {
   };
 
   useEffect(() => {
-    fetchAdmins();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (typeof fetchAdmins === 'function') {
+      fetchAdmins();
+    }
+  }, [fetchAdmins]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreateAdmin = async () => {
     try {
@@ -156,9 +158,9 @@ const AdminManagement = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
             <p className="text-gray-600">Loading admins...</p>
           </div>
-        ) :  admins.length === 0 ? (
+        ) :  !admins || admins.length === 0 ? (
           <div className="col-span-full flex justify-center items-center mt-12">
-            <p className="text-gray-500">No events found.</p>
+            <p className="text-gray-500">No admins found.</p>
           </div>
         ) :
         (

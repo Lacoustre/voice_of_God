@@ -27,6 +27,7 @@ export default function CarouselComponent() {
         if (response.ok) {
           const data = await response.json();
           if (data.top && data.top.length > 0) {
+            // Make sure we only use published items
             const publishedImages = data.top.filter(item => item.published).map(item => item.image_url);
             if (publishedImages.length > 0) {
               setCarouselImages(publishedImages);

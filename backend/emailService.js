@@ -12,6 +12,11 @@ class EmailService {
         pass: process.env.EMAIL_PASS,
       },
     });
+    
+    // Log email configuration (without sensitive data)
+    console.log(`Email service initialized with user: ${process.env.EMAIL_USER}`);
+    console.log(`Email password provided: ${process.env.EMAIL_PASS ? 'Yes' : 'No'}`);
+  
   }
 
   /**
@@ -29,8 +34,12 @@ class EmailService {
       html: message,
     };
 
+    console.log(`Attempting to send email to: ${to}`);
+    console.log(`Subject: ${subject}`);
+    
     try {
       const result = await this.transporter.sendMail(mailOptions);
+      console.log(`Email sent successfully to ${to}. Message ID: ${result.messageId}`);
       return result;
     } catch (error) {
       console.error("Error sending email:", error);

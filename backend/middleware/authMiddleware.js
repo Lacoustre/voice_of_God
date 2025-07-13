@@ -7,6 +7,7 @@ const client = new sdk.Client()
   .setKey(process.env.APPWRITE_API_KEY);
 
 const account = new sdk.Account(client);
+const databases = new sdk.Databases(client);
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -16,11 +17,31 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).json({ error: "No token provided" });
     }
 
-    client.setJWT(token);
-    const user = await account.get();
-    req.user = user;
-    next();
+    // For our custom token system, extract the user ID from the token
+    // Format: 'admin-token-{userId}-{timestamp}'
+    const tokenParts = token.split('-');
+    if (tokenParts.length < 3 || tokenParts[0] !== 'admin' || tokenParts[1] !== 'token') {
+      return res.status(401).json({ error: "Invalid token format" });
+    }
+
+    const userId = tokenParts[2];
+    
+    // Get the user from the database
+    try {
+      const user = await databases.getDocument(
+        process.env.APPWRITE_DATABASE_ID,
+        '6857e27c003209cdf7ef', // Admins collection ID
+        userId
+      );
+      
+      req.user = { $id: user.$id };
+      next();
+    } catch (dbError) {
+      console.error('Error fetching user from database:', dbError);
+      return res.status(401).json({ error: "User not found" });
+    }
   } catch (error) {
+    console.error('Authentication error:', error);
     res.status(401).json({ error: "The current user is not authorized to perform the requested action." });
   }
 };

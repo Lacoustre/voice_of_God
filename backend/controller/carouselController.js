@@ -15,7 +15,9 @@ exports.getTopCarousel = async (req, res) => {
   try {
     const carousel = await databases.listDocuments(
       process.env.APPWRITE_DATABASE_ID,
-      process.env.TOP_CAROUSEL_COLLECTION_ID
+      process.env.TOP_CAROUSEL_COLLECTION_ID,
+      // Only return published items for public consumption
+      [sdk.Query.equal('published', true)]
     );
     res.status(200).json({ success: true, carousel: carousel.documents });
   } catch (error) {
@@ -28,7 +30,9 @@ exports.getDonationCarousel = async (req, res) => {
   try {
     const carousel = await databases.listDocuments(
       process.env.APPWRITE_DATABASE_ID,
-      process.env.DONATION_CAROUSEL_COLLECTION_ID
+      process.env.DONATION_CAROUSEL_COLLECTION_ID,
+      // Only return published items for public consumption
+      [sdk.Query.equal('published', true)]
     );
     res.status(200).json({ success: true, carousel: carousel.documents });
   } catch (error) {
@@ -39,12 +43,12 @@ exports.getDonationCarousel = async (req, res) => {
 
 exports.createTopCarouselItem = async (req, res) => {
   try {
-    const { image, title, description } = req.body;
+    const { image, title, description, published = false } = req.body;
     const carouselItem = await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID,
       process.env.TOP_CAROUSEL_COLLECTION_ID,
       sdk.ID.unique(),
-      { image, title, description }
+      { image, title, description, published }
     );
     res.status(201).json({ success: true, carouselItem });
   } catch (error) {
@@ -55,12 +59,12 @@ exports.createTopCarouselItem = async (req, res) => {
 
 exports.createDonationCarouselItem = async (req, res) => {
   try {
-    const { image, title, description } = req.body;
+    const { image, title, description, published = false } = req.body;
     const carouselItem = await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID,
       process.env.DONATION_CAROUSEL_COLLECTION_ID,
       sdk.ID.unique(),
-      { image, title, description }
+      { image, title, description, published }
     );
     res.status(201).json({ success: true, carouselItem });
   } catch (error) {

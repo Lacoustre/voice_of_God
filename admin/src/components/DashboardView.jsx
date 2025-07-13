@@ -31,8 +31,10 @@ const DashboardView = ({ stats, events, loading }) => {
         <div className="lg:col-span-2 h-[32rem] overflow-y-auto bg-white rounded-xl shadow p-4">
           <EventsList events={events} />
         </div>
-        <div className="h-[32rem] overflow-y-auto bg-white rounded-xl shadow p-4">
-          <QuickActions />
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl shadow p-4">
+            <QuickActions />
+          </div>
         </div>
       </div>
     </div>

@@ -10,6 +10,11 @@ export const AppProvider = ({ children }) => {
   const [activeSection, setActiveSection] = React.useState(() => {
     return localStorage.getItem("activeSection") || "dashboard";
   });
+  
+  // Update localStorage when activeSection changes
+  React.useEffect(() => {
+    localStorage.setItem("activeSection", activeSection);
+  }, [activeSection]);
   const API_BASE_URL =
     process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 

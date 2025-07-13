@@ -219,7 +219,7 @@ const EventCard = ({ event }) => {
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                     <div className="flex items-center gap-3">
-                                        <FaCalendarAlt className="text-purple-400" />
+                                        <FaCalendarPlus className="text-purple-400" />
                                         <span>{formatDate(event.date)}</span>
                                         <button 
                                             onClick={(e) => {

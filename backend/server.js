@@ -14,7 +14,6 @@ const serviceRoutes = require('./routes/serviceRoute');
 const memberRoutes = require('./routes/memberRoute');
 const dashboardRoutes = require("./routes/statsRoute");
 const carouselRoutes = require('./routes/carouselRoute');
-const testEmailRoutes = require('./routes/testEmailRoute');
 const emailTestRoutes = require('./routes/emailTestRoute');
 
 
@@ -46,7 +45,6 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/carousel", carouselRoutes);
-app.use("/api/test-email", testEmailRoutes);
 app.use("/api/email", emailTestRoutes);
 
 // Routes without /api prefix (for compatibility)
@@ -61,7 +59,6 @@ app.use("/services", serviceRoutes);
 app.use("/members", memberRoutes);
 app.use("/dashboard", dashboardRoutes);
 app.use("/carousel", carouselRoutes);
-app.use("/test-email", testEmailRoutes);
 app.use("/email", emailTestRoutes);
 
 // Debug: Check if build directory exists

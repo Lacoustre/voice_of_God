@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   Mail,
   User,
-  Calendar,
   Reply,
   Send,
-  AlertCircle,
   CheckCircle,
   Trash2,
 } from "lucide-react";
@@ -25,7 +23,7 @@ const MessagesPage = () => {
 
   useEffect(() => {
     fetchMessages();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchMessages = async () => {
     try {
@@ -61,11 +59,8 @@ const MessagesPage = () => {
     try {
       setReplyLoading(true);
       showToast("Sending...", "info");
-      
-      // Show sending for 3 seconds
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Send email reply
+
       const originalMessage = messages.find(m => m.id === msgId)?.message;
       await apiRequest('/api/contact/reply', {
         method: 'POST',
@@ -76,20 +71,14 @@ const MessagesPage = () => {
           originalMessage: originalMessage
         })
       });
-      
+
       showToast("Deleting message...", "info");
-      
-      // Show deleting message for 3 seconds
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Delete message after successful email send
       await apiRequest(`/api/contact/${msgId}`, { method: 'DELETE' });
-      
-      // Remove from list after successful operations
+
       setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
       setReplyingTo(null);
       setReplyText("");
-      
       showToast(`Reply sent to ${email} and message deleted`, "success");
     } catch (error) {
       console.error('Error sending reply:', error);
@@ -121,10 +110,7 @@ const MessagesPage = () => {
     setActionLoading(prev => ({ ...prev, [`delete-${msgId}`]: true }));
     try {
       showToast("Deleting message...", "info");
-      
-      // Show loading animation for 3 seconds
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
       await apiRequest(`/api/contact/${msgId}`, { method: 'DELETE' });
       setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
       setDeleteConfirm(null);
@@ -161,7 +147,7 @@ const MessagesPage = () => {
   return (
     <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-2xl font-bold text-gray-800">Visitor Messages</h2>
         <div className="flex items-center gap-4 text-sm">
           <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
@@ -173,6 +159,11 @@ const MessagesPage = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Info Message */}
+      <div className="mb-4 px-4 py-3 bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-md">
+        💡 Messages get <strong>deleted</strong> automatically when you reply to them.
       </div>
 
       {/* Filters */}

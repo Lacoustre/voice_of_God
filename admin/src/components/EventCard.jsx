@@ -58,11 +58,7 @@ const handleDelete = async () => {
             day: "numeric",
           })}{" "}
           at{" "}
-          {new Date(`${event.date}T${event.time}`).toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          })}
+          {event.time || "TBD"}
         </p>
       </div>
 

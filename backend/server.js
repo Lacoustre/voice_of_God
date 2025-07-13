@@ -7,6 +7,7 @@ const contactRoutes = require('./routes/contactRoute');
 const newsletterRoutes = require('./routes/newsLetterRoute');
 const manageAdminRoutes = require("./routes/manageAdminRoute");
 const authRoutes = require("./routes/authRoute");
+const passwordResetRoutes = require("./routes/passwordResetRoute");
 const uploadMediaRoutes = require('./routes/uploadMediaRoute');
 const eventRoutes = require('./routes/eventRoute');
 const announcementRoutes = require('./routes/announcementRoute');
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/password-reset", passwordResetRoutes);
 app.use("/api/admin", manageAdminRoutes);
 app.use("/api/media", uploadMediaRoutes);
 app.use("/api/events", eventRoutes);
@@ -51,6 +53,7 @@ app.use("/api/email", emailTestRoutes);
 app.use('/contact', contactRoutes);
 app.use('/newsletter', newsletterRoutes);
 app.use("/auth", authRoutes);
+app.use("/password-reset", passwordResetRoutes);
 app.use("/admin", manageAdminRoutes);
 app.use("/media", uploadMediaRoutes);
 app.use("/events", eventRoutes);
@@ -83,7 +86,8 @@ app.get('*', (req, res, next) => {
       req.path.startsWith('/carousel') || 
       req.path.startsWith('/contact') || 
       req.path.startsWith('/newsletter') ||
-      req.path.startsWith('/email')) {
+      req.path.startsWith('/email') ||
+      req.path.startsWith('/password-reset')) {
     return next();
   }
   

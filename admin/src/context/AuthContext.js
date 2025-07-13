@@ -211,6 +211,52 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const requestPasswordReset = async (email) => {
+    try {
+      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        showToast('If your email is registered, you will receive a reset code', 'success');
+        return { success: true };
+      } else {
+        showToast(data.error || 'Failed to request password reset', 'error');
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      showToast('Failed to request password reset: ' + error.message, 'error');
+      return { success: false, error: error.message };
+    }
+  };
+  
+  const resetPassword = async (email, code, newPassword) => {
+    try {
+      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code, newPassword })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        showToast('Password has been reset successfully', 'success');
+        return { success: true };
+      } else {
+        showToast(data.error || 'Failed to reset password', 'error');
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      showToast('Failed to reset password: ' + error.message, 'error');
+      return { success: false, error: error.message };
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -221,6 +267,8 @@ export const AuthProvider = ({ children }) => {
     refreshUser,
     checkAuthStatus,
     showToast,
+    requestPasswordReset,
+    resetPassword,
   };
 
   return (

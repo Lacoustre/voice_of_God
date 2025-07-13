@@ -6,6 +6,7 @@ import background_image from "../assets/prayer.jpg";
 import { useAuth } from "../context";
 import Toast from "../components/common/Toast";
 import { validateEmail } from "../utils/validation";
+import ForgotPassword from "../components/ForgotPassword";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [signingIn, setSigningIn] = useState(false);
   const [toast, setToast] = useState(null);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -87,8 +89,12 @@ const SignIn = () => {
       {/* RIGHT: Login Form */}
       <div className="w-[40%] bg-black text-white px-10 py-12 flex flex-col justify-center items-center">
         <div className="w-full max-w-xs">
-          <h2 className="text-xl font-semibold mb-6 text-left">Sign in</h2>
-          <form onSubmit={handleSubmit} className="space-y-5 text-sm w-full">
+          {showForgotPassword ? (
+            <ForgotPassword onBack={() => setShowForgotPassword(false)} />
+          ) : (
+            <>
+              <h2 className="text-xl font-semibold mb-6 text-left">Sign in</h2>
+              <form onSubmit={handleSubmit} className="space-y-5 text-sm w-full">
             <div>
               <label className="block mb-1 text-left">Email</label>
               <div className="flex items-center bg-zinc-900 rounded px-3 py-1.5">
@@ -166,7 +172,19 @@ const SignIn = () => {
                 "Sign In"
               )}
             </button>
+            
+            <div className="mt-4 text-center">
+              <button 
+                type="button" 
+                onClick={() => setShowForgotPassword(true)}
+                className="text-xs text-gray-400 hover:text-pink-400 transition-colors"
+              >
+                Forgot password?
+              </button>
+            </div>
           </form>
+          </>
+          )}
         </div>
       </div>
       {toast && (

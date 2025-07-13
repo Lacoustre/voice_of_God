@@ -154,7 +154,17 @@ const ServicesPage = () => {
           }
           
           // Check if current time is within range
-          if (currentTime >= startTimeMinutes && currentTime <= endTimeMinutes) {
+          const isServiceOngoing = currentTime >= startTimeMinutes && currentTime <= endTimeMinutes;
+          
+          // Debug log to help troubleshoot
+          console.debug(
+            `Service ${service.title} - Day: ${today}, Schedule: ${scheduleItem}\n` +
+            `Current time: ${now.toLocaleTimeString()} (${currentTime} minutes)\n` +
+            `Service time: ${startTimeMinutes}-${endTimeMinutes} minutes\n` +
+            `Is ongoing: ${isServiceOngoing}`
+          );
+          
+          if (isServiceOngoing) {
             updatedOngoingServices[service._id] = true;
           }
         });

@@ -35,11 +35,16 @@ const EventCard = ({ event }) => {
       const now = new Date();
       const eventDate = new Date(event.date);
       
+      // Reset hours to compare just the dates
+      const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+      
       // Check if event spans multiple days (has endDate property)
       let eventEndDate = event.endDate ? new Date(event.endDate) : eventDate;
+      const eventEndDateOnly = new Date(eventEndDate.getFullYear(), eventEndDate.getMonth(), eventEndDate.getDate());
       
       // Check if current date is within the event date range
-      const isDateInRange = now >= eventDate && now <= eventEndDate;
+      const isDateInRange = nowDate >= eventDateOnly && nowDate <= eventEndDateOnly;
       if (!isDateInRange) {
         setIsOngoing(false);
         return;
@@ -107,7 +112,16 @@ const EventCard = ({ event }) => {
       }
       
       // Check if current time is between start and end
-      setIsOngoing(now >= startTime && now <= endTime);
+      const isOngoing = now >= startTime && now <= endTime;
+      
+      // Debug log to help troubleshoot
+      console.debug(
+        `Event ${event.title} - Date: ${formatDate(event.date)}, Time: ${event.time}\n` +
+        `Current: ${now.toLocaleString()}, Event time: ${startTime.toLocaleTimeString()}-${endTime.toLocaleTimeString()}\n` +
+        `Is ongoing: ${isOngoing}`
+      );
+      
+      setIsOngoing(isOngoing);
     };
     
     // Initial check

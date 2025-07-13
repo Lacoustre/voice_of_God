@@ -3,14 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FaMapMarkerAlt,
   FaTimes,
-  FaCalendarAlt,
   FaClock,
   FaCalendarPlus,
+  FaCircle,
 } from "react-icons/fa";
 
 const EventCard = ({ event }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [isOngoing, setIsOngoing] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,29 +19,110 @@ const EventCard = ({ event }) => {
         (prevSlide) => (prevSlide + 1) % (event.images?.length || 1)
       );
     }, 3000);
-
     return () => clearInterval(interval);
   }, [event.images]);
 
   useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
+    document.body.style.overflow = showModal ? "hidden" : "unset";
+    return () => (document.body.style.overflow = "unset");
   }, [showModal]);
 
-  const getGoogleMapsUrl = (location) => {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  // Check if event is currently ongoing
+  useEffect(() => {
+    const checkIfOngoing = () => {
+      if (!event.date || !event.time) return false;
+      
+      const now = new Date();
+      const eventDate = new Date(event.date);
+      
+      // Check if event spans multiple days (has endDate property)
+      let eventEndDate = event.endDate ? new Date(event.endDate) : eventDate;
+      
+      // Check if current date is within the event date range
+      const isDateInRange = now >= eventDate && now <= eventEndDate;
+      if (!isDateInRange) {
+        setIsOngoing(false);
+        return;
+      }
+      
+      // Parse event time (handles various formats like "10:00 AM – 12:00 PM" or "10:00-12:00")
+      // Look for common separators: en dash, hyphen, or 'to'
+      let timeRange = [];
+      if (event.time.includes('–')) {
+        timeRange = event.time.split('–');
+      } else if (event.time.includes('-')) {
+        timeRange = event.time.split('-');
+      } else if (event.time.toLowerCase().includes(' to ')) {
+        timeRange = event.time.toLowerCase().split(' to ');
+      } else {
+        // If no separator found, assume it's a single time point (like a service)
+        // and set duration to 2 hours
+        const singleTime = event.time.trim();
+        timeRange = [singleTime, ''];
+      }
+      
+      // Extract start time
+      const startTimeStr = timeRange[0].trim();
+      let startTime = new Date(eventDate);
+      
+      // Try to parse the start time
+      const startTimeParts = startTimeStr.match(/([\d]{1,2})(?::([\d]{2}))?\s*(am|pm|AM|PM)?/);
+      if (!startTimeParts) {
+        setIsOngoing(false);
+        return;
+      }
+      
+      // Set hours for start time
+      let startHour = parseInt(startTimeParts[1]);
+      const startMinutes = startTimeParts[2] ? parseInt(startTimeParts[2]) : 0;
+      const startPeriod = startTimeParts[3] ? startTimeParts[3].toLowerCase() : null;
+      
+      if (startPeriod === 'pm' && startHour < 12) startHour += 12;
+      if (startPeriod === 'am' && startHour === 12) startHour = 0;
+      startTime.setHours(startHour, startMinutes, 0);
+      
+      // Set end time
+      let endTime;
+      if (timeRange[1]) {
+        const endTimeStr = timeRange[1].trim();
+        endTime = new Date(eventDate);
+        
+        // Try to parse the end time
+        const endTimeParts = endTimeStr.match(/([\d]{1,2})(?::([\d]{2}))?\s*(am|pm|AM|PM)?/);
+        if (endTimeParts) {
+          let endHour = parseInt(endTimeParts[1]);
+          const endMinutes = endTimeParts[2] ? parseInt(endTimeParts[2]) : 0;
+          const endPeriod = endTimeParts[3] ? endTimeParts[3].toLowerCase() : startPeriod;
+          
+          if (endPeriod === 'pm' && endHour < 12) endHour += 12;
+          if (endPeriod === 'am' && endHour === 12) endHour = 0;
+          endTime.setHours(endHour, endMinutes, 0);
+        } else {
+          // If end time can't be parsed, default to 2 hours after start
+          endTime = new Date(startTime.getTime() + 2 * 60 * 60 * 1000);
+        }
+      } else {
+        // Default duration of 2 hours if no end time specified
+        endTime = new Date(startTime.getTime() + 2 * 60 * 60 * 1000);
+      }
+      
+      // Check if current time is between start and end
+      setIsOngoing(now >= startTime && now <= endTime);
+    };
+    
+    // Initial check
+    checkIfOngoing();
+    
+    // Set up interval to check every minute
+    const interval = setInterval(checkIfOngoing, 60000);
+    return () => clearInterval(interval);
+  }, [event.date, event.time, event.endDate]);
+
+  const getGoogleMapsUrl = (location) =>
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
       location
     )}`;
-  };
 
-  // Format date from ISO string to readable format
   const formatDate = (dateString) => {
     if (!dateString) return "";
     try {
@@ -51,22 +133,25 @@ const EventCard = ({ event }) => {
         day: "numeric",
       });
     } catch (error) {
-      return dateString; // Return original if parsing fails
+      return dateString;
     }
   };
 
   const createCalendarEvent = (event) => {
-    // Format date for calendar
-    const eventDate = event.date.replace("–", " to ");
+    const start = new Date(event.date + "T" + (event.time?.split("–")[0] || "09:00"));
+    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // 2 hours duration
+
+    const format = (date) => date.toISOString().replace(/[-:]|\.\d{3}/g, "");
+    const startTime = format(start);
+    const endTime = format(end);
+
     const title = encodeURIComponent(event.title);
     const details = encodeURIComponent(
       `${event.additionalInfo}\n\nLocation: ${event.location}\nTime: ${event.time}`
     );
     const location = encodeURIComponent(event.location);
 
-    // Google Calendar link
-    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=20250626/20250630`;
-
+    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
     window.open(googleUrl, "_blank");
   };
 
@@ -82,26 +167,42 @@ const EventCard = ({ event }) => {
         onClick={() => setShowModal(true)}
       >
         <div className="rounded-t-2xl overflow-hidden relative h-64">
-          {event.images && event.images.length > 0 ? (
-            event.images.map((img, index) => (
-              <div key={index} className="absolute inset-0">
-                <img
-                  src={img}
-                  alt={`${event.title} - image ${index + 1}`}
-                  className="object-fill h-full w-full"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-              </div>
-            ))
-          ) : (
-            <div className="absolute inset-0">
+          {(event.images && event.images.length > 0 ? event.images : [
+            "https://via.placeholder.com/400x200?text=Event",
+          ]).map((img, index) => (
+            <div key={index} className="absolute inset-0">
               <img
-                src="https://via.placeholder.com/400x200?text=Event"
-                alt="Event placeholder"
+                src={img}
+                alt={`${event.title} - image ${index + 1}`}
                 className="object-fill h-full w-full"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             </div>
+          ))}
+          
+          {/* Live event indicator */}
+          {isOngoing && (
+            <motion.div 
+              className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2 z-20"
+              initial={{ scale: 0.9, opacity: 0.8 }}
+              animate={{ 
+                scale: [0.9, 1.05, 0.9],
+                opacity: [0.8, 1, 0.8],
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 1.5,
+                ease: "easeInOut"
+              }}
+            >
+              <motion.div
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ repeat: Infinity, duration: 1 }}
+              >
+                <FaCircle className="text-xs" />
+              </motion.div>
+              <span className="font-bold text-sm">{event.ongoingText || "LIVE NOW"}</span>
+            </motion.div>
           )}
 
           <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
@@ -140,9 +241,7 @@ const EventCard = ({ event }) => {
             <p className="text-sm opacity-80 italic mb-2 font-bold">
               {formatDate(event.date)} | {event.time}
             </p>
-            <p className="text-sm opacity-90 italic font-bold">
-              "{event.verse}"
-            </p>
+            <p className="text-sm opacity-90 italic font-bold">"{event.verse}"</p>
           </div>
 
           <div className="mb-4 flex items-center gap-2 opacity-90">
@@ -159,9 +258,7 @@ const EventCard = ({ event }) => {
           </div>
 
           {event.ticketPrice && (
-            <p className="mb-4 text-sm font-bold">
-              Ticket: ${event.ticketPrice}
-            </p>
+            <p className="mb-4 text-sm font-bold">Ticket: ${event.ticketPrice}</p>
           )}
 
           <p className="text-sm leading-relaxed opacity-90 font-bold line-clamp-3">
@@ -188,34 +285,25 @@ const EventCard = ({ event }) => {
             >
               <div className="relative">
                 <div className="h-64 md:h-80 relative">
-                  {event.images && event.images.length > 0 ? (
-                    event.images.map((img, index) => (
-                      <div
-                        key={index}
-                        className="absolute inset-0"
-                        style={{
-                          opacity: currentSlide === index ? 1 : 0,
-                          transition: "opacity 1.2s ease-in-out",
-                        }}
-                      >
-                        <img
-                          src={img}
-                          alt={`${event.title} - image ${index + 1}`}
-                          className="object-fill h-full w-full"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="absolute inset-0">
+                  {(event.images && event.images.length > 0 ? event.images : [
+                    "https://via.placeholder.com/400x200?text=Event",
+                  ]).map((img, index) => (
+                    <div
+                      key={index}
+                      className="absolute inset-0"
+                      style={{
+                        opacity: currentSlide === index ? 1 : 0,
+                        transition: "opacity 1.2s ease-in-out",
+                      }}
+                    >
                       <img
-                        src="https://via.placeholder.com/400x200?text=Event"
-                        alt="Event placeholder"
+                        src={img}
+                        alt={`${event.title} - image ${index + 1}`}
                         className="object-fill h-full w-full"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-40"></div>
                     </div>
-                  )}
+                  ))}
                 </div>
 
                 <button
@@ -227,30 +315,43 @@ const EventCard = ({ event }) => {
               </div>
 
               <div className="p-6 text-white">
-                <h2 className="text-3xl font-bold mb-4 text-purple-300">
-                  {event.title}
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-3xl font-bold text-purple-300">
+                    {event.title}
+                  </h2>
+                  {isOngoing && (
+                    <motion.div 
+                      className="bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2"
+                      initial={{ scale: 0.9, opacity: 0.8 }}
+                      animate={{ 
+                        scale: [0.9, 1.05, 0.9],
+                        opacity: [0.8, 1, 0.8],
+                      }}
+                      transition={{ 
+                        repeat: Infinity, 
+                        duration: 1.5,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <motion.div
+                        animate={{ opacity: [0.5, 1, 0.5] }}
+                        transition={{ repeat: Infinity, duration: 1 }}
+                      >
+                        <FaCircle className="text-xs" />
+                      </motion.div>
+                      <span className="font-bold text-sm">{event.ongoingText || "LIVE NOW"}</span>
+                    </motion.div>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        createCalendarEvent(event);
-                      }}
-                      className="ml-2 text-purple-300 hover:text-purple-100 transition-colors"
-                      title="Add to Calendar"
-                    >
-                      <FaCalendarPlus className="text-purple-400" />
-                      <span>{formatDate(event.date)}</span>
-                    </button>
-                  </div>
                   <div className="flex items-center gap-3">
                     <FaClock className="text-purple-400" />
                     <span>{event.time}</span>
                   </div>
-                  <div className="flex items-start gap-3 md:col-span-2">
-                    <FaMapMarkerAlt className="text-purple-400 mt-1" />
+
+                  <div className="flex items-center gap-3 md:col-span-2">
+                    <FaMapMarkerAlt className="text-purple-400" />
                     <a
                       href={getGoogleMapsUrl(event.location)}
                       target="_blank"
@@ -260,6 +361,20 @@ const EventCard = ({ event }) => {
                     >
                       {event.location}
                     </a>
+                  </div>
+
+                  <div className="flex items-center gap-3 md:col-span-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        createCalendarEvent(event);
+                      }}
+                      className="flex items-center gap-2 text-purple-300 hover:text-purple-100 transition-colors"
+                      title="Add to Google Calendar"
+                    >
+                      <FaCalendarPlus className="text-purple-400" />
+                      <span>Add to Google Calendar</span>
+                    </button>
                   </div>
                 </div>
 

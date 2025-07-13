@@ -24,9 +24,7 @@ import AccountModal from "./AccountModal";
 import Messages from "../components/Messages";
 
 const ChurchAdminPanel = () => {
-  const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem("activeSection") || "dashboard";
-  });
+  const { activeSection, setActiveSection } = useContext(AppContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -40,9 +38,7 @@ const ChurchAdminPanel = () => {
 
   const [events, setEvents] = useState([]);
 
-  useEffect(() => {
-    localStorage.setItem("activeSection", activeSection);
-  }, [activeSection]);
+  // activeSection is now managed by AppContext
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -176,15 +172,12 @@ const ChurchAdminPanel = () => {
     <div className="min-h-screen flex bg-gray-50">
       <Sidebar
         menuItems={menuItems}
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         setShowAccountModal={setShowAccountModal}
       />
       <div className="flex-1 flex flex-col">
         <Header
-          activeSection={activeSection}
           setSidebarOpen={setSidebarOpen}
         />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto no-scrollbar">

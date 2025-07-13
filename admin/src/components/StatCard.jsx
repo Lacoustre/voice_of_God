@@ -1,6 +1,31 @@
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
+
 const StatCard = ({ title, value, icon: Icon, color, change, loading }) => {
+  const { setActiveSection } = useContext(AppContext);
+  
+  const handleClick = () => {
+    // Map stat titles to their corresponding sections
+    const sectionMap = {
+      'Total Members': 'members',
+      'Unreplied Messages': 'messages',
+      'Upcoming Events': 'events',
+      'Unapproved Members': 'members'
+    };
+    
+    const section = sectionMap[title];
+    if (section) {
+      setActiveSection(section);
+      // Also update localStorage to persist the active section
+      localStorage.setItem('activeSection', section);
+    }
+  };
+  
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer">
+    <div 
+      className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>

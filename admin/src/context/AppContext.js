@@ -7,6 +7,9 @@ export const useApp = () => useContext(AppContext);
 export const AppProvider = ({ children }) => {
   const [admins, setAdmins] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [activeSection, setActiveSection] = React.useState(() => {
+    return localStorage.getItem("activeSection") || "dashboard";
+  });
   const API_BASE_URL =
     process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
@@ -313,6 +316,9 @@ export const AppProvider = ({ children }) => {
     deleteAdmin,
     admins,
     loading,
+    // Navigation
+    activeSection,
+    setActiveSection,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

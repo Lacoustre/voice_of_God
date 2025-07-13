@@ -41,7 +41,9 @@ export const AppProvider = ({ children }) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`${API_BASE_URL}/api/media/upload`, {
+      console.log('Uploading file to:', `${API_BASE_URL}/api/media/upload-file`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/media/upload-file`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -50,10 +52,13 @@ export const AppProvider = ({ children }) => {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`File upload error! Status: ${response.status}, Response: ${errorText}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('File upload successful:', data);
       return { success: true, url: data.url, fileId: data.fileId };
     } catch (error) {
       console.error("Error uploading file:", error);

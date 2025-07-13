@@ -1,5 +1,5 @@
 const sdk = require("node-appwrite");
-const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 require("dotenv").config();
 
 const client = new sdk.Client()
@@ -9,15 +9,16 @@ const client = new sdk.Client()
 
 const databases = new sdk.Databases(client);
 
-// Password hashing function
-exports.hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  return await bcrypt.hash(password, salt);
+// Password hashing function using SHA-256 (compatible with 50 char limit)
+exports.hashPassword = (password) => {
+  const salt = process.env.TOKEN_SECRET || 'default-salt-value';
+  return crypto.createHmac('sha256', salt).update(password).digest('hex').substring(0, 50);
 };
 
 // Password verification function
-exports.verifyPassword = async (plainPassword, hashedPassword) => {
-  return await bcrypt.compare(plainPassword, hashedPassword);
+exports.verifyPassword = (plainPassword, hashedPassword) => {
+  const hashedInput = exports.hashPassword(plainPassword);
+  return hashedInput === hashedPassword;
 };
 
 exports.login = async (req, res) => {
@@ -39,8 +40,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
     
-    // Secure password verification using bcrypt
-    const isPasswordValid = await exports.verifyPassword(password, admin.password);
+    // Secure password verification using SHA-256
+    const isPasswordValid = exports.verifyPassword(password, admin.password);
     
     if (!isPasswordValid) {
       console.log('Password verification failed for:', email);

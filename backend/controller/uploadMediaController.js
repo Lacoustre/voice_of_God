@@ -15,27 +15,44 @@ const upload = multer({ storage: multer.memoryStorage() });
 exports.uploadMedia = async (req, res) => {
   const { image_url, uploaded_by, published = false, target } = req.body;
 
+  // Validate required fields
+  if (!image_url) {
+    return res.status(400).json({ error: "Missing required field: image_url" });
+  }
+  
+  if (!target) {
+    return res.status(400).json({ error: "Missing required field: target" });
+  }
+
   const COLLECTION_ID =
     target === "top"
       ? process.env.TOP_CAROUSEL_COLLECTION_ID
       : process.env.DONATION_CAROUSEL_COLLECTION_ID;
 
+  if (!COLLECTION_ID) {
+    return res.status(400).json({ error: `Invalid target: ${target}` });
+  }
+
   try {
-    await databases.createDocument(
+    console.log(`Creating media document in collection ${COLLECTION_ID}`);
+    console.log(`Data: image_url=${image_url}, uploaded_by=${uploaded_by || 'unknown'}, published=${published}`);
+    
+    const result = await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID,
       COLLECTION_ID,
       sdk.ID.unique(),
       {
         image_url,
-        uploaded_by,
+        uploaded_by: uploaded_by || 'system',
         published: published || false,
       }
     );
 
-    res.status(200).json({ message: "Media uploaded successfully" });
+    console.log('Media document created successfully:', result.$id);
+    res.status(200).json({ message: "Media uploaded successfully", id: result.$id });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to upload media" });
+    console.error('Error creating media document:', err);
+    res.status(500).json({ error: "Failed to upload media: " + err.message });
   }
 };
 

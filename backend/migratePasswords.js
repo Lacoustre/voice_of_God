@@ -1,5 +1,5 @@
 const sdk = require('node-appwrite');
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const client = new sdk.Client()
@@ -12,16 +12,16 @@ const databases = new sdk.Databases(client);
 const DATABASE_ID = process.env.APPWRITE_DATABASE_ID;
 const COLLECTION_ID = process.env.APPWRITE_ADMINS_COLLECTION_ID || '6857e27c003209cdf7ef';
 
-// Function to hash a password
-const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  return await bcrypt.hash(password, salt);
+// Function to hash a password using SHA-256 (compatible with 50 char limit)
+const hashPassword = (password) => {
+  const salt = process.env.TOKEN_SECRET || 'default-salt-value';
+  return crypto.createHmac('sha256', salt).update(password).digest('hex').substring(0, 50);
 };
 
-// Function to check if a password is already hashed
+// Function to check if a password is already hashed (SHA-256 produces 64 char hex, but we truncate to 50)
 const isPasswordHashed = (password) => {
-  // bcrypt hashes start with $2a$, $2b$, or $2y$
-  return /^\$2[aby]\$\d+\$/.test(password);
+  // Check if it's a hex string of appropriate length
+  return /^[0-9a-f]{40,50}$/.test(password);
 };
 
 // Main migration function
@@ -52,7 +52,8 @@ const migratePasswords = async () => {
       
       // Hash the plain text password
       console.log(`Migrating password for admin ${admin.$id}`);
-      const hashedPassword = await hashPassword(admin.password);
+      const hashedPassword = hashPassword(admin.password);
+      console.log(`Generated hash of length: ${hashedPassword.length}`);
       
       // Update the admin document with the hashed password
       await databases.updateDocument(

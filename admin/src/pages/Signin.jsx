@@ -173,7 +173,7 @@ const SignIn = () => {
               )}
             </button>
             
-            <div className="mt-4 text-center">
+            <div className="mt-4 text-left">
               <button 
                 type="button" 
                 onClick={() => setShowForgotPassword(true)}

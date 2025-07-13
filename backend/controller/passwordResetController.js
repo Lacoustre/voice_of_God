@@ -40,10 +40,10 @@ exports.requestReset = async (req, res) => {
     const admin = adminList.documents.find(a => a.email === email);
     
     if (!admin) {
-      // Don't reveal if email exists or not for security
-      return res.status(200).json({ 
-        success: true, 
-        message: "If your email is registered, you will receive a reset code" 
+      // Return error if email doesn't exist
+      return res.status(404).json({ 
+        success: false, 
+        error: "No account found with this email address" 
       });
     }
     

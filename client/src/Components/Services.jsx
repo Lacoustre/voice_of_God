@@ -38,19 +38,39 @@ const ServicesPage = () => {
       const today = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert to minutes
       
+      console.debug(`Current day: ${today}, Current time: ${now.toLocaleTimeString()} (${currentTime} minutes)`)
+      
       const updatedOngoingServices = {};
       
       services.forEach(service => {
-        if (!service.schedule || service.schedule.length === 0) return;
+        // Log service details
+        console.debug(`Checking service: ${service.title}`);
+        
+        if (!service.schedule || service.schedule.length === 0) {
+          console.debug(`Service ${service.title} has no schedule`);
+          return;
+        }
+        
+        // Special case for Sunday Evening Service
+        if (service.title.toLowerCase().includes('evening') && today === 'sunday') {
+          console.debug(`Special handling for Sunday Evening Service: ${service.title}`);
+        }
         
         // Check each schedule item
         service.schedule.forEach(scheduleItem => {
           // Parse schedule (format like "Sunday 10:00 AM - 12:00 PM")
           const parts = scheduleItem.toLowerCase().split(' ');
-          if (parts.length < 3) return;
+          if (parts.length < 3) {
+            console.debug(`Skipping schedule item with too few parts: ${scheduleItem}`);
+            return;
+          }
           
           const day = parts[0];
-          if (day !== today) return;
+          console.debug(`Comparing day: ${day} with today: ${today}`);
+          if (day !== today) {
+            console.debug(`Day mismatch for service ${service.title}: ${day} vs ${today}`);
+            return;
+          }
           
           // Find time range
           let timeRangeIndex = -1;
@@ -116,12 +136,28 @@ const ServicesPage = () => {
           
           // Parse start time
           const startTimeStr = timeRange[0].trim();
-          const startTimeParts = startTimeStr.match(/([\d]{1,2})(?::([\d]{2}))?\s*(am|pm)?/i);
-          if (!startTimeParts) return;
+          console.debug(`Parsing start time: ${startTimeStr}`);
+          
+          // More flexible regex to handle various time formats
+          const startTimeParts = startTimeStr.match(/([\d]{1,2})(?::([\d]{2}))?\s*(am|pm|a\.m\.|p\.m\.)?/i);
+          if (!startTimeParts) {
+            console.debug(`Failed to parse start time: ${startTimeStr}`);
+            return;
+          }
           
           let startHour = parseInt(startTimeParts[1]);
           const startMinutes = startTimeParts[2] ? parseInt(startTimeParts[2]) : 0;
-          const startPeriod = startTimeParts[3] ? startTimeParts[3].toLowerCase() : null;
+          let startPeriod = startTimeParts[3] ? startTimeParts[3].toLowerCase() : null;
+          
+          // Handle periods with dots (a.m., p.m.)
+          if (startPeriod === 'a.m.') startPeriod = 'am';
+          if (startPeriod === 'p.m.') startPeriod = 'pm';
+          
+          // If no AM/PM specified but hour is small, assume PM for evening services
+          if (!startPeriod && startHour < 12 && startHour >= 5 && service.title.toLowerCase().includes('evening')) {
+            console.debug(`Assuming PM for evening service with hour ${startHour}`);
+            startPeriod = 'pm';
+          }
           
           if (startPeriod === 'pm' && startHour < 12) startHour += 12;
           if (startPeriod === 'am' && startHour === 12) startHour = 0;
@@ -168,6 +204,18 @@ const ServicesPage = () => {
             updatedOngoingServices[service._id] = true;
           }
         });
+      });
+      
+      // Manual override for Sunday Evening Service if it's Sunday evening
+      const isSundayEvening = today === 'sunday' && currentTime >= 17*60 && currentTime <= 20*60; // 5PM to 8PM
+      
+      services.forEach(service => {
+        if (service.title.toLowerCase().includes('evening') && 
+            service.title.toLowerCase().includes('sunday') && 
+            isSundayEvening) {
+          console.debug(`Manually setting Sunday Evening Service as active: ${service.title}`);
+          updatedOngoingServices[service._id] = true;
+        }
       });
       
       setOngoingServices(updatedOngoingServices);

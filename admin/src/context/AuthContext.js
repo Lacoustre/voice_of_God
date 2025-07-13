@@ -213,13 +213,23 @@ export const AuthProvider = ({ children }) => {
 
   const requestPasswordReset = async (email) => {
     try {
-      const res = await fetch('/api/password-reset/request', {
+      // Use the full URL to avoid relative path issues
+      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
       
-      const data = await res.json();
+      let data = {};
+      // Check if there's content to parse
+      const text = await res.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error('Error parsing response:', e);
+        }
+      }
       
       if (res.ok) {
         showToast('Reset code sent to your email', 'success');
@@ -236,13 +246,23 @@ export const AuthProvider = ({ children }) => {
   
   const resetPassword = async (email, code, newPassword) => {
     try {
-      const res = await fetch('/api/password-reset/reset', {
+      // Use the full URL to avoid relative path issues
+      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code, newPassword })
       });
       
-      const data = await res.json();
+      let data = {};
+      // Check if there's content to parse
+      const text = await res.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error('Error parsing response:', e);
+        }
+      }
       
       if (res.ok) {
         showToast('Password has been reset successfully', 'success');

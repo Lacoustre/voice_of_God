@@ -53,13 +53,22 @@ const ForgotPassword = ({ onBack }) => {
     
     try {
       // Create a temporary endpoint to verify the code without changing the password
-      const res = await fetch('/api/password-reset/verify', {
+      const res = await fetch('https://voice-of-god.onrender.com/api/password-reset/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code })
       });
       
-      const data = await res.json();
+      let data = {};
+      // Check if there's content to parse
+      const text = await res.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error('Error parsing response:', e);
+        }
+      }
       
       if (res.ok) {
         setStep(3);

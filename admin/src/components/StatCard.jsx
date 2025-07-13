@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 
 const StatCard = ({ title, value, icon: Icon, color, change, loading }) => {
-  const { setActiveSection } = useContext(AppContext);
+  const { setActiveSection } = useApp();
   
   const handleClick = () => {
     // Map stat titles to their corresponding sections

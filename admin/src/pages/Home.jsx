@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useApp } from '../context/AppContext';
 import {
   Users,
   Calendar,
@@ -24,7 +25,7 @@ import AccountModal from "./AccountModal";
 import Messages from "../components/Messages";
 
 const ChurchAdminPanel = () => {
-  const { activeSection, setActiveSection } = useContext(AppContext);
+  const { activeSection } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [loading, setLoading] = useState(true);

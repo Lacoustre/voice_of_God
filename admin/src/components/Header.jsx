@@ -1,13 +1,13 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Menu, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context";
-import { AppContext } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 
 const Header = ({ setSidebarOpen }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { activeSection } = useContext(AppContext);
+  const { activeSection } = useApp();
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);

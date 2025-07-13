@@ -1,7 +1,6 @@
 import { X, User } from "lucide-react";
 import logo from "../assets/modified_logo.png";
-import { useContext } from 'react';
-import { AppContext } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 
 const Sidebar = ({
   menuItems,
@@ -9,7 +8,7 @@ const Sidebar = ({
   setSidebarOpen,
   setShowAccountModal,
 }) => {
-  const { activeSection, setActiveSection } = useContext(AppContext);
+  const { activeSection, setActiveSection } = useApp();
   const SidebarContent = ({ isMobile = false }) => (
     <div className="flex flex-col h-full">
       {/* Header */}

@@ -39,10 +39,14 @@ const AdminManagement = () => {
     setToast({ message, type });
   };
 
+  // Use a ref to track if we've already fetched admins
+  const hasFetchedRef = useRef(false);
+  
   useEffect(() => {
-    // Using a ref to prevent infinite loop
     const fetchData = async () => {
-      if (typeof fetchAdmins === 'function') {
+      // Only fetch if we haven't already
+      if (!hasFetchedRef.current && typeof fetchAdmins === 'function') {
+        hasFetchedRef.current = true;
         try {
           const result = await fetchAdmins();
           if (!result.success) {
@@ -52,9 +56,8 @@ const AdminManagement = () => {
         } catch (err) {
           console.error('Exception in fetchAdmins:', err);
           showToast('Error loading admins: ' + err.message, 'error');
+          hasFetchedRef.current = false; // Reset so we can try again
         }
-      } else {
-        console.error('fetchAdmins is not a function');
       }
     };
     

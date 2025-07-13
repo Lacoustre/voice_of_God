@@ -11,6 +11,15 @@ const client = new sdk.Client()
 const databases = new sdk.Databases(client);
 const RESET_CODES = {}; // In-memory storage for reset codes
 
+// Helper function to verify reset code
+const verifyResetCode = (email, code) => {
+  const resetData = RESET_CODES[email];
+  if (!resetData || resetData.code !== code || Date.now() > resetData.expires) {
+    return false;
+  }
+  return true;
+};
+
 // Generate a random 6-digit code
 const generateResetCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -85,6 +94,29 @@ exports.requestReset = async (req, res) => {
   }
 };
 
+// Verify reset code without changing password
+exports.verifyCode = async (req, res) => {
+  const { email, code } = req.body;
+  
+  if (!email || !code) {
+    return res.status(400).json({ error: "Email and code are required" });
+  }
+  
+  try {
+    if (verifyResetCode(email, code)) {
+      return res.status(200).json({ 
+        success: true, 
+        message: "Code verified successfully" 
+      });
+    } else {
+      return res.status(400).json({ error: "Invalid or expired reset code" });
+    }
+  } catch (error) {
+    console.error("Code verification error:", error);
+    return res.status(500).json({ error: "Failed to verify code" });
+  }
+};
+
 // Verify reset code and set new password
 exports.resetPassword = async (req, res) => {
   const { email, code, newPassword } = req.body;
@@ -95,11 +127,11 @@ exports.resetPassword = async (req, res) => {
   
   try {
     // Check if reset code exists and is valid
-    const resetData = RESET_CODES[email];
-    
-    if (!resetData || resetData.code !== code || Date.now() > resetData.expires) {
+    if (!verifyResetCode(email, code)) {
       return res.status(400).json({ error: "Invalid or expired reset code" });
     }
+    
+    const resetData = RESET_CODES[email];
     
     // Update password in database
     await databases.updateDocument(

@@ -49,7 +49,28 @@ const ForgotPassword = ({ onBack }) => {
       return;
     }
     
-    setStep(3);
+    setLoading(true);
+    
+    try {
+      // Create a temporary endpoint to verify the code without changing the password
+      const res = await fetch('/api/password-reset/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setStep(3);
+      } else {
+        setError(data.error || "Invalid or expired verification code");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
   
   const handleResetPassword = async (e) => {

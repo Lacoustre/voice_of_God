@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authenticateUser } = require("../middleware/authMiddleware");
 const {
   createAdmin,
   getAdmins,
@@ -9,11 +10,12 @@ const {
   updateCurrentUserProfile,
 } = require("../controller/manageAdminController");
 
-router.post("/create", createAdmin);
-router.get("/get", getAdmins);
-router.put("/profile/update", updateCurrentUserProfile);
-router.get("/:id", getAdminById);
-router.delete("/:id", deleteAdmin);
-router.put("/:id", updateAdmin);
+// Apply authentication middleware to all admin routes
+router.post("/create", authenticateUser, createAdmin);
+router.get("/get", authenticateUser, getAdmins);
+router.put("/profile/update", authenticateUser, updateCurrentUserProfile);
+router.get("/:id", authenticateUser, getAdminById);
+router.delete("/:id", authenticateUser, deleteAdmin);
+router.put("/:id", authenticateUser, updateAdmin);
 
 module.exports = router;

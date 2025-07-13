@@ -74,10 +74,17 @@ exports.createAdmin = async (req, res) => {
 
 exports.getAdmins = async (req, res) => {
   try {
+    console.log('Fetching admins - User ID:', req.user?.$id);
+    console.log('Database ID:', DATABASE_ID);
+    console.log('Collection ID:', COLLECTION_ID);
+    
     const result = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+    console.log('Admins fetched successfully, count:', result.documents.length);
+    
     res.status(200).json({ admins: result.documents });
   } catch (error) {
     console.error("Error fetching admins:", error.message);
+    console.error("Full error:", error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -174,6 +174,16 @@ export const AppProvider = ({ children }) => {
     setLoading(true);
     try {
       const token = getAuthToken();
+      
+      if (!token) {
+        console.error("No auth token found");
+        setAdmins([]);
+        setLoading(false);
+        return { success: false, error: "Authentication token missing", admins: [] };
+      }
+      
+      console.log(`Fetching admins from: ${API_BASE_URL}/api/admin/get`);
+      
       const response = await fetch(`${API_BASE_URL}/api/admin/get`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -181,10 +191,13 @@ export const AppProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`HTTP error! status: ${response.status}, response: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}, response: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log("Admins fetched successfully:", data);
       setAdmins(data.admins || []);
       setLoading(false);
       return { success: true, admins: data.admins || [] };

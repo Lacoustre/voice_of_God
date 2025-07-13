@@ -41,7 +41,18 @@ const AdminManagement = () => {
 
   useEffect(() => {
     if (typeof fetchAdmins === 'function') {
-      fetchAdmins();
+      console.log('Calling fetchAdmins function');
+      fetchAdmins().then(result => {
+        if (!result.success) {
+          console.error('Failed to fetch admins:', result.error);
+          showToast('Failed to load admins: ' + result.error, 'error');
+        }
+      }).catch(err => {
+        console.error('Exception in fetchAdmins:', err);
+        showToast('Error loading admins: ' + err.message, 'error');
+      });
+    } else {
+      console.error('fetchAdmins is not a function');
     }
   }, [fetchAdmins]); // eslint-disable-line react-hooks/exhaustive-deps
 

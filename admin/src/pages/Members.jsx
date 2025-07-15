@@ -213,7 +213,7 @@ const MembersPage = () => {
     try {
       setSubmitting(true);
       await new Promise(resolve => setTimeout(resolve, 3000));
-      let imageUrl = newMember.profile_image;
+      let imageUrl = "";
       
       if (newMember.imageFile) {
         imageUrl = await uploadImage(newMember.imageFile);
@@ -223,7 +223,7 @@ const MembersPage = () => {
         name: newMember.name,
         phone: newMember.phone,
         email: newMember.email,
-        profile_image: imageUrl || "",
+        profile_image: imageUrl, // Always use the uploaded URL or empty string
         address: newMember.address || "",
         groups: newMember.groups || [],
         role: newMember.role,
@@ -487,17 +487,22 @@ const MembersPage = () => {
             try {
               setUpdatingMemberId(selectedMember.$id || selectedMember.id);
               await new Promise(resolve => setTimeout(resolve, 3000));
-              let imageUrl = memberData.profile_image;
+              let imageUrl = "";
               
+              // If there's a new file to upload, use that
               if (memberData.imageFile) {
                 imageUrl = await uploadImage(memberData.imageFile);
+              } 
+              // If there's an existing valid URL (not a blob URL), keep it
+              else if (memberData.profile_image && memberData.profile_image.startsWith('http')) {
+                imageUrl = memberData.profile_image;
               }
               
               const updateData = {
                 name: memberData.name,
                 phone: memberData.phone,
                 email: memberData.email,
-                profile_image: imageUrl || "",
+                profile_image: imageUrl,
                 address: memberData.address || "",
                 groups: memberData.groups || [],
                 role: memberData.role,

@@ -112,7 +112,7 @@ const MemberRegistrationPage = () => {
       
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      let imageUrl = member.profile_image;
+      let imageUrl = "";
       if (member.imageFile) {
         imageUrl = await uploadImage(member.imageFile);
       }
@@ -124,7 +124,7 @@ const MemberRegistrationPage = () => {
         address: member.address,
         role: member.role,
         groups: member.groups,
-        profile_image: imageUrl,
+        profile_image: imageUrl, // Always use the uploaded URL or empty string
         approved: false
       };
 

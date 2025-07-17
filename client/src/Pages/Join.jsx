@@ -92,18 +92,34 @@ const MemberRegistrationPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Check all required fields
     if (!member.name.trim()) {
       showToast("Please enter your full name", "error");
       return;
     }
     
+    if (!member.email.trim()) {
+      showToast("Please enter your email address", "error");
+      return;
+    }
+    
     if (!validateEmail(member.email)) {
-      showToast("Please enter a valid email address", "error");
+      showToast("Please enter a valid email address format", "error");
+      return;
+    }
+    
+    if (!member.phone.trim()) {
+      showToast("Please enter your phone number", "error");
       return;
     }
     
     if (!validatePhone(member.phone)) {
       showToast("Please enter a valid phone number (at least 10 digits)", "error");
+      return;
+    }
+    
+    if (!member.role) {
+      showToast("Please select your role in the church", "error");
       return;
     }
     

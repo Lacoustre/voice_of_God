@@ -123,6 +123,11 @@ const MemberRegistrationPage = () => {
       return;
     }
     
+    if (!member.profile_image) {
+      showToast("Please upload your profile photo", "error");
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -169,6 +174,8 @@ const MemberRegistrationPage = () => {
   };
 
   const isStep1Valid = member.name && member.phone && member.email && member.role;
+  const isStep2Valid = member.profile_image !== null; // Check if profile image is uploaded
+  const isFormValid = isStep1Valid && isStep2Valid;
   const progress = step === 1 ? 50 : 100;
 
   return (
@@ -331,6 +338,9 @@ const MemberRegistrationPage = () => {
                 <div className="text-center mb-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">Join Our Community</h2>
                   <p className="text-gray-600">Select groups you'd like to be part of and add your photo</p>
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-yellow-700 text-sm font-medium">⚠️ All fields including profile photo are required to complete your membership registration.</p>
+                  </div>
                 </div>
 
                 <FormField 
@@ -382,7 +392,8 @@ const MemberRegistrationPage = () => {
                 <FormField 
                   label="Profile Photo" 
                   icon={Image}
-                  description="Help us put a face to your name (optional, max 5MB)"
+                  required
+                  description="Help us put a face to your name (required, max 5MB)"
                 >
                   <div
                     className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
@@ -454,7 +465,7 @@ const MemberRegistrationPage = () => {
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || !isFormValid}
                     onClick={handleSubmit}
                     className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >

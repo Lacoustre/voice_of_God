@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaClock, FaChurch, FaBible, FaPrayingHands, FaCircle } from "react-icons/fa";
+import { FaChurch, FaBible, FaPrayingHands, FaCircle } from "react-icons/fa";
 
 const getServiceIcon = (title) => {
   if (title.toLowerCase().includes('sunday')) return <FaChurch />;

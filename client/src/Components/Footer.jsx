@@ -107,8 +107,8 @@ const Footer = () => {
               <h4 className="font-bold text-xl mb-6 text-purple-200">Quick Links</h4>
               <ul className="space-y-4">
                 <li><Link to="/" onClick={scrollToTop} className="text-gray-200 hover:text-white group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">HOME</span></Link></li>
-                <li><a href="#services" className="text-gray-200 hover:text-white group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">SERVICES</span></a></li>
-                <li><a href="#donation" className="text-gray-200 hover:text-white group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">DONATE</span></a></li>
+                <li><a href="#services" onClick={(e) => { e.preventDefault(); document.getElementById('services').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-gray-200 hover:text-white group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">SERVICES</span></a></li>
+                <li><a href="#donation" onClick={(e) => { e.preventDefault(); document.getElementById('donation').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-gray-200 hover:text-white group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">DONATE</span></a></li>
               </ul>
             </div>
 

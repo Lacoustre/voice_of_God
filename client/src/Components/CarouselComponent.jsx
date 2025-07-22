@@ -76,7 +76,7 @@ export default function CarouselComponent() {
         >
           <img
             src={image}
-            alt={`Church Image ${index + 1}`}
+            alt={`Church ${index + 1}`}
             className="w-full h-full object-cover object-top"
           />
         </div>

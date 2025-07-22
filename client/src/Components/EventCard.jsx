@@ -130,7 +130,7 @@ const EventCard = ({ event }) => {
     // Set up interval to check every minute
     const interval = setInterval(checkIfOngoing, 60000);
     return () => clearInterval(interval);
-  }, [event.date, event.time, event.endDate]);
+  }, [event.date, event.time, event.endDate, event.title]);
 
   const getGoogleMapsUrl = (location) =>
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -187,7 +187,7 @@ const EventCard = ({ event }) => {
             <div key={index} className="absolute inset-0">
               <img
                 src={img}
-                alt={`${event.title} - image ${index + 1}`}
+                alt={`${event.title} - ${index + 1}`}
                 className="object-fill h-full w-full"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -312,7 +312,7 @@ const EventCard = ({ event }) => {
                     >
                       <img
                         src={img}
-                        alt={`${event.title} - image ${index + 1}`}
+                        alt={`${event.title} - ${index + 1}`}
                         className="object-fill h-full w-full"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-40"></div>

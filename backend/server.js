@@ -22,7 +22,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 const corsOptions = {
-  origin: ['https://thevogministries.org', 'https://admin-c4rg.onrender.com', 'http://localhost:3000', 'http://localhost:3001', 'https://frontend-1-hf4w.onrender.com'],
+  origin: ['https://thevogministries.org', 'https://admin-c4rg.onrender.com', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002','https://frontend-1-hf4w.onrender.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],

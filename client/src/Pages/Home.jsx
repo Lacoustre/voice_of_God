@@ -5,7 +5,7 @@ import EventCard from "../Components/EventCard";
 import ServicesPage from "../Components/Services";
 import SectionTitle from "../Components/SectionTitle";
 import LeadershipPage from "../Components/Leadership";
-import CharityFoundationPage from "../Components/Donate";
+
 import AnnouncementSection from "../Components/Announcement";
 import Ministries from "../Pages/Ministries";
 
@@ -51,7 +51,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+    <div className="min-h-screen overflow-x-hidden bg-white">
       <div className="-mt-10 z-50 relative">
         <Navbar />
       </div>
@@ -70,7 +70,7 @@ export default function Home() {
 
       <section
         id="services"
-        className="container mx-auto px-4 py-12 pt-20"
+        className="container mx-auto px-4 py-8 pt-16"
       >
         <div className="text-center mb-8">
           <SectionTitle title="Our Services" />
@@ -80,7 +80,7 @@ export default function Home() {
       
       <section
         id="ministries"
-        className="container mx-auto px-4 py-12"
+        className="container mx-auto px-4 py-8 mt-0"
       >
         <Ministries />
       </section>
@@ -114,15 +114,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section
-        id="donation"
-        className="container mx-auto px-4 py-12 pt-20"
-      >
-        <div className="text-center mb-12">
-          <SectionTitle title="Support Our Ministry" />
-          <CharityFoundationPage />
-        </div>
-      </section>
+
 
       <section
         id="contact"

@@ -26,8 +26,8 @@ export default function MensMinistry() {
         whileInView={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-3xl font-bold text-white mb-4">Men's Ministry</h2>
-        <p className="text-gray-300 mb-6">
+        <h2 className="text-3xl font-bold text-blue-800 mb-4">Men's Ministry</h2>
+        <p className="text-gray-700 mb-6">
           Our Men's Ministry is dedicated to helping men grow in their relationship with God and 
           become spiritual leaders in their homes, church, and community. Through fellowship, 
           accountability, and service opportunities, we encourage men to live out their faith 
@@ -35,16 +35,16 @@ export default function MensMinistry() {
         </p>
         <ul className="space-y-4 list-disc pl-5">
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Brotherhood Meetings</h3>
-            <p className="text-gray-300">Monthly gatherings for fellowship and spiritual growth</p>
+            <h3 className="text-xl font-semibold text-blue-600">Brotherhood Meetings</h3>
+            <p className="text-gray-700">Monthly gatherings for fellowship and spiritual growth</p>
           </li>
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Mentorship Program</h3>
-            <p className="text-gray-300">Pairing experienced men with younger men for guidance</p>
+            <h3 className="text-xl font-semibold text-blue-600">Mentorship Program</h3>
+            <p className="text-gray-700">Pairing experienced men with younger men for guidance</p>
           </li>
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Service Projects</h3>
-            <p className="text-gray-300">Using skills and strength to serve the church and community</p>
+            <h3 className="text-xl font-semibold text-blue-600">Service Projects</h3>
+            <p className="text-gray-700">Using skills and strength to serve the church and community</p>
           </li>
         </ul>
       </motion.div>

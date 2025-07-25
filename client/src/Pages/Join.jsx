@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   User, Phone, Mail, MapPin, Briefcase, Image, 
   Upload, X, ChevronDown, Users, Heart, Star
@@ -179,20 +180,20 @@ const MemberRegistrationPage = () => {
   const progress = step === 1 ? 50 : 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 py-12 px-4">
       {/* Background Decorations */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-slate-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-slate-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
       </div>
 
       <div className="relative max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl mb-6 shadow-lg">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-slate-700 rounded-2xl mb-6 shadow-lg">
             <Heart className="text-white" size={32} />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
             Join Voice of God Ministry
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -204,17 +205,17 @@ const MemberRegistrationPage = () => {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className={`flex items-center gap-2 ${step >= 1 ? 'text-indigo-600' : 'text-gray-400'}`}>
+            <div className={`flex items-center gap-2 ${step >= 1 ? 'text-slate-600' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                step >= 1 ? 'bg-indigo-600 text-white' : 'bg-gray-200'
+                step >= 1 ? 'bg-slate-600 text-white' : 'bg-gray-200'
               }`}>
                 1
               </div>
               <span className="font-medium">Personal Info</span>
             </div>
-            <div className={`flex items-center gap-2 ${step >= 2 ? 'text-indigo-600' : 'text-gray-400'}`}>
+            <div className={`flex items-center gap-2 ${step >= 2 ? 'text-slate-600' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                step >= 2 ? 'bg-indigo-600 text-white' : 'bg-gray-200'
+                step >= 2 ? 'bg-slate-600 text-white' : 'bg-gray-200'
               }`}>
                 2
               </div>
@@ -223,7 +224,7 @@ const MemberRegistrationPage = () => {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full transition-all duration-300"
+              className="bg-slate-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -317,18 +318,21 @@ const MemberRegistrationPage = () => {
                 </FormField>
 
                 <div className="flex justify-end">
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => setStep(2)}
                     disabled={!isStep1Valid}
                     className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 ${
                       isStep1Valid
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:scale-105'
+                        ? 'bg-slate-700 text-white'
                         : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     }`}
+                    whileHover={isStep1Valid ? { scale: 1.05, y: -2 } : {}}
+                    whileTap={isStep1Valid ? { scale: 0.98 } : {}}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   >
                     Continue to Groups & Photo
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             )}

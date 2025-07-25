@@ -12,7 +12,7 @@ export default function Navbar() {
   
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'leadership', 'services', 'ministries', 'events', 'donation', 'contact'];
+      const sections = ['home', 'leadership', 'services', 'ministries', 'events', 'contact'];
       
       // Find the section that is currently in view
       for (const section of sections) {
@@ -40,7 +40,7 @@ export default function Navbar() {
     <div>
       <div id="home" className="relative">
         <CarouselComponent />
-        <nav className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-black via-gray-900 to-black text-white shadow-md rounded-2xl px-4 py-3 max-w-7xl w-full mx-4">
+        <nav className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white shadow-md rounded-2xl px-4 py-3 max-w-7xl w-[calc(100%-2rem)] mx-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center gap-1">
             <img
@@ -48,8 +48,11 @@ export default function Navbar() {
               alt="Logo"
               className="w-8 h-8 rounded-full object-cover"
             />
-            <span className="text-lg font-semibold tracking-wide">
+            <span className="text-lg font-semibold tracking-wide sm:inline hidden">
               Voice of God Ministies
+            </span>
+            <span className="text-lg font-semibold tracking-wide sm:hidden inline">
+              VOG
             </span>
           </Link>
 
@@ -57,56 +60,50 @@ export default function Navbar() {
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'home' ? 'text-blue-400 font-bold' : 'text-white'}`}
+              className={`cursor-pointer transition ${activeSection === 'home' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
               <a href="#home" onClick={(e) => {e.preventDefault(); scrollToSection('home');}} className="cursor-pointer">HOME</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'leadership' ? 'text-blue-400 font-bold' : 'text-white'}`}
+              className={`cursor-pointer transition ${activeSection === 'leadership' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
               <a href="#leadership" onClick={(e) => {e.preventDefault(); scrollToSection('leadership');}} className="cursor-pointer">LEADERSHIP</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'services' ? 'text-blue-400 font-bold' : 'text-white'}`}
+              className={`cursor-pointer transition ${activeSection === 'services' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
               <a href="#services" onClick={(e) => {e.preventDefault(); scrollToSection('services');}} className="cursor-pointer">SERVICES</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'ministries' ? 'text-blue-400 font-bold' : 'text-white'}`}
+              className={`cursor-pointer transition ${activeSection === 'ministries' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
               <a href="#ministries" onClick={(e) => {e.preventDefault(); scrollToSection('ministries');}} className="cursor-pointer">MINISTRIES</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'events' ? 'text-blue-400 font-bold' : 'text-white'}`}
+              className={`cursor-pointer transition ${activeSection === 'events' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
               <a href="#events" onClick={(e) => {e.preventDefault(); scrollToSection('events');}} className="cursor-pointer">EVENTS</a>
             </motion.li>
+
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'donation' ? 'text-blue-400 font-bold' : 'text-white'}`}
-            >
-              <a href="#donation" onClick={(e) => {e.preventDefault(); scrollToSection('donation');}} className="cursor-pointer">DONATE</a>
-            </motion.li>
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'contact' ? 'text-blue-400 font-bold' : 'text-white'}`}
+              className={`cursor-pointer transition ${activeSection === 'contact' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
               <a href="#contact" onClick={(e) => {e.preventDefault(); scrollToSection('contact');}} className="cursor-pointer">CONTACT</a>
             </motion.li>
             <li>
               <Link
                 to="/join"
-                className="inline-flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
+                className="inline-flex items-center gap-1 px-4 py-2 bg-slate-700 text-white font-semibold rounded-xl hover:bg-slate-600 hover:shadow-lg hover:scale-105 transition-all duration-200"
               >
                 <Heart size={16} />
                 Join Us
@@ -114,7 +111,7 @@ export default function Navbar() {
             </li>
           </ul>
 
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center ml-auto">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="focus:outline-none flex items-center justify-center"
@@ -148,7 +145,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden bg-gray-900 px-6 py-4 text-white font-semibold rounded-b-2xl space-y-4"
+              className="md:hidden bg-slate-800 px-4 py-3 text-white font-semibold rounded-b-2xl space-y-2 [&>div]:border-b [&>div]:border-white/20 [&>div]:pb-1 absolute right-0 w-48 top-full mt-2 text-sm"
             >
               <motion.div
                 whileHover={{ x: 5 }}
@@ -162,7 +159,7 @@ export default function Navbar() {
                     scrollToSection('home');
                     setIsMenuOpen(false);
                   }}
-                  className={`cursor-pointer ${activeSection === 'home' ? 'text-blue-400 font-bold' : 'text-white'}`}
+                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'home' ? 'text-white font-bold' : 'text-white/80'}`}
                 >
                   HOME
                 </a>
@@ -179,7 +176,7 @@ export default function Navbar() {
                     scrollToSection('leadership');
                     setIsMenuOpen(false);
                   }}
-                  className={`cursor-pointer ${activeSection === 'leadership' ? 'text-blue-400 font-bold' : 'text-white'}`}
+                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'leadership' ? 'text-white font-bold' : 'text-white/80'}`}
                 >
                   LEADERSHIP
                 </a>
@@ -196,7 +193,7 @@ export default function Navbar() {
                     scrollToSection('services');
                     setIsMenuOpen(false);
                   }}
-                  className={`cursor-pointer ${activeSection === 'services' ? 'text-blue-400 font-bold' : 'text-white'}`}
+                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'services' ? 'text-white font-bold' : 'text-white/80'}`}
                 >
                   SERVICES
                 </a>
@@ -213,7 +210,7 @@ export default function Navbar() {
                     scrollToSection('ministries');
                     setIsMenuOpen(false);
                   }}
-                  className={`cursor-pointer ${activeSection === 'ministries' ? 'text-blue-400 font-bold' : 'text-white'}`}
+                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'ministries' ? 'text-white font-bold' : 'text-white/80'}`}
                 >
                   MINISTRIES
                 </a>
@@ -230,28 +227,12 @@ export default function Navbar() {
                     scrollToSection('events');
                     setIsMenuOpen(false);
                   }}
-                  className={`cursor-pointer ${activeSection === 'events' ? 'text-blue-400 font-bold' : 'text-white'}`}
+                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'events' ? 'text-white font-bold' : 'text-white/80'}`}
                 >
                   EVENTS
                 </a>
               </motion.div>
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <a
-                  href="#donation"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('donation');
-                    setIsMenuOpen(false);
-                  }}
-                  className={`cursor-pointer ${activeSection === 'donation' ? 'text-blue-400 font-bold' : 'text-white'}`}
-                >
-                  DONATE
-                </a>
-              </motion.div>
+
               <motion.div
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.95 }}
@@ -264,17 +245,17 @@ export default function Navbar() {
                     scrollToSection('contact');
                     setIsMenuOpen(false);
                   }}
-                  className={`cursor-pointer ${activeSection === 'contact' ? 'text-blue-400 font-bold' : 'text-white'}`}
+                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'contact' ? 'text-white font-bold' : 'text-white/80'}`}
                 >
                   CONTACT
                 </a>
               </motion.div>
-              <div className="pt-2">
+              <div className="pt-1 flex justify-end">
                 <Link
                   to="/join"
-                  className="inline-flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-700 text-white font-semibold rounded-lg hover:bg-slate-600 hover:shadow-lg hover:scale-105 transition-all duration-200 text-xs"
                 >
-                  <Heart size={16} />
+                  <Heart size={12} />
                   Join Us
                 </Link>
               </div>

@@ -8,19 +8,19 @@ import ChildrenMinistry from "../Components/Ministries/ChildrenMinistry";
 
 export default function Ministries() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
-      <div className="pt-40 pb-20">
+    <div className="min-h-screen overflow-x-hidden bg-white">
+      <div className="pt-0 pb-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-8"
           >
             <SectionTitle title="Our Ministries" />
           </motion.div>
 
-          <div className="space-y-24">
+          <div className="space-y-16">
             <motion.section
               id="womens-ministry"
               initial={{ opacity: 0 }}

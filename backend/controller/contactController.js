@@ -1,14 +1,34 @@
 const sdk = require("node-appwrite");
 require("dotenv").config();
 
-const client = new sdk.Client()
-  .setEndpoint(process.env.APPWRITE_ENDPOINT)
-  .setProject(process.env.APPWRITE_PROJECT_ID)
-  .setKey(process.env.APPWRITE_API_KEY);
+// Check if required environment variables are defined
+if (!process.env.APPWRITE_ENDPOINT) {
+  console.error("Error: APPWRITE_ENDPOINT is not defined in .env file");
+  process.env.APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1"; // Default fallback
+}
+
+if (!process.env.APPWRITE_PROJECT_ID) {
+  console.error("Error: APPWRITE_PROJECT_ID is not defined in .env file");
+}
+
+if (!process.env.APPWRITE_API_KEY) {
+  console.error("Error: APPWRITE_API_KEY is not defined in .env file");
+}
+
+const client = new sdk.Client();
+
+// Set endpoint with error handling
+try {
+  client.setEndpoint(process.env.APPWRITE_ENDPOINT);
+  client.setProject(process.env.APPWRITE_PROJECT_ID || "");
+  client.setKey(process.env.APPWRITE_API_KEY || "");
+} catch (error) {
+  console.error("Error initializing Appwrite client:", error);
+}
 
 const databases = new sdk.Databases(client);
 
-const DATABASE_ID = process.env.APPWRITE_DATABASE_ID;
+const DATABASE_ID = process.env.APPWRITE_DATABASE_ID || "";
 const COLLECTION_ID = "686158d00005863e7d47";
 
 exports.getContacts = async (req, res) => {

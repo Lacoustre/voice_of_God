@@ -11,8 +11,8 @@ export default function YouthMinistry() {
         transition={{ duration: 0.6 }}
         className="order-2 md:order-1"
       >
-        <h2 className="text-3xl font-bold text-white mb-4">Young Adults and Youth Ministry</h2>
-        <p className="text-gray-300 mb-6">
+        <h2 className="text-3xl font-bold text-cyan-700 mb-4">Young Adults and Youth Ministry</h2>
+        <p className="text-gray-700 mb-6">
           Our Young Adults and Youth Ministry creates a vibrant, engaging environment where teens and 
           young adults can explore their faith, build lasting friendships, and develop leadership skills. 
           Through dynamic worship, relevant teaching, and fun activities, we help young people navigate 
@@ -20,16 +20,16 @@ export default function YouthMinistry() {
         </p>
         <ul className="space-y-4 list-disc pl-5">
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Weekly Youth Gatherings</h3>
-            <p className="text-gray-300">Fun, interactive sessions focused on relevant faith topics</p>
+            <h3 className="text-xl font-semibold text-cyan-600">Weekly Youth Gatherings</h3>
+            <p className="text-gray-700">Fun, interactive sessions focused on relevant faith topics</p>
           </li>
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Leadership Development</h3>
-            <p className="text-gray-300">Training young people to become future church leaders</p>
+            <h3 className="text-xl font-semibold text-cyan-600">Leadership Development</h3>
+            <p className="text-gray-700">Training young people to become future church leaders</p>
           </li>
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Mission Trips & Outreach</h3>
-            <p className="text-gray-300">Opportunities to serve and share faith locally and globally</p>
+            <h3 className="text-xl font-semibold text-cyan-600">Mission Trips & Outreach</h3>
+            <p className="text-gray-700">Opportunities to serve and share faith locally and globally</p>
           </li>
         </ul>
       </motion.div>

@@ -11,24 +11,24 @@ export default function ChildrenMinistry() {
         transition={{ duration: 0.6 }}
         className="order-2 md:order-1"
       >
-        <h2 className="text-3xl font-bold text-white mb-4">Children's Ministry</h2>
-        <p className="text-gray-300 mb-6">
+        <h2 className="text-3xl font-bold text-green-700 mb-4">Children's Ministry</h2>
+        <p className="text-gray-700 mb-6">
           Our Children's Ministry creates a fun, safe environment where children can learn about God's 
           love and develop a strong foundation of faith. Through age-appropriate lessons, activities, 
           and worship, we help children discover their unique gifts and grow in their relationship with Jesus.
         </p>
         <ul className="space-y-4 list-disc pl-5">
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Sunday School</h3>
-            <p className="text-gray-300">Age-appropriate Bible lessons and activities</p>
+            <h3 className="text-xl font-semibold text-green-600">Sunday School</h3>
+            <p className="text-gray-700">Age-appropriate Bible lessons and activities</p>
           </li>
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Vacation Bible School</h3>
-            <p className="text-gray-300">Summer program filled with fun, learning, and adventure</p>
+            <h3 className="text-xl font-semibold text-green-600">Vacation Bible School</h3>
+            <p className="text-gray-700">Summer program filled with fun, learning, and adventure</p>
           </li>
           <li>
-            <h3 className="text-xl font-semibold text-blue-400">Children's Choir</h3>
-            <p className="text-gray-300">Teaching children to worship through music</p>
+            <h3 className="text-xl font-semibold text-green-600">Children's Choir</h3>
+            <p className="text-gray-700">Teaching children to worship through music</p>
           </li>
         </ul>
       </motion.div>

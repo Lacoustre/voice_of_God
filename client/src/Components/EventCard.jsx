@@ -172,15 +172,20 @@ const EventCard = ({ event }) => {
   return (
     <>
       <motion.div
-        className="bg-transparent rounded-2xl shadow-2xl overflow-hidden w-full h-full cursor-pointer"
+        className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden w-full h-full cursor-pointer border border-white/60 group relative"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
         whileHover={{
-          scale: 1.05,
-          boxShadow: "0 25px 50px -12px rgba(124, 58, 237, 0.25)",
+          y: -15,
+          scale: 1.02,
+          boxShadow: "0 30px 60px rgba(0, 0, 0, 0.2)",
+          borderColor: "rgba(71, 85, 105, 0.2)"
         }}
-        transition={{ duration: 0.3 }}
+        viewport={{ once: true }}
         onClick={() => setShowModal(true)}
       >
-        <div className="rounded-t-2xl overflow-hidden relative h-64">
+        <div className="rounded-t-3xl overflow-hidden relative h-72 group-hover:h-80 transition-all duration-500">
           {(event.images && event.images.length > 0 ? event.images : [
             "https://via.placeholder.com/400x200?text=Event",
           ]).map((img, index) => (
@@ -237,48 +242,57 @@ const EventCard = ({ event }) => {
           </div>
         </div>
 
-        <motion.div
-          className="p-6 text-white"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+        <div className="p-8 text-gray-800 bg-gradient-to-b from-white to-slate-50/50 relative">
           <div className="mb-4">
-            <motion.h3
-              className="text-2xl font-bold mb-1"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
+            <h3 className="text-2xl font-bold mb-1 text-slate-800">
               {event.title}
-            </motion.h3>
-            <p className="text-sm opacity-80 italic mb-2 font-bold">
-              {formatDate(event.date)} | {event.time}
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <div>
+              <p className="text-xs text-slate-600 uppercase font-bold">Date & Time</p>
+              <p className="text-sm text-gray-700 font-medium">
+                {formatDate(event.date)}<br/>{event.time}
+              </p>
+            </div>
+            
+            <div>
+              <p className="text-xs text-slate-600 uppercase font-bold">Location</p>
+              <a
+                href={getGoogleMapsUrl(event.location)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-700 hover:text-slate-700 transition-colors block"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {event.location}
+              </a>
+            </div>
+            
+            {event.ticketPrice && (
+              <div>
+                <p className="text-xs text-slate-600 uppercase font-bold">Ticket</p>
+                <p className="text-sm text-gray-700">${event.ticketPrice}</p>
+              </div>
+            )}
+            
+            {event.verse && (
+              <div className="col-span-2">
+                <p className="text-xs text-slate-600 uppercase font-bold">Scripture</p>
+                <p className="text-sm text-gray-700 italic">"{event.verse}"</p>
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <p className="text-xs text-slate-600 uppercase font-bold mb-1">Details</p>
+            <p className="text-sm leading-relaxed text-gray-700 line-clamp-2">
+              {event.additionalInfo}
             </p>
-            <p className="text-sm opacity-90 italic font-bold">"{event.verse}"</p>
+            <p className="text-xs text-slate-700 mt-1 font-medium">Click for more info</p>
           </div>
-
-          <div className="mb-4 flex items-center gap-2 opacity-90">
-            <FaMapMarkerAlt className="text-white" />
-            <a
-              href={getGoogleMapsUrl(event.location)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-bold hover:text-purple-300 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {event.location}
-            </a>
-          </div>
-
-          {event.ticketPrice && (
-            <p className="mb-4 text-sm font-bold">Ticket: ${event.ticketPrice}</p>
-          )}
-
-          <p className="text-sm leading-relaxed opacity-90 font-bold line-clamp-3">
-            {event.additionalInfo}
-          </p>
-        </motion.div>
+        </div>
       </motion.div>
 
       <AnimatePresence>

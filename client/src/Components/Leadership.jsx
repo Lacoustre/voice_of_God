@@ -7,14 +7,14 @@ import Pastor_David from "../assets/Pastor_David.jpg";
 
 const leaders = [
   {
-    name: "Apostle PK Oheneba",
+    name: "Apostle Oheneba Poku (PK)",
     title: "Founder & Lead Pastor",
     image: Apostle_PK,
     bio: "Leading with vision and passion to transform lives through the power of God's Word."
   },
   {
     name: "Pastor Geina",
-    title: "Residential Pastor",
+    title: "Resident Pastor",
     image: Pastor_Geina,
     bio: "Dedicated to nurturing spiritual growth and providing pastoral care to the congregation."
   },
@@ -34,34 +34,58 @@ const leaders = [
 
 const LeadershipPage = () => {
   return (
-    <section className="py-8">
-      <motion.p 
-        className="text-lg text-gray-200 max-w-2xl mx-auto mb-8 text-center font-bold"
-        whileInView={{ opacity: 1, x: 0 }}
+    <section className="py-16 bg-gradient-to-b from-slate-50/50 to-white">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+        viewport={{ once: true }}
+        className="text-center mb-16"
       >
-        Meet the dedicated leaders guiding our ministry with faith and vision.
-      </motion.p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.p 
+          className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          Meet the dedicated leaders guiding our ministry with faith and vision.
+        </motion.p>
+      </motion.div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
         {leaders.map((leader, index) => (
           <motion.div
             key={index}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="bg-transparent backdrop-blur-sm rounded-lg shadow-lg border border-gray-700 hover:border-purple-500 transform hover:scale-105 transition-all duration-300 text-center p-6 cursor-pointer"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 text-center p-8 cursor-pointer group relative overflow-hidden"
+            whileHover={{ 
+              y: -12, 
+              scale: 1.03, 
+              boxShadow: "0 25px 50px rgba(0,0,0,0.15)",
+              borderColor: "rgba(71, 85, 105, 0.3)"
+            }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
           >
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-100/20 to-slate-200/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <motion.div 
-              className="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.3 }}
+              className="w-36 h-36 mx-auto mb-6 overflow-hidden rounded-full relative z-10"
+              whileHover={{ scale: 1.1, rotate: 2 }}
+              transition={{ type: "spring", stiffness: 250, damping: 20 }}
             >
               <img
                 src={leader.image}
                 alt={leader.name}
-                className="w-full h-full object-cover border-4 border-purple-600/50"
+                className="w-full h-full object-cover border-4 border-slate-300 group-hover:border-slate-400 transition-colors duration-300"
               />
             </motion.div>
-            <h3 className="text-xl font-semibold text-white mb-1">{leader.name}</h3>
-            <p className="text-sm text-purple-300 italic mb-3 font-bold">{leader.title}</p>
-            <p className="text-sm text-gray-300 leading-relaxed font-bold">{leader.bio}</p>
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-slate-900 transition-colors">{leader.name}</h3>
+              <p className="text-sm text-slate-600 italic mb-4 font-semibold">{leader.title}</p>
+              <p className="text-sm text-slate-700 leading-relaxed">{leader.bio}</p>
+            </div>
           </motion.div>
         ))}
       </div>

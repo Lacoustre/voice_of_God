@@ -78,7 +78,7 @@ const LeadershipPage = () => {
               <img
                 src={leader.image}
                 alt={leader.name}
-                className="w-full h-full object-cover border-4 border-slate-300 group-hover:border-slate-400 transition-colors duration-300"
+                className="w-full h-full object-cover object-top border-4 border-slate-300 group-hover:border-slate-400 transition-colors duration-300"
               />
             </motion.div>
             <div className="relative z-10">

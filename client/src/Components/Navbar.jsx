@@ -63,21 +63,21 @@ export default function Navbar() {
               whileTap={{ scale: 0.95 }}
               className={`cursor-pointer transition ${activeSection === 'home' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
-              <a href="#home" onClick={(e) => {e.preventDefault(); window.location.href = '/#home'; setTimeout(() => scrollToSection('home'), 100);}} className="cursor-pointer">HOME</a>
+              <a href="#home" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('home'); } else { window.location.href = '/#home'; }}} className="cursor-pointer">HOME</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className={`cursor-pointer transition ${activeSection === 'leadership' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
-              <a href="#leadership" onClick={(e) => {e.preventDefault(); window.location.href = '/#leadership'; setTimeout(() => scrollToSection('leadership'), 100);}} className="cursor-pointer">LEADERSHIP</a>
+              <a href="#leadership" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('leadership'); } else { window.location.href = '/#leadership'; }}} className="cursor-pointer">LEADERSHIP</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className={`cursor-pointer transition ${activeSection === 'services' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
-              <a href="#services" onClick={(e) => {e.preventDefault(); window.location.href = '/#services'; setTimeout(() => scrollToSection('services'), 100);}} className="cursor-pointer">SERVICES</a>
+              <a href="#services" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('services'); } else { window.location.href = '/#services'; }}} className="cursor-pointer">SERVICES</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
@@ -112,7 +112,7 @@ export default function Navbar() {
               whileTap={{ scale: 0.95 }}
               className={`cursor-pointer transition ${activeSection === 'events' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
-              <a href="#events" onClick={(e) => {e.preventDefault(); window.location.href = '/#events'; setTimeout(() => scrollToSection('events'), 100);}} className="cursor-pointer">EVENTS</a>
+              <a href="#events" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('events'); } else { window.location.href = '/#events'; }}} className="cursor-pointer">EVENTS</a>
             </motion.li>
 
             <motion.li
@@ -120,7 +120,7 @@ export default function Navbar() {
               whileTap={{ scale: 0.95 }}
               className={`cursor-pointer transition ${activeSection === 'contact' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
             >
-              <a href="#contact" onClick={(e) => {e.preventDefault(); window.location.href = '/#contact'; setTimeout(() => scrollToSection('contact'), 100);}} className="cursor-pointer">CONTACT</a>
+              <a href="#contact" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('contact'); } else { window.location.href = '/#contact'; }}} className="cursor-pointer">CONTACT</a>
             </motion.li>
             <li>
               <Link

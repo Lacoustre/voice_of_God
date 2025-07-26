@@ -62,7 +62,7 @@ export default function CarouselComponent() {
   }
 
   return (
-    <div className="relative overflow-hidden h-64 sm:h-96 md:h-screen w-full mt-20 md:mt-0">
+    <div className="relative overflow-hidden h-64 sm:h-96 md:h-screen w-full mt-12 md:mt-0">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-800/40 to-black/60 z-10" />
 
       {carouselImages.map((image, index) => (

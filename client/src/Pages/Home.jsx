@@ -90,7 +90,7 @@ export default function Home() {
         className="container mx-auto px-4 py-12 pt-20 mt-4"
       >
         <div className="text-center mb-12">
-          <SectionTitle title="Upcoming Events" />
+          <SectionTitle title="Events" />
         </div>
 
         <div className="flex justify-center px-2">

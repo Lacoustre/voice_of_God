@@ -19,7 +19,12 @@ const ServicesPage = () => {
         const response = await fetch('https://voice-of-god.onrender.com/api/services');
         const data = await response.json();
         if (data.success) {
-          setServices(data.services);
+          const sortedServices = data.services.sort((a, b) => {
+            if (a.title.toLowerCase().includes('sunday')) return -1;
+            if (b.title.toLowerCase().includes('sunday')) return 1;
+            return 0;
+          });
+          setServices(sortedServices);
         }
       } catch (error) {
         console.error('Error fetching services:', error);

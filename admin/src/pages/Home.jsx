@@ -10,7 +10,6 @@ import {
   UserCog,
   Church,
   Megaphone,
-  BookOpen,
 } from "lucide-react";
 
 import EventsPage from "../pages/Event";
@@ -24,7 +23,7 @@ import MediaPage from "../pages/Media";
 import AdminManagement from "../pages/AdminManagement";
 import AccountModal from "./AccountModal";
 import Messages from "../components/Messages";
-import MinistriesPage from "../pages/Ministries";
+
 
 const ChurchAdminPanel = () => {
   const { activeSection } = useApp();
@@ -150,7 +149,7 @@ const ChurchAdminPanel = () => {
     { id: "events", label: "Events", icon: Calendar },
     { id: "members", label: "Members", icon: Users },
     { id: "services", label: "Services", icon: Church },
-    { id: "ministries", label: "Ministries", icon: BookOpen },
+
     { id: "annoucement", label: "Announcements", icon: Megaphone },
     { id: "media", label: "Media", icon: Image },
     { id: "admin-management", label: "Admin Management", icon: UserCog },
@@ -163,7 +162,7 @@ const ChurchAdminPanel = () => {
       events: <EventsPage />,
       members: <MembersPage />,
       services: <ServicesPage />,
-      ministries: <MinistriesPage />,
+
       annoucement: <AnnouncementsPage />,
       media: <MediaPage />,
       "admin-management": <AdminManagement />,

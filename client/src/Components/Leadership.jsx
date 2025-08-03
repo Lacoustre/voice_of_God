@@ -4,6 +4,7 @@ import Apostle_PK from "../assets/Apostle_PK.jpg";
 import Pastor_Geina from "../assets/Pastor_Geina.jpg";
 import Pastor_Alfred from "../assets/Pastor_Alfred.jpg";
 import Pastor_David from "../assets/Pastor_David.jpg";
+import Pastor_Giuseppina from "../assets/Pastor_Giuseppina.jpg";
 
 const leaders = [
   {
@@ -29,6 +30,12 @@ const leaders = [
     title: "Head of Youth Ministry",
     image: Pastor_David,
     bio: "Inspiring the next generation to develop a personal relationship with Christ."
+  },
+  {
+    name: "Pastor Giuseppina Wetteyson",
+    title: "Head of Chosen Generation",
+    image: Pastor_Giuseppina,
+    bio: "Leading and mentoring young adults in their spiritual journey and purpose."
   }
 ];
 
@@ -52,7 +59,7 @@ const LeadershipPage = () => {
           Meet the dedicated leaders guiding our ministry with faith and vision.
         </motion.p>
       </motion.div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 max-w-7xl mx-auto px-4">
         {leaders.map((leader, index) => (
           <motion.div
             key={index}

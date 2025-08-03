@@ -10,6 +10,8 @@ import Ministries from './Pages/Ministries';
 import YouthMinistryPage from './Pages/YouthMinistry';
 import WomensMinistryPage from './Pages/WomensMinistry';
 import CharityFoundationPage from './Pages/CharityFoundation';
+import ChosenGenerationPage from './Pages/ChosenGeneration';
+import MensMinistryPage from './Pages/MensMinistry';
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
         <Route path="/youth-ministry" element={<YouthMinistryPage />} />
         <Route path="/womens-ministry" element={<WomensMinistryPage />} />
         <Route path="/charity-foundation" element={<CharityFoundationPage />} />
+        <Route path="/chosen-generation" element={<ChosenGenerationPage />} />
+        <Route path="/mens-ministry" element={<MensMinistryPage />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <ToastContainer

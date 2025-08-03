@@ -1,6 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
+import church_7 from "../../assets/church_photo_7.jpeg";
+import church_8 from "../../assets/church_photo_8.JPG";
+import prayer from "../../assets/prayer.jpg";
 
 export default function WomensMinistry() {
   return (
@@ -41,11 +44,7 @@ export default function WomensMinistry() {
       >
         <div className="bg-gradient-to-br from-slate-600 to-slate-700 p-1 rounded-xl">
           <MinistryCarousel 
-            images={[
-              "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2232&q=80",
-              "https://images.unsplash.com/photo-1591115765373-5207764f72e7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
-              "https://images.unsplash.com/photo-1543269664-7eef42226a21?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-            ]}
+            images={[church_7, church_8, prayer]}
             title="Women's Ministry"
           />
         </div>

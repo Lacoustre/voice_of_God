@@ -7,7 +7,6 @@ import SectionTitle from "../Components/SectionTitle";
 import LeadershipPage from "../Components/Leadership";
 
 import AnnouncementSection from "../Components/Announcement";
-import Ministries from "../Pages/Ministries";
 
 export default function Home() {
   const [events, setEvents] = useState([]);
@@ -60,7 +59,7 @@ export default function Home() {
 
       <section
         id="leadership"
-        className="container mx-auto px-4 py-12 pt-20"
+        className="container mx-auto px-4 py-12 pt-16"
       >
         <div className="text-center mb-12">
           <SectionTitle title="Our Leadership" />
@@ -79,15 +78,8 @@ export default function Home() {
       </section>
       
       <section
-        id="ministries"
-        className="container mx-auto px-4 py-8 mt-0"
-      >
-        <Ministries />
-      </section>
-
-      <section
         id="events"
-        className="container mx-auto px-4 py-12 pt-20 mt-4"
+        className="container mx-auto px-4 py-12 pt-16 mt-4"
       >
         <div className="text-center mb-12">
           <SectionTitle title="Events" />
@@ -99,16 +91,28 @@ export default function Home() {
               <div className="w-16 h-16 border-4 border-purple-200 rounded-full animate-spin border-t-purple-600"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
-              {events.map((event, index) => (
-                <div
-                  key={event.id || event.$id}
-                  className="w-full h-full"
-                  style={{ aspectRatio: "1/1.2" }}
-                >
-                  <EventCard event={event} />
-                </div>
-              ))}
+            <div className="flex justify-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full justify-items-center">
+                {[...events.filter(event => new Date(event.date) >= new Date()), ...events.filter(event => new Date(event.date) < new Date())].map((event, index) => {
+                  const isUpcoming = new Date(event.date) >= new Date();
+                  return (
+                    <div
+                      key={event.id || event.$id}
+                      className="w-full h-full max-w-sm relative"
+                      style={{ aspectRatio: "1/1.2" }}
+                    >
+                      <div className="absolute top-2 left-2 z-10">
+                        <span className={`px-2 py-1 rounded-full text-xs font-bold text-white ${
+                          isUpcoming ? 'bg-blue-600' : 'bg-red-600'
+                        }`}>
+                          {isUpcoming ? 'UPCOMING' : 'PAST'}
+                        </span>
+                      </div>
+                      <EventCard event={event} />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

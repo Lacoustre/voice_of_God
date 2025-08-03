@@ -100,7 +100,9 @@ export default function Navbar() {
                   >
                     <div className="py-2">
                       <Link to="/youth-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Youth Ministry</Link>
+                      <Link to="/chosen-generation" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Chosen Generation</Link>
                       <Link to="/womens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Women's Ministry</Link>
+                      <Link to="/mens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Men's Ministry</Link>
                       <Link to="/charity-foundation" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Charity Foundation</Link>
                     </div>
                   </motion.div>
@@ -239,7 +241,9 @@ export default function Navbar() {
                   {showMinistriesDropdown && (
                     <div className="text-xs text-white/60 space-y-1 pl-4">
                       <Link to="/youth-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Youth Ministry</Link>
+                      <Link to="/chosen-generation" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Chosen Generation</Link>
                       <Link to="/womens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Women's Ministry</Link>
+                      <Link to="/mens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Men's Ministry</Link>
                       <Link to="/charity-foundation" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Charity Foundation</Link>
                     </div>
                   )}

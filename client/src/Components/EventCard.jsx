@@ -4,7 +4,7 @@ import {
   FaMapMarkerAlt,
   FaTimes,
   FaClock,
-  FaCalendarPlus,
+
   FaCircle,
 } from "react-icons/fa";
 
@@ -151,23 +151,7 @@ const EventCard = ({ event }) => {
     }
   };
 
-  const createCalendarEvent = (event) => {
-    const start = new Date(event.date + "T" + (event.time?.split("–")[0] || "09:00"));
-    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // 2 hours duration
 
-    const format = (date) => date.toISOString().replace(/[-:]|\.\d{3}/g, "");
-    const startTime = format(start);
-    const endTime = format(end);
-
-    const title = encodeURIComponent(event.title);
-    const details = encodeURIComponent(
-      `${event.additionalInfo}\n\nLocation: ${event.location}\nTime: ${event.time}`
-    );
-    const location = encodeURIComponent(event.location);
-
-    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
-    window.open(googleUrl, "_blank");
-  };
 
   return (
     <>
@@ -391,19 +375,7 @@ const EventCard = ({ event }) => {
                     </a>
                   </div>
 
-                  <div className="flex items-center gap-3 md:col-span-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        createCalendarEvent(event);
-                      }}
-                      className="flex items-center gap-2 text-purple-300 hover:text-purple-100 transition-colors"
-                      title="Add to Google Calendar"
-                    >
-                      <FaCalendarPlus className="text-purple-400" />
-                      <span>Add to Google Calendar</span>
-                    </button>
-                  </div>
+
                 </div>
 
                 <div className="mb-6 p-4 bg-purple-900 bg-opacity-30 rounded-lg">

@@ -5,6 +5,7 @@ import MensMinistry from "../Components/Ministries/MensMinistry";
 import YouthMinistry from "../Components/Ministries/YouthMinistry";
 import CharityFoundation from "../Components/Ministries/CharityFoundation";
 import ChildrenMinistry from "../Components/Ministries/ChildrenMinistry";
+import ChosenGeneration from "../Components/Ministries/ChosenGeneration";
 
 export default function Ministries() {
   return (
@@ -69,6 +70,16 @@ export default function Ministries() {
               className="scroll-mt-24"
             >
               <ChildrenMinistry />
+            </motion.section>
+
+            <motion.section
+              id="chosen-generation"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="scroll-mt-24"
+            >
+              <ChosenGeneration />
             </motion.section>
           </div>
         </div>

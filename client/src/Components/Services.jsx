@@ -221,6 +221,8 @@ const ServicesPage = () => {
           console.debug(`Manually setting Sunday Evening Service as active: ${service.title}`);
           updatedOngoingServices[service._id] = true;
         }
+        
+
       });
       
       setOngoingServices(updatedOngoingServices);
@@ -277,30 +279,7 @@ const ServicesPage = () => {
                   className="w-64 h-64 object-cover rounded-lg shadow-xl"
                 />
                 
-                {/* Live service indicator */}
-                {ongoingServices[service._id] && (
-                  <motion.div 
-                    className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2 z-30"
-                    initial={{ scale: 0.9, opacity: 0.8 }}
-                    animate={{ 
-                      scale: [0.9, 1.05, 0.9],
-                      opacity: [0.8, 1, 0.8],
-                    }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      duration: 1.5,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <motion.div
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ repeat: Infinity, duration: 1 }}
-                    >
-                      <FaCircle className="text-xs" />
-                    </motion.div>
-                    <span className="font-bold text-sm">{service.ongoingText || "LIVE NOW"}</span>
-                  </motion.div>
-                )}
+
               </motion.div>
 
               {/* Text Content Card */}

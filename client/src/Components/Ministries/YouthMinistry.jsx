@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
 import church_5 from "../../assets/church_photo_5.JPG";
 import church_6 from "../../assets/church_photo_6.JPG";
-import event_1 from "../../assets/event_1.JPG";
 
 export default function YouthMinistry() {
   return (
@@ -44,7 +43,7 @@ export default function YouthMinistry() {
       >
         <div className="bg-gradient-to-br from-cyan-500 to-blue-600 p-1 rounded-xl">
           <MinistryCarousel 
-            images={[church_5, church_6, event_1]}
+            images={[church_5, church_6]}
             title="Youth Ministry"
           />
         </div>

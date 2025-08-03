@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
-import church_3 from "../../assets/church_photo_3.jpg";
-import church_4 from "../../assets/church_photo_4.jpg";
-import sunday_service from "../../assets/sunday_service.jpg";
+import Apostle_PK from "../../assets/Apostle_PK.jpg";
 
-const fallbackMensImages = [church_3, church_4, sunday_service];
+const fallbackMensImages = [Apostle_PK];
 
 export default function MensMinistry() {
   const [mensImages, setMensImages] = useState(fallbackMensImages);

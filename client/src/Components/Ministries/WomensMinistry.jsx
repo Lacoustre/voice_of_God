@@ -1,8 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
-import church_7 from "../../assets/church_photo_7.jpeg";
-import church_8 from "../../assets/church_photo_8.JPG";
 import prayer from "../../assets/prayer.jpg";
 
 export default function WomensMinistry() {
@@ -44,7 +42,7 @@ export default function WomensMinistry() {
       >
         <div className="bg-gradient-to-br from-slate-600 to-slate-700 p-1 rounded-xl">
           <MinistryCarousel 
-            images={[church_7, church_8, prayer]}
+            images={[ prayer]}
             title="Women's Ministry"
           />
         </div>

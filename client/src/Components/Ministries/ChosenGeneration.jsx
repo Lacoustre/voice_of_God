@@ -3,9 +3,8 @@ import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
 import church_9 from "../../assets/church_photo_9.JPG";
 import church_10 from "../../assets/church_photo_10.JPG";
-import event_2 from "../../assets/event_2.JPG";
 
-const fallbackChosenGenerationImages = [church_9, church_10, event_2];
+const fallbackChosenGenerationImages = [church_9, church_10];
 
 export default function ChosenGeneration() {
   const [chosenGenerationImages, setChosenGenerationImages] = useState(fallbackChosenGenerationImages);

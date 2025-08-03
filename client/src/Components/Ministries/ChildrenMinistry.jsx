@@ -1,6 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
+import childrens_ministry_1 from "../../assets/childrens_ministry_1.jpg";
+import childrens_ministry_2 from "../../assets/childrens_ministry_2.jpg";
+import childrens_ministry_3 from "../../assets/childrens_ministry_3.jpg";
 
 export default function ChildrenMinistry() {
   return (
@@ -40,11 +43,7 @@ export default function ChildrenMinistry() {
       >
         <div className="bg-gradient-to-br from-green-500 to-teal-500 p-1 rounded-xl">
           <MinistryCarousel 
-            images={[
-              "https://images.unsplash.com/photo-1602052577122-f73b9710adba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
-              "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2072&q=80",
-              "https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-            ]}
+            images={[childrens_ministry_1, childrens_ministry_2, childrens_ministry_3]}
             title="Children's Ministry"
           />
         </div>

@@ -22,7 +22,7 @@ export default function MinistryCarousel({ images, title }) {
             key={index} 
             src={img} 
             alt={`${title} ${index + 1}`} 
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+            className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
             onError={(e) => {

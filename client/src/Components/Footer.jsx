@@ -80,7 +80,7 @@ const Footer = () => {
 
   return (
     <footer id="contact" className="bg-primary-900 text-white py-16 mt-12">
-      <div className="w-full px-0">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between mb-16 gap-12">
           <div className="mb-8 md:mb-0 md:max-w-xl">
             <h3 className="text-3xl font-semibold tracking-tight mb-6 transform transition duration-500 ease-in-out hover:scale-105 text-white">

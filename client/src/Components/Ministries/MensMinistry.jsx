@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
-import Apostle_PK from "../../assets/Apostle_PK.jpg";
+import men_1 from "../../assets/men_1.jpg";
+import men_2 from "../../assets/men_2.jpg";
 
-const fallbackMensImages = [Apostle_PK];
+const fallbackMensImages = [men_1, men_2];
 
 export default function MensMinistry() {
   const [mensImages, setMensImages] = useState(fallbackMensImages);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMensImages = async () => {
@@ -30,7 +31,7 @@ export default function MensMinistry() {
     };
 
     fetchMensImages();
-  }, []);
+  }, [setLoading]);
 
   return (
     <div className="space-y-12">

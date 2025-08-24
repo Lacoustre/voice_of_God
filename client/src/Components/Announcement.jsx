@@ -73,7 +73,7 @@ const AnnouncementSection = () => {
 
 
   return (
-    <div className="w-full bg-gradient-to-r from-black via-gray-900 to-black relative overflow-hidden">
+    <div className="w-full bg-gradient-to-r from-primary-900 via-primary-800 to-primary-900 relative overflow-hidden">
       {/* Subtle background animation */}
       <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 animate-pulse"></div>
 

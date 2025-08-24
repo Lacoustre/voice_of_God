@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaHeart, FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
+import { FaHeart, FaTimes } from "react-icons/fa";
 import MinistryCarousel from "./MinistryCarousel";
 import donation_1 from "../../assets/donation_1.JPG";
 import donation_2 from "../../assets/donation_2.JPG";
-import logo from "../../assets/logo.jpg";
+
 import Toast from "../Toast";
 
 const fallbackDonationImages = [donation_1, donation_2];
 
 export default function CharityFoundation() {
   const [donationImages, setDonationImages] = useState(fallbackDonationImages);
-  const [currentSlide, setCurrentSlide] = useState(0);
+
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = "success") => {
@@ -43,17 +43,9 @@ export default function CharityFoundation() {
     fetchDonationImages();
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % donationImages.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [donationImages.length, loading]);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % donationImages.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + donationImages.length) % donationImages.length);
+
+
 
   const handleCopyZelle = () => {
     navigator.clipboard.writeText("+1 (860) 967-5647");

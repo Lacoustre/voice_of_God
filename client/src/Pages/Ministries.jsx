@@ -9,7 +9,7 @@ import ChosenGeneration from "../Components/Ministries/ChosenGeneration";
 
 export default function Ministries() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <div className="pt-0 pb-20">
         <div className="container mx-auto px-4">
           <motion.div

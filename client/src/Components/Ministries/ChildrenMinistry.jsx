@@ -1,9 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
-import childrens_ministry_1 from "../../assets/childrens_ministry_1.jpg";
-import childrens_ministry_2 from "../../assets/childrens_ministry_2.jpg";
-import childrens_ministry_3 from "../../assets/childrens_ministry_3.jpg";
+import children_1 from "../../assets/children_1.jpg";
+import children_2 from "../../assets/children_2.jpg";
 
 export default function ChildrenMinistry() {
   return (
@@ -43,7 +42,7 @@ export default function ChildrenMinistry() {
       >
         <div className="bg-gradient-to-br from-green-500 to-teal-500 p-1 rounded-xl">
           <MinistryCarousel 
-            images={[childrens_ministry_1, childrens_ministry_2, childrens_ministry_3]}
+            images={[children_1, children_2]}
             title="Children's Ministry"
           />
         </div>

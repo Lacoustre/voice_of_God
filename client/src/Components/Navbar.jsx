@@ -41,7 +41,7 @@ export default function Navbar() {
     <div>
       <div id="home" className="relative">
         <CarouselComponent />
-        <nav className="fixed md:top-8 top-0 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white shadow-md md:rounded-2xl px-4 py-3 max-w-7xl w-full md:w-[calc(100%-2rem)] mx-auto md:mx-4">
+        <nav className="fixed md:top-8 top-0 left-1/2 transform -translate-x-1/2 z-50 bg-primary-900 text-white shadow-md md:rounded-2xl px-4 py-3 max-w-7xl w-full md:w-[calc(100%-2rem)] mx-auto md:mx-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center gap-1">
             <img
@@ -61,28 +61,28 @@ export default function Navbar() {
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'home' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
+              className={`cursor-pointer transition ${activeSection === 'home' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
             >
               <a href="#home" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('home'); } else { window.location.href = '/#home'; }}} className="cursor-pointer">HOME</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'leadership' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
+              className={`cursor-pointer transition ${activeSection === 'leadership' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
             >
               <a href="#leadership" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('leadership'); } else { window.location.href = '/#leadership'; }}} className="cursor-pointer">LEADERSHIP</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'services' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
+              className={`cursor-pointer transition ${activeSection === 'services' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
             >
               <a href="#services" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('services'); } else { window.location.href = '/#services'; }}} className="cursor-pointer">SERVICES</a>
             </motion.li>
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition relative ${activeSection === 'ministries' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
+              className={`cursor-pointer transition relative ${activeSection === 'ministries' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
             >
               <button onClick={() => setShowMinistriesDropdown(!showMinistriesDropdown)} className="cursor-pointer flex items-center gap-1">
                 MINISTRIES
@@ -99,6 +99,7 @@ export default function Navbar() {
                     className="absolute top-full left-0 mt-2 bg-white text-slate-800 rounded-lg shadow-xl border border-gray-200 min-w-48 z-50"
                   >
                     <div className="py-2">
+                      <Link to="/childrens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Children's Ministry</Link>
                       <Link to="/youth-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Youth Ministry</Link>
                       <Link to="/chosen-generation" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Chosen Generation</Link>
                       <Link to="/womens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Women's Ministry</Link>
@@ -112,7 +113,7 @@ export default function Navbar() {
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'events' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
+              className={`cursor-pointer transition ${activeSection === 'events' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
             >
               <a href="#events" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('events'); } else { window.location.href = '/#events'; }}} className="cursor-pointer">EVENTS</a>
             </motion.li>
@@ -120,14 +121,14 @@ export default function Navbar() {
             <motion.li
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'contact' ? 'text-white font-bold scale-110' : 'text-white/80'}`}
+              className={`cursor-pointer transition ${activeSection === 'contact' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
             >
               <a href="#contact" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('contact'); } else { window.location.href = '/#contact'; }}} className="cursor-pointer">CONTACT</a>
             </motion.li>
             <li>
               <Link
                 to="/join"
-                className="inline-flex items-center gap-1 px-4 py-2 bg-slate-700 text-white font-semibold rounded-xl hover:bg-slate-600 hover:shadow-lg hover:scale-105 transition-all duration-200"
+                className="inline-flex items-center gap-1 px-4 py-2 bg-primary-700 text-white font-semibold rounded-xl hover:bg-primary-600 hover:shadow-lg hover:scale-105 transition-all duration-200"
               >
                 <Heart size={16} />
                 Join Us
@@ -169,7 +170,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden bg-slate-800 px-4 py-3 text-white font-semibold rounded-b-2xl space-y-2 [&>div]:border-b [&>div]:border-white/20 [&>div]:pb-1 absolute right-0 w-48 top-full mt-2 text-sm"
+              className="md:hidden bg-primary-800 px-4 py-3 text-white font-semibold rounded-b-2xl space-y-2 [&>div]:border-b [&>div]:border-primary-200/20 [&>div]:pb-1 absolute right-0 w-48 top-full mt-2 text-sm"
             >
               <motion.div
                 whileHover={{ x: 5 }}
@@ -240,6 +241,7 @@ export default function Navbar() {
                   </button>
                   {showMinistriesDropdown && (
                     <div className="text-xs text-white/60 space-y-1 pl-4">
+                      <Link to="/childrens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Children's Ministry</Link>
                       <Link to="/youth-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Youth Ministry</Link>
                       <Link to="/chosen-generation" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Chosen Generation</Link>
                       <Link to="/womens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Women's Ministry</Link>

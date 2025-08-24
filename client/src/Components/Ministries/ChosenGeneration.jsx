@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MinistryCarousel from "./MinistryCarousel";
-import church_9 from "../../assets/church_photo_9.JPG";
-import church_10 from "../../assets/church_photo_10.JPG";
+import chosen_generation_1 from "../../assets/chosen_generation_1.jpg";
+import chosen_generation_2 from "../../assets/chosen_generation_2.jpg";
 
-const fallbackChosenGenerationImages = [church_9, church_10];
+const fallbackChosenGenerationImages = [chosen_generation_1, chosen_generation_2];
 
 export default function ChosenGeneration() {
   const [chosenGenerationImages, setChosenGenerationImages] = useState(fallbackChosenGenerationImages);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchChosenGenerationImages = async () => {
@@ -31,7 +31,7 @@ export default function ChosenGeneration() {
     };
 
     fetchChosenGenerationImages();
-  }, []);
+  }, [setLoading]);
 
   return (
     <div className="space-y-12">

@@ -5,6 +5,7 @@ import EventCard from "../Components/EventCard";
 import ServicesPage from "../Components/Services";
 import SectionTitle from "../Components/SectionTitle";
 import LeadershipPage from "../Components/Leadership";
+import CoreBeliefSection from "../Components/Core_Beliefs";
 
 import AnnouncementSection from "../Components/Announcement";
 
@@ -50,16 +51,18 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white">
+    <div className="min-h-screen overflow-x-hidden bg-church-gradient">
       <div className="-mt-10 z-50 relative">
         <Navbar />
       </div>
 
       <AnnouncementSection />
 
+    <CoreBeliefSection/>
+
       <section
         id="leadership"
-        className="container mx-auto px-4 py-12 pt-16"
+        className="container mx-auto px-4 py-0"
       >
         <div className="text-center mb-12">
           <SectionTitle title="Our Leadership" />
@@ -69,7 +72,7 @@ export default function Home() {
 
       <section
         id="services"
-        className="container mx-auto px-4 py-8 pt-16"
+        className="container mx-auto px-4 py-0"
       >
         <div className="text-center mb-8">
           <SectionTitle title="Our Services" />
@@ -79,7 +82,7 @@ export default function Home() {
       
       <section
         id="events"
-        className="container mx-auto px-4 py-12 pt-16 mt-4"
+        className="container mx-auto px-4 py-0"
       >
         <div className="text-center mb-12">
           <SectionTitle title="Events" />

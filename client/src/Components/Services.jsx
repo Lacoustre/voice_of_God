@@ -221,8 +221,6 @@ const ServicesPage = () => {
           console.debug(`Manually setting Sunday Evening Service as active: ${service.title}`);
           updatedOngoingServices[service._id] = true;
         }
-        
-
       });
       
       setOngoingServices(updatedOngoingServices);
@@ -251,9 +249,9 @@ const ServicesPage = () => {
   }
 
   return (
-    <section className="py-24 px-6 bg-gradient-to-b from-white via-slate-50/30 to-white" id="services">
-      <div className="space-y-20 max-w-7xl mx-auto">
-        {services.map((service, index) => {
+    <section className="py-24 px-6 bg-section-gradient" id="services">
+      <div className="space-y-20 w-full">
+        {services.filter(service => !service.title.toLowerCase().includes('bible')).map((service, index) => {
           const isEven = index % 2 === 0;
 
           return (
@@ -284,7 +282,7 @@ const ServicesPage = () => {
 
               {/* Text Content Card */}
               <motion.div 
-                className="lg:w-[60%] w-full border border-white/60 bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl cursor-pointer z-10 relative overflow-hidden"
+                className="lg:w-[60%] w-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl cursor-pointer z-10 relative overflow-hidden"
                 whileHover={{ y: -8, boxShadow: "0 25px 50px rgba(0,0,0,0.15)", scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
               >
@@ -292,15 +290,15 @@ const ServicesPage = () => {
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <div className="flex items-center gap-4">
                     <motion.div 
-                      className="text-3xl text-slate-600 p-3 bg-slate-100 rounded-xl"
+                      className="text-3xl text-primary-600 p-3 bg-primary-100 rounded-xl"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
                       {React.cloneElement(getServiceIcon(service.title), {
-                        className: "text-slate-600",
+                        className: "text-primary-600",
                       })}
                     </motion.div>
-                    <h3 className="text-3xl font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
+                    <h3 className="text-3xl font-bold text-primary-800 group-hover:text-primary-900 transition-colors">
                       {service.title}
                     </h3>
                   </div>
@@ -332,13 +330,13 @@ const ServicesPage = () => {
                 </div>
 
                 <div className="relative z-10">
-                  <p className="text-base text-gray-700 leading-relaxed mb-4">
+                  <p className="text-base text-primary-700 leading-relaxed mb-4">
                     {service.description}
                   </p>
 
                   {service.verse && (
-                    <div className="mb-4 p-4 bg-slate-50 rounded-xl border-l-4 border-slate-400">
-                      <p className="text-sm text-slate-700 italic font-medium">
+                    <div className="mb-4 p-4 bg-primary-50 rounded-xl">
+                      <p className="text-sm text-primary-700 italic font-medium">
                         {service.verse}
                       </p>
                     </div>
@@ -347,18 +345,31 @@ const ServicesPage = () => {
 
                 {service.schedule && service.schedule.length > 0 && (
                   <div className="mb-4 relative z-10">
-                    <h4 className="text-base font-bold text-slate-700 mb-3">Schedule:</h4>
+                    <h4 className="text-base font-bold text-primary-700 mb-3">Schedule:</h4>
                     <div className="flex flex-wrap gap-3">
                       {service.schedule.map((scheduleItem, idx) => (
                         <motion.span 
                           key={idx} 
-                          className="text-sm bg-gradient-to-r from-slate-100 to-slate-200 text-slate-800 px-4 py-2 rounded-full border border-slate-300 shadow-sm"
+                          className="text-sm bg-gradient-to-r from-primary-100 to-primary-200 text-primary-800 px-4 py-2 rounded-full shadow-sm"
                           whileHover={{ scale: 1.05, y: -2 }}
                           transition={{ type: "spring", stiffness: 300 }}
                         >
                           {scheduleItem}
                         </motion.span>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {service.title.toLowerCase().includes('sunday') && (
+                  <div className="relative z-10">
+                    <div className="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
+                      <p className="text-sm text-blue-700 font-medium mb-2">
+                        📖 <strong>Bible Teaching:</strong> Early morning study before the main service
+                      </p>
+                      <p className="text-sm text-blue-700 font-medium">
+                        ⛪ <strong>Sunday Service:</strong> Main worship and fellowship
+                      </p>
                     </div>
                   </div>
                 )}

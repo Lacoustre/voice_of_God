@@ -79,8 +79,8 @@ const Footer = () => {
   };
 
   return (
-    <footer id="contact" className="bg-slate-900 text-white py-16 mt-12">
-      <div className="container mx-auto px-6 md:px-12">
+    <footer id="contact" className="bg-primary-900 text-white py-16 mt-12">
+      <div className="w-full px-0">
         <div className="flex flex-col md:flex-row justify-between mb-16 gap-12">
           <div className="mb-8 md:mb-0 md:max-w-xl">
             <h3 className="text-3xl font-semibold tracking-tight mb-6 transform transition duration-500 ease-in-out hover:scale-105 text-white">
@@ -96,7 +96,7 @@ const Footer = () => {
               We invite you to join us..
             </p>
             <Link to="/" onClick={scrollToTop}>
-              <div className="bg-slate-900 rounded-lg mt-10 p-2">
+              <div className="bg-primary-900 rounded-lg mt-10 p-2">
                 <img src={logo} alt="Logo" className="h-50 mt-6" />
               </div>
             </Link>
@@ -106,20 +106,20 @@ const Footer = () => {
             <div className="min-w-[160px]">
               <h4 className="font-bold text-xl mb-6 text-white">Quick Links</h4>
               <ul className="space-y-4">
-                <li><Link to="/" onClick={scrollToTop} className="text-white hover:text-gray-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">HOME</span></Link></li>
-                <li><a href="#leadership" onClick={(e) => { e.preventDefault(); document.getElementById('leadership').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-gray-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">LEADERSHIP</span></a></li>
-                <li><a href="#services" onClick={(e) => { e.preventDefault(); document.getElementById('services').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-gray-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">SERVICES</span></a></li>
-                <li><a href="#ministries" onClick={(e) => { e.preventDefault(); document.getElementById('ministries').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-gray-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">MINISTRIES</span></a></li>
-                <li><a href="#events" onClick={(e) => { e.preventDefault(); document.getElementById('events').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-gray-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">EVENTS</span></a></li>
+                <li><Link to="/" onClick={scrollToTop} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">HOME</span></Link></li>
+                <li><a href="#leadership" onClick={(e) => { e.preventDefault(); document.getElementById('leadership').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">LEADERSHIP</span></a></li>
+                <li><a href="#services" onClick={(e) => { e.preventDefault(); document.getElementById('services').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">SERVICES</span></a></li>
+                <li><a href="#ministries" onClick={(e) => { e.preventDefault(); document.getElementById('ministries').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">MINISTRIES</span></a></li>
+                <li><a href="#events" onClick={(e) => { e.preventDefault(); document.getElementById('events').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">EVENTS</span></a></li>
               </ul>
             </div>
 
             <div className="min-w-[200px]">
               <h4 className="font-bold text-xl mb-6 text-white">Contact</h4>
               <ul className="space-y-4">
-                <li><a href="tel:8607263424" className="text-white hover:text-gray-200 flex items-center group"><FaPhone className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform">+1 (860) 726-3424</span></a></li>
-                <li><a href="mailto:INFO@THEVOGMINISTRIES.ORG" className="text-white hover:text-gray-200 flex items-center group"><FaEnvelope className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform break-all">INFO@THEVOGMINISTRIES.ORG</span></a></li>
-                <li><a href="https://maps.google.com/?q=52+Connecticut+Avenue+A+South+Windsor+CT+06074" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 flex items-center group"><FaMapMarkerAlt className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform">52 Connecticut Avenue, A<br />South Windsor, CT 06074</span></a></li>
+                <li><a href="tel:8607263424" className="text-white hover:text-primary-200 flex items-center group"><FaPhone className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform">+1 (860) 726-3424</span></a></li>
+                <li><a href="mailto:INFO@THEVOGMINISTRIES.ORG" className="text-white hover:text-primary-200 flex items-center group"><FaEnvelope className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform break-all">INFO@THEVOGMINISTRIES.ORG</span></a></li>
+                <li><a href="https://maps.google.com/?q=52+Connecticut+Avenue+A+South+Windsor+CT+06074" target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary-200 flex items-center group"><FaMapMarkerAlt className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform">52 Connecticut Avenue, A<br />South Windsor, CT 06074</span></a></li>
               </ul>
 
               <h1 className="text-white text-2xl font-bold mt-6">Send us a message</h1>
@@ -146,7 +146,7 @@ const Footer = () => {
         </div>
 
         <div className="text-center mb-8">
-          <Link to="/join" onClick={scrollToTop} className="inline-flex items-center gap-2 px-6 py-3 bg-slate-700 text-white font-semibold rounded-xl hover:bg-slate-600 hover:shadow-lg hover:scale-105 transition-all duration-200">
+          <Link to="/join" onClick={scrollToTop} className="inline-flex items-center gap-2 px-6 py-3 bg-primary-700 text-white font-semibold rounded-xl hover:bg-primary-600 hover:shadow-lg hover:scale-105 transition-all duration-200">
             <Heart size={20} />
             Join Our Church Family
           </Link>

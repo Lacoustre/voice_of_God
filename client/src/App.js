@@ -12,6 +12,7 @@ import WomensMinistryPage from './Pages/WomensMinistry';
 import CharityFoundationPage from './Pages/CharityFoundation';
 import ChosenGenerationPage from './Pages/ChosenGeneration';
 import MensMinistryPage from './Pages/MensMinistry';
+import ChildrensMinistryPage from './Pages/ChildrensMinistry';
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/charity-foundation" element={<CharityFoundationPage />} />
         <Route path="/chosen-generation" element={<ChosenGenerationPage />} />
         <Route path="/mens-ministry" element={<MensMinistryPage />} />
+        <Route path="/childrens-ministry" element={<ChildrensMinistryPage />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <ToastContainer

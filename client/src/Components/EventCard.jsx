@@ -156,7 +156,7 @@ const EventCard = ({ event }) => {
   return (
     <>
       <motion.div
-        className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden w-full h-full cursor-pointer border border-white/60 group relative"
+        className="bg-gradient-to-br from-indigo-50/90 via-white/90 to-purple-50/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden w-full h-full cursor-pointer border border-white/60 group relative"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
@@ -226,7 +226,7 @@ const EventCard = ({ event }) => {
           </div>
         </div>
 
-        <div className="p-8 text-gray-800 bg-gradient-to-b from-white to-slate-50/50 relative">
+        <div className="p-8 text-gray-800 bg-gradient-to-b from-indigo-50/80 via-white/80 to-purple-50/80 relative">
           <div className="mb-4">
             <h3 className="text-2xl font-bold mb-1 text-slate-800">
               {event.title}

@@ -10,40 +10,25 @@ const EventCard = ({ event, onClick }) => {
 
   return (
     <div
-      className="cursor-pointer border rounded-xl bg-white hover:shadow-md transition overflow-hidden flex flex-col"
+      className="cursor-pointer border bg-black hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col h-96 relative group"
       onClick={onClick}
     >
-      <div className="w-full h-80 overflow-hidden rounded-t-xl bg-gray-100">
-        <img
-          src={getImageUrl()}
-          alt={event?.title || "Event"}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      <div className="p-4 flex flex-col space-y-2 text-left">
-        {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-800">
+      <div
+        className="absolute inset-0 transition-all duration-500 group-hover:scale-50 group-hover:translate-x-full group-hover:translate-y-full group-hover:opacity-0"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.2)), url(${getImageUrl()})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      
+      <div className="relative p-4 text-left">
+        <h3 className="text-lg font-bold text-white drop-shadow-lg transition-all duration-300 group-hover:-translate-y-2">
           {event?.title || "Untitled Event"}
         </h3>
-
-        <p className="text-sm text-gray-600">
-          <span className="font-semibold">Date:</span>{" "}
-          {event?.date
-            ? new Date(event.date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })
-            : "Not specified"}
+        <p className="text-sm text-white mt-2 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+          {event?.verse || "No verse available"}
         </p>
-
-        {event?.verse && (
-          <p className="text-sm text-gray-700">
-            <span className="font-semibold">Verse:</span>{" "}
-            <span className="italic text-indigo-600">{event.verse}</span>
-          </p>
-        )}
       </div>
     </div>
   );
@@ -147,7 +132,7 @@ const EventsPage = () => {
   const createEvent = async () => {
     try {
       setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const imageUrls = [];
       for (let file of formData.images) {
@@ -339,20 +324,23 @@ const EventsPage = () => {
         <h2 className="text-2xl font-bold text-gray-800">Upcoming Events</h2>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 transition"
         >
           <Plus size={18} />
           Add Event
         </button>
       </div>
 
-     <div className="flex flex-col h-[650px] overflow-y-auto pr-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-  <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+     <div className="flex flex-col h-[700px] overflow-y-auto pr-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  <div className="grid gap-6 md:grid-cols-3 xl:grid-cols-4">
     {loading ? (
-      <div className="col-span-full flex flex-col items-center gap-4 mt-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-        <p className="text-gray-600">Loading events...</p>
-      </div>
+      Array(8).fill(0).map((_, i) => (
+        <div key={i} className="border bg-gray-100 h-96 animate-pulse">
+          <div className="p-4">
+            <div className="h-6 bg-gray-300 w-3/4 mb-2"></div>
+          </div>
+        </div>
+      ))
     ) : events.length === 0 ? (
       <div className="col-span-full flex justify-center items-center mt-12">
         <p className="text-gray-500">No events found.</p>
@@ -387,7 +375,7 @@ const EventsPage = () => {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl shadow-lg relative">
+          <div className="bg-white p-6 w-full max-w-xl shadow-lg relative">
             <button
               onClick={resetForm}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -413,7 +401,7 @@ const EventsPage = () => {
                   name="date"
                   value={formData.date}
                   onChange={handleInputChange}
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2"
                   required
                 />
                 <input
@@ -421,7 +409,7 @@ const EventsPage = () => {
                   name="time"
                   value={formData.time}
                   onChange={handleInputChange}
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2"
                   required
                 />
               </div>
@@ -432,7 +420,7 @@ const EventsPage = () => {
                 placeholder="Bible Verse"
                 value={formData.verse}
                 onChange={handleInputChange}
-                className="w-full border px-4 py-2 rounded-md"
+                className="w-full border px-4 py-2"
               />
 
               <div className="relative" ref={locationRef}>
@@ -442,11 +430,11 @@ const EventsPage = () => {
                   placeholder="Location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="w-full border px-4 py-2 rounded-md"
+                  className="w-full border px-4 py-2"
                 />
                 {showLocationDropdown && (
                   <ul
-                    className="absolute left-0 right-0 bg-white border border-gray-200 mt-1 rounded-xl max-h-48 overflow-y-auto shadow-lg z-50"
+                    className="absolute left-0 right-0 bg-white border border-gray-200 mt-1 max-h-48 overflow-y-auto shadow-lg z-50"
                     style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                   >
                     {locationSuggestions.map((suggestion, index) => (
@@ -506,13 +494,13 @@ const EventsPage = () => {
                       <img
                         src={img}
                         alt={`preview-${index}`}
-                        className="w-full h-20 object-cover rounded border"
+                        className="w-full h-20 object-cover border"
                       />
 
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(index)}
-                        className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700"
+                        className="absolute top-0 right-0 bg-red-600 text-white p-1 text-xs hover:bg-red-700"
                         title="Remove"
                       >
                         <X size={14} />
@@ -527,21 +515,21 @@ const EventsPage = () => {
                 placeholder="Additional Info"
                 value={formData.additionalInfo}
                 onChange={handleInputChange}
-                className="w-full border px-4 py-2 rounded-md"
+                className="w-full border px-4 py-2"
               />
 
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-4 py-2 rounded-md border"
+                  className="px-4 py-2 border"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
+                  className="bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-700 disabled:bg-gray-400"
                 >
                   {submitting ? (
                     <span className="flex items-center gap-2">

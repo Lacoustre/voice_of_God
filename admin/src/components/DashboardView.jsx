@@ -1,20 +1,14 @@
 import StatCard from "./StatCard";
 import EventsList from "./EventsList";
 import QuickActions from "./QuickActions";
+import RecentAnnouncements from "./RecentAnnouncements";
+import UpcomingServices from "./UpcomingServices";
+import MessagePreview from "./MessagePreview";
 
 const DashboardView = ({ stats, events, loading }) => {
   return (
-    <div className="min-h-full p-6 space-y-6">
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">
-          Welcome to Voice of God Admin Panel
-        </h2>
-        <p className="text-indigo-100">
-          Manage your ministry with faith and excellence
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="h-[calc(100vh-120px)] p-6 flex flex-col gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <StatCard
             key={index}
@@ -27,13 +21,26 @@ const DashboardView = ({ stats, events, loading }) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 h-[32rem] overflow-y-auto bg-white rounded-xl shadow p-4">
-          <EventsList events={events} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+          <div className="bg-white rounded-xl shadow p-4 flex flex-col h-full" style={{borderColor: 'rgb(217, 143, 53)', borderWidth: '1px', borderStyle: 'solid'}}>
+            <EventsList events={events} />
+          </div>
+          <div className="space-y-4 flex flex-col h-full">
+            <div className="flex-1">
+              <RecentAnnouncements />
+            </div>
+            <div className="flex-1">
+              <UpcomingServices />
+            </div>
+          </div>
         </div>
-        <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow p-4">
+        <div className="space-y-4 flex flex-col h-full">
+          <div className="bg-white rounded-xl shadow p-4" style={{borderColor: 'rgb(217, 143, 53)', borderWidth: '1px', borderStyle: 'solid'}}>
             <QuickActions />
+          </div>
+          <div className="bg-white rounded-xl shadow p-4 flex-1" style={{borderColor: 'rgb(217, 143, 53)', borderWidth: '1px', borderStyle: 'solid'}}>
+            <MessagePreview />
           </div>
         </div>
       </div>

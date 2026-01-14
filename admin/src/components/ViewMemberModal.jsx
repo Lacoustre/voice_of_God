@@ -56,12 +56,12 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center px-4">
-        <div className="bg-white w-full max-w-3xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto font-sans relative">
+        <div className="bg-white w-full max-w-3xl shadow-lg p-6 max-h-[90vh] overflow-y-auto font-sans relative">
           {/* Header */}
           <div className="text-center mb-8 relative">
             <button
               onClick={onClose}
-              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 z-10"
+              className="absolute -top-2 -right-2 bg-red-500 text-white p-1 hover:bg-red-600 z-10"
             >
               <X size={16} />
             </button>
@@ -74,7 +74,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
           {/* Profile Image Upload */}
           <div className="flex justify-center mb-6">
             <div
-              className="relative w-24 h-24 rounded-full overflow-hidden group cursor-pointer"
+              className="relative w-24 h-24 overflow-hidden group cursor-pointer"
               onClick={() => isEditing && fileInputRef.current.click()}
             >
               {form.profile_image || form.image ? (
@@ -111,12 +111,12 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
               <label className="block font-medium mb-1">Name</label>
               {isEditing ? (
                 <input
-                  className="w-full border rounded-md px-3 py-1.5 text-sm"
+                  className="w-full border px-3 py-1.5 text-sm"
                   value={form.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                 />
               ) : (
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {form.name}
                 </div>
               )}
@@ -127,12 +127,12 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
               <label className="block font-medium mb-1">Email</label>
               {isEditing ? (
                 <input
-                  className="w-full border rounded-md px-3 py-1.5 text-sm"
+                  className="w-full border px-3 py-1.5 text-sm"
                   value={form.email}
                   onChange={(e) => handleChange("email", e.target.value)}
                 />
               ) : (
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {form.email}
                 </div>
               )}
@@ -143,12 +143,12 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
               <label className="block font-medium mb-1">Phone</label>
               {isEditing ? (
                 <input
-                  className="w-full border rounded-md px-3 py-1.5 text-sm"
+                  className="w-full border px-3 py-1.5 text-sm"
                   value={form.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
                 />
               ) : (
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {form.phone}
                 </div>
               )}
@@ -159,7 +159,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
               <label className="block font-medium mb-1">Role</label>
               {isEditing ? (
                 <select
-                  className="w-full border rounded-md px-3 py-1.5 text-sm"
+                  className="w-full border px-3 py-1.5 text-sm"
                   value={form.role}
                   onChange={(e) => handleChange("role", e.target.value)}
                 >
@@ -168,7 +168,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
                   <option value="Pastor">Pastor</option>
                 </select>
               ) : (
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {form.role}
                 </div>
               )}
@@ -177,7 +177,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
             {/* Date of Birth */}
             <div>
               <label className="block font-medium mb-1">Member Since</label>
-              <div className="bg-gray-100 px-3 py-2 rounded-md">
+              <div className="bg-gray-100 px-3 py-2">
                 {new Date(
                   member?.$createdAt || member?.createdAt || ""
                 ).toLocaleDateString(undefined, {
@@ -193,12 +193,12 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
               <label className="block font-medium mb-1">Address</label>
               {isEditing ? (
                 <input
-                  className="w-full border rounded-md px-3 py-1.5 text-sm"
+                  className="w-full border px-3 py-1.5 text-sm"
                   value={form.address}
                   onChange={(e) => handleChange("address", e.target.value)}
                 />
               ) : (
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {form.address}
                 </div>
               )}
@@ -214,14 +214,14 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
                     id="approved-status"
                     checked={form.approved || false}
                     onChange={(e) => handleChange("approved", e.target.checked)}
-                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className="border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                   <label htmlFor="approved-status" className="text-sm text-gray-700">
                     Member is approved
                   </label>
                 </div>
               ) : (
-                <div className={`px-3 py-2 rounded-md text-sm font-medium ${
+                <div className={`px-3 py-2 text-sm font-medium ${
                   form.approved 
                     ? 'bg-green-100 text-green-700' 
                     : 'bg-yellow-100 text-yellow-700'
@@ -240,7 +240,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
                     {form.groups?.map((group, index) => (
                       <span
                         key={index}
-                        className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-xs flex items-center"
+                        className="bg-indigo-100 text-indigo-700 px-2 py-1 text-xs flex items-center"
                       >
                         {group}
                         <button
@@ -259,7 +259,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
                     ))}
                   </div>
                   <select
-                    className="w-full px-3 py-1.5 border rounded-md text-sm"
+                    className="w-full px-3 py-1.5 border text-sm"
                     onChange={(e) => {
                       const value = e.target.value;
                       if (value && !form.groups.includes(value)) {
@@ -283,7 +283,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
                     (group, i) => (
                       <span
                         key={i}
-                        className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-xs"
+                        className="bg-indigo-100 text-indigo-700 px-2 py-1 text-xs"
                       >
                         {group}
                       </span>
@@ -298,7 +298,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
           <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-200">
             <button
               onClick={() => setShowConfirmDelete(true)}
-              className="flex items-center gap-2 text-sm text-red-600 px-3 py-2 rounded hover:bg-red-50"
+              className="flex items-center gap-2 text-sm text-red-600 px-3 py-2 hover:bg-red-50"
             >
               <Trash2 size={16} />
               Delete
@@ -308,7 +308,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 text-sm text-blue-600 px-3 py-2 rounded hover:bg-blue-50"
+                  className="flex items-center gap-2 text-sm text-blue-600 px-3 py-2 hover:bg-blue-50"
                 >
                   <Pencil size={16} />
                   Edit
@@ -317,7 +317,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
                 <button
                   onClick={handleSave}
                   disabled={!isChanged}
-                  className={`flex items-center gap-2 text-sm px-3 py-2 rounded ${
+                  className={`flex items-center gap-2 text-sm px-3 py-2 ${
                     isChanged
                       ? "bg-indigo-600 text-white hover:bg-indigo-700"
                       : "bg-gray-200 text-gray-500 cursor-not-allowed"
@@ -335,7 +335,7 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
       {/* Delete Confirm */}
       {showConfirmDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center space-y-4">
+          <div className="bg-white shadow-lg p-6 w-full max-w-sm text-center space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">
               Confirm Deletion
             </h3>
@@ -345,14 +345,14 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
             </p>
             <div className="flex justify-center gap-3 mt-4">
               <button
-                className="px-4 py-2 rounded border text-gray-600 hover:bg-gray-100"
+                className="px-4 py-2 border text-gray-600 hover:bg-gray-100"
                 onClick={() => setShowConfirmDelete(false)}
               >
                 Cancel
               </button>
               <LoadingButton
                 isLoading={isDeleting}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700"
                 onClick={handleDelete}
               >
                 {isDeleting ? "Deleting..." : "Confirm Delete"}

@@ -656,40 +656,40 @@ const QuickActions = () => {
   };
 
   return (
-    <div className="h-full">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
-      <div className="grid grid-cols-1 gap-3">
+    <div className="h-full flex flex-col">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+      <div className="grid grid-cols-1 gap-2">
         <button
           onClick={() => openModal("member")}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-lg flex items-center gap-2 text-sm font-medium transition duration-200"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-lg flex items-center gap-2 text-xs font-medium transition duration-200"
         >
           <UserPlus className="w-4 h-4" /> Add New Member
         </button>
         
         <button
           onClick={() => setShowEventModal(true)}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg flex items-center gap-2 text-sm font-medium transition duration-200"
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-lg flex items-center gap-2 text-xs font-medium transition duration-200"
         >
           <Calendar className="w-4 h-4" /> Create Event
         </button>
         
         <button
           onClick={() => openModal("announcement")}
-          className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg flex items-center gap-2 text-sm font-medium transition duration-200"
+          className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg flex items-center gap-2 text-xs font-medium transition duration-200"
         >
           <Megaphone className="w-4 h-4" /> Make Announcement
         </button>
         
         <button
           onClick={() => openModal("service")}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg flex items-center gap-2 text-sm font-medium transition duration-200"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center gap-2 text-xs font-medium transition duration-200"
         >
           <Church className="w-4 h-4" /> Schedule Service
         </button>
         
         <button
           onClick={() => openModal("media")}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-lg flex items-center gap-2 text-sm font-medium transition duration-200"
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-lg flex items-center gap-2 text-xs font-medium transition duration-200"
         >
           <Image className="w-4 h-4" /> Upload Media
         </button>

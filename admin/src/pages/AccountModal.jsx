@@ -2,10 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Client, Storage, ID } from 'appwrite';
 import { useAuth, useApp } from '../context';
+import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 
 const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const { updateAdmin } = useApp();
+  const navigate = useNavigate();
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [accountDetails, setAccountDetails] = useState({
     name: '',
     email: '',
@@ -90,11 +94,37 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
     }
   };
 
+  const handleLogout = async () => {
+    setLogoutLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      setLogoutLoading(false);
+    }
+  };
+
   if (!showAccountModal) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl relative">
+        <button
+          onClick={handleLogout}
+          disabled={logoutLoading}
+          className="absolute top-4 right-4 px-3 py-2 rounded bg-red-600 text-white hover:bg-red-700 flex items-center gap-2 disabled:bg-gray-400 text-sm"
+        >
+          {logoutLoading ? (
+            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+          ) : (
+            <LogOut size={16} />
+          )}
+          {logoutLoading ? 'Logging out...' : 'Logout'}
+        </button>
+        
         <h3 className="text-lg font-semibold text-gray-800 mb-1">Update Account Details</h3>
         <hr className="mb-6 border-gray-300" />
 

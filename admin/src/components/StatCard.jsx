@@ -23,42 +23,24 @@ const StatCard = ({ title, value, icon: Icon, color, change, loading }) => {
   
   return (
     <div 
-      className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white rounded-xl shadow-sm p-6 cursor-pointer"
+      style={{borderColor: 'rgb(217, 143, 53)', borderWidth: '1px', borderStyle: 'solid'}}
       onClick={handleClick}
     >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
-            {loading ? (
-              <svg
-                className="animate-spin h-5 w-5 text-gray-500"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                />
-              </svg>
-            ) : (
-              value
-            )}
-          </p>
-          <p className="text-sm text-green-600 mt-1">{change}</p>
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 mt-1">
+          <Icon className="w-8 h-8 text-gray-700" style={{color: 'rgb(217, 143, 53)'}} />
         </div>
-        <div className={`${color} p-3 rounded-lg`}>
-          <Icon className="w-6 h-6 text-white" />
+        <div className="flex-1 text-right">
+          <p className="text-lg font-bold text-gray-700 mb-2">{title}</p>
+          <div className="text-3xl font-bold text-gray-900 flex justify-end">
+            {loading ? (
+              <div className="h-9 w-20 bg-gray-200 rounded animate-pulse"></div>
+            ) : (
+              <span>{value}</span>
+            )}
+          </div>
+          {change && <p className="text-sm text-green-600 mt-2">{change}</p>}
         </div>
       </div>
     </div>

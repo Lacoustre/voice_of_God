@@ -25,8 +25,8 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
-      <div className="bg-white w-full max-w-4xl rounded-lg shadow-lg overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center animate-fadeIn">
+      <div className="bg-white w-full max-w-4xl shadow-lg overflow-hidden max-h-[90vh] flex flex-col animate-scaleIn">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="text-xl font-bold">Edit Event</h3>
@@ -42,7 +42,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
         <div className="overflow-y-auto p-6 space-y-4 flex-1">
           <input
             type="text"
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             placeholder="Title"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -50,7 +50,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
           />
           <input
             type="date"
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             placeholder="Date"
             value={
               form.date ? new Date(form.date).toISOString().split("T")[0] : ""
@@ -61,7 +61,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
 
           <input
             type="text"
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             placeholder="Time"
             value={form.time}
             onChange={(e) => setForm({ ...form, time: e.target.value })}
@@ -69,7 +69,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
           />
           <input
             type="text"
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             placeholder="Verse"
             value={form.verse}
             onChange={(e) => setForm({ ...form, verse: e.target.value })}
@@ -77,7 +77,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
           />
           <input
             type="text"
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             placeholder="Location"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -85,7 +85,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
           />
           <textarea
             rows="4"
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             placeholder="Additional Info"
             value={form.additionalInfo}
             onChange={(e) =>
@@ -105,11 +105,11 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
                     <img
                       src={src}
                       alt={`Event ${index}`}
-                      className="object-cover w-full h-full rounded"
+                      className="object-cover w-full h-full"
                     />
                     <button
                       onClick={() => handleImageRemove(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -135,20 +135,20 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
         <div className="flex justify-between items-center p-4 border-t">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded border text-gray-600 hover:bg-gray-100"
+            className="px-4 py-2 border text-gray-600 hover:bg-gray-100"
           >
             Cancel
           </button>
           <div className="flex gap-3">
             <button
               onClick={() => setShowConfirmDelete(true)}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+              className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 transition"
             >
               <Trash2 className="inline mr-1" size={18} />
               Delete
             </button>
             <button
-              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition disabled:bg-gray-400"
+              className="bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-700 transition disabled:bg-gray-400"
               disabled={isSaving}
               onClick={async () => {
                 if (!form.title.trim()) {
@@ -203,7 +203,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
 
         {showConfirmDelete && (
           <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg w-full max-w-sm p-6 text-center space-y-4 shadow-xl">
+            <div className="bg-white w-full max-w-sm p-6 text-center space-y-4 shadow-xl">
               <h2 className="text-lg font-bold text-red-600">Delete Event</h2>
               <hr />
               <p className="text-gray-700">
@@ -211,13 +211,13 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
               </p>
               <div className="flex justify-center gap-4 mt-4">
                 <button
-                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
                   onClick={() => setShowConfirmDelete(false)}
                 >
                   Cancel
                 </button>
                 <button
-                  className={`px-4 py-2 rounded text-white ${
+                  className={`px-4 py-2 text-white ${
                     isDeleting
                       ? "bg-red-400 cursor-not-allowed"
                       : "bg-red-600 hover:bg-red-700"

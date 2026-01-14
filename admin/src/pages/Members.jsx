@@ -74,7 +74,7 @@ const MembersPage = () => {
       } else {
         setDecliningMemberId(member.$id || member.id);
       }
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const updateData = { ...member, approved };
       await updateMember(member.$id || member.id, updateData);
       setMembers(prev => prev.map(m => {
@@ -101,7 +101,7 @@ const MembersPage = () => {
     
     try {
       setApproveAllLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       for (const member of unapprovedMembers) {
         await updateMember(member.$id || member.id, { ...member, approved: true });
@@ -128,7 +128,7 @@ const MembersPage = () => {
     
     try {
       setDeclineAllLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       for (const member of approvedMembers) {
         await updateMember(member.$id || member.id, { ...member, approved: false });
@@ -212,7 +212,7 @@ const MembersPage = () => {
   const handleSave = async () => {
     try {
       setSubmitting(true);
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       let imageUrl = "";
       
       if (newMember.imageFile) {
@@ -281,17 +281,24 @@ const MembersPage = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full flex flex-col">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-800">Members</h2>
           <button  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed">
             <UserPlus size={18} />
             Add Member
           </button>
         </div>
-        <div className="flex flex-col items-center gap-4 mt-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="text-gray-600">Loading members...</p>
+        <div className="space-y-3 flex-1">
+          {Array(10).fill(0).map((_, i) => (
+            <div key={i} className="bg-gray-100 rounded-md p-3 animate-pulse flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gray-300"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-300 rounded w-1/3 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -306,7 +313,7 @@ const MembersPage = () => {
           <button
             onClick={handleApproveAll}
             disabled={approveAllLoading || members.filter(m => !m.approved).length === 0}
-            className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition text-sm"
+            className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 transition text-sm"
           >
             {approveAllLoading ? (
               <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
@@ -318,7 +325,7 @@ const MembersPage = () => {
           <button
             onClick={handleDeclineAll}
             disabled={declineAllLoading || members.filter(m => m.approved).length === 0}
-            className="inline-flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 transition text-sm"
+            className="inline-flex items-center gap-2 px-3 py-2 bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400 transition text-sm"
           >
             {declineAllLoading ? (
               <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
@@ -329,7 +336,7 @@ const MembersPage = () => {
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 transition"
           >
             <UserPlus size={18} />
             Add Member
@@ -486,7 +493,7 @@ const MembersPage = () => {
           onUpdate={async (memberData) => {
             try {
               setUpdatingMemberId(selectedMember.$id || selectedMember.id);
-              await new Promise(resolve => setTimeout(resolve, 3000));
+              await new Promise(resolve => setTimeout(resolve, 1000));
               let imageUrl = "";
               
               // If there's a new file to upload, use that
@@ -522,7 +529,7 @@ const MembersPage = () => {
           onDelete={async (id) => {
             try {
               setDeletingMemberId(id);
-              await new Promise(resolve => setTimeout(resolve, 3000));
+              await new Promise(resolve => setTimeout(resolve, 1000));
               await deleteMember(id);
               setMembers(prev => prev.filter(m => m.$id !== id && m.id !== id));
               showToast('Member deleted successfully!');

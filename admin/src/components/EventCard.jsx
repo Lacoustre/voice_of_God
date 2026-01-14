@@ -35,7 +35,7 @@ const handleDelete = async () => {
 };
 
   return (
-    <div className="relative bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all text-left cursor-pointer">
+    <div className="relative bg-white rounded-lg shadow-sm p-4 text-left cursor-pointer" style={{borderColor: 'rgb(217, 143, 53)', borderWidth: '1px', borderStyle: 'solid'}}>
       {/* Trash Icon */}
       <button
         onClick={() => setShowConfirm(true)}

@@ -47,8 +47,8 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center px-4">
-        <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto relative text-sm">
+      <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center px-4 animate-fadeIn">
+        <div className="bg-white w-full max-w-2xl shadow-lg p-6 max-h-[90vh] overflow-y-auto relative text-sm animate-slideUp">
           {/* Header */}
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold">Service Details</h2>
@@ -66,7 +66,7 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
             <div>
               <label className="block font-medium mb-1 text-left">Title</label>
               <input
-                className="w-full border rounded px-3 py-1.5"
+                className="w-full border px-3 py-1.5"
                 value={form.title}
                 onChange={(e) => handleChange("title", e.target.value)}
               />
@@ -75,7 +75,7 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
               <label className="block font-medium mb-1 text-left">Bible Verse</label>
               <textarea
                 rows={3}
-                className="w-full border rounded px-3 py-1.5"
+                className="w-full border px-3 py-1.5"
                 placeholder="Enter Bible verse..."
                 value={form.verse}
                 onChange={(e) => handleChange("verse", e.target.value)}
@@ -87,7 +87,7 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
                 {form.schedule.map((schedule, index) => (
                   <div key={index} className="flex gap-2">
                     <input
-                      className="flex-1 border rounded px-3 py-1.5"
+                      className="flex-1 border px-3 py-1.5"
                       value={schedule}
                       placeholder="e.g. Weekly, Monthly, Special Event"
                       onChange={(e) => {
@@ -103,27 +103,29 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
                           const newSchedules = form.schedule.filter((_, i) => i !== index);
                           handleChange("schedule", newSchedules);
                         }}
-                        className="px-3 py-1.5 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                        className="px-3 py-1.5 bg-red-500 text-white text-sm hover:bg-red-600"
                       >
                         Remove
                       </button>
                     )}
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={() => handleChange("schedule", [...form.schedule, ""])}
-                  className="px-3 py-1.5 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-                >
-                  Add Schedule
-                </button>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleChange("schedule", [...form.schedule, ""])}
+                    className="px-3 py-1.5 bg-blue-500 text-white text-sm hover:bg-blue-600"
+                  >
+                    Add Schedule
+                  </button>
+                </div>
               </div>
             </div>
             <div>
               <label className="block font-medium mb-1 text-left">Description</label>
               <textarea
                 rows={3}
-                className="w-full border rounded px-3 py-1.5"
+                className="w-full border px-3 py-1.5"
                 value={form.description}
                 onChange={(e) => handleChange("description", e.target.value)}
               />
@@ -133,7 +135,7 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
             <div>
               <label className="block font-medium mb-1 text-left">Upload Image</label>
               <div
-                className="relative w-40 h-28 rounded overflow-hidden border bg-gray-100 flex items-center justify-center cursor-pointer group"
+                className="relative w-40 h-28 overflow-hidden border bg-gray-100 flex items-center justify-center cursor-pointer group"
                 onClick={() => fileInputRef.current.click()}
               >
                 {form.image ? (
@@ -161,7 +163,7 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
           <div className="flex justify-between items-center mt-6 pt-4 border-t">
             <button
               onClick={() => setShowConfirmDelete(true)}
-              className="flex items-center gap-2 text-sm text-red-600 px-3 py-2 rounded hover:bg-red-50"
+              className="flex items-center gap-2 text-sm text-red-600 px-3 py-2 hover:bg-red-50"
             >
               <Trash2 size={16} />
               Delete
@@ -170,7 +172,7 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
             <button
               onClick={() => onSave(form)}
               disabled={!isChanged}
-              className={`flex items-center gap-2 text-sm px-4 py-2 rounded ${
+              className={`flex items-center gap-2 text-sm px-4 py-2 ${
                 isChanged
                   ? "bg-indigo-600 text-white hover:bg-indigo-700"
                   : "bg-gray-200 text-gray-500 cursor-not-allowed"
@@ -186,21 +188,21 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
       {/* Confirm Delete Modal */}
       {showConfirmDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center space-y-4">
+          <div className="bg-white shadow-lg p-6 w-full max-w-sm text-center space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">Confirm Deletion</h3>
             <p className="text-sm text-gray-600">
               Are you sure you want to delete <span className="font-medium">{form.title}</span>?
             </p>
             <div className="flex justify-center gap-3 mt-4">
               <button
-                className="px-4 py-2 rounded border text-gray-600 hover:bg-gray-100"
+                className="px-4 py-2 border text-gray-600 hover:bg-gray-100"
                 onClick={() => setShowConfirmDelete(false)}
               >
                 Cancel
               </button>
               <LoadingButton
                 isLoading={isDeleting}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700"
                 onClick={handleDelete}
               >
                 {isDeleting ? 'Deleting...' : 'Confirm Delete'}

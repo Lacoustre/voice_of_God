@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import EventCard from "./EventCard";
 import Toast from "../components/common/Toast";
 import AddEventModal from "./AddEventModal";
+import { useApp } from "../context/AppContext";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
@@ -12,6 +13,7 @@ const EventsList = ({ events: propEvents }) => {
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const { setActiveSection } = useApp();
 
   // Modal state is now managed by the AddEventModal component
 
@@ -56,14 +58,14 @@ const EventsList = ({ events: propEvents }) => {
         .filter((e) => new Date(e.date) >= now)
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      let topThree = [...upcoming.slice(0, 3)];
+      let topThree = [...upcoming.slice(0, 5)];
 
-      if (topThree.length < 3) {
+      if (topThree.length < 5) {
         const past = data.events
           .filter((e) => new Date(e.date) < now)
           .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        topThree = [...topThree, ...past.slice(0, 3 - topThree.length)];
+        topThree = [...topThree, ...past.slice(0, 5 - topThree.length)];
       }
 
       setEvents(topThree);
@@ -73,10 +75,15 @@ const EventsList = ({ events: propEvents }) => {
     }
   };
 
+  const handleEventClick = () => {
+    setActiveSection('events');
+    localStorage.setItem('activeSection', 'events');
+  };
+
   // Form handling is now managed by the AddEventModal component
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div className="bg-white rounded-xl p-6 flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Recent Events</h3>
         <button
@@ -87,17 +94,28 @@ const EventsList = ({ events: propEvents }) => {
         </button>
       </div>
 
-      <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1 scrollbar-hide">
-        {events.map((event) => (
-          <EventCard
-            key={event.$id}
-            event={event}
-            onDelete={(deletedId) =>
-              setEvents((prev) => prev.filter((e) => e.$id !== deletedId))
-            }
-            setToast={setToast}
-          />
-        ))}
+      <div className="space-y-4 flex-1 overflow-y-auto pr-1 scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+        {events.length === 0 ? (
+          // Loading skeleton
+          Array(5).fill(0).map((_, i) => (
+            <div key={i} className="bg-gray-100 rounded-lg p-4 animate-pulse">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          ))
+        ) : (
+          events.map((event) => (
+            <div key={event.$id} onClick={handleEventClick} className="cursor-pointer">
+              <EventCard
+                event={event}
+                onDelete={(deletedId) =>
+                  setEvents((prev) => prev.filter((e) => e.$id !== deletedId))
+                }
+                setToast={setToast}
+              />
+            </div>
+          ))
+        )}
       </div>
 
       <AddEventModal 

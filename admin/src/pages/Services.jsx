@@ -12,36 +12,35 @@ const API_BASE_URL =
 const ServiceCard = ({ service, onClick }) => (
   <div
     onClick={onClick}
-    className="cursor-pointer border rounded-xl bg-white hover:shadow-md transition overflow-hidden flex flex-col"
+    className="cursor-pointer border bg-white transition overflow-hidden flex flex-col relative h-96"
+    style={{
+      backgroundImage: `url(${service.image})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    }}
   >
-    {/* Image */}
-    <div className="w-full h-72 overflow-hidden rounded-t-xl bg-gray-100">
-      <img
-        src={service.image}
-        alt="service"
-        className="w-full h-full object-cover"
-      />
-    </div>
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
     {/* Content */}
-    <div className="p-4 flex flex-col space-y-2 text-left">
+    <div className="p-4 flex flex-col space-y-2 text-left relative z-10 mt-auto">
       {/* Title */}
-      <p className="text-sm text-gray-700">
+      <p className="text-sm text-white">
         <span className="font-semibold">Title:</span> {service.title}
       </p>
 
       {/* Schedule */}
       {service.schedule && service.schedule.length > 0 && (
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-white">
           <span className="font-semibold">Schedule:</span>{" "}
           {service.schedule.join(", ")}
         </p>
       )}
 
       {/* Description */}
-      <p className="text-sm text-gray-700">
+      <p className="text-sm text-white">
         <span className="font-semibold">Description:</span>{" "}
-        <span className="italic text-indigo-600">{service.description}</span>
+        <span className="italic text-indigo-300">{service.description}</span>
       </p>
     </div>
   </div>
@@ -235,7 +234,7 @@ const ServicesPage = () => {
         </button>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 max-h-[690px] overflow-y-auto pr-2 scrollbar-hide">
+      <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6 max-h-[690px] overflow-y-auto pr-2 scrollbar-hide">
         {services.map((service) => (
           <ServiceCard
             key={service.$id || service.id}

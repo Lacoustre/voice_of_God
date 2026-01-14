@@ -169,7 +169,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-xl shadow-lg relative">
+      <div className="bg-white p-6 w-full max-w-xl shadow-lg relative">
         <button
           onClick={resetForm}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
@@ -185,7 +185,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
             placeholder="Event Title"
             value={formData.title}
             onChange={handleInputChange}
-            className="w-full border px-4 py-2 rounded-md"
+            className="w-full border px-4 py-2"
             required
           />
           <div className="grid grid-cols-2 gap-4">
@@ -194,7 +194,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
               name="date"
               value={formData.date}
               onChange={handleInputChange}
-              className="w-full border px-4 py-2 rounded-md"
+              className="w-full border px-4 py-2"
               required
             />
             <input
@@ -202,7 +202,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
               name="time"
               value={formData.time}
               onChange={handleInputChange}
-              className="w-full border px-4 py-2 rounded-md"
+              className="w-full border px-4 py-2"
               required
             />
           </div>
@@ -212,7 +212,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
             placeholder="Bible Verse"
             value={formData.verse}
             onChange={handleInputChange}
-            className="w-full border px-4 py-2 rounded-md"
+            className="w-full border px-4 py-2"
           />
           <div className="relative">
             <input
@@ -221,10 +221,10 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
               placeholder="Location"
               value={formData.location}
               onChange={handleInputChange}
-              className="w-full border px-4 py-2 rounded-md"
+              className="w-full border px-4 py-2"
             />
             {showLocationDropdown && (
-              <ul className="absolute left-0 right-0 bg-white border mt-1 rounded-xl max-h-48 overflow-y-auto shadow-lg z-50">
+              <ul className="absolute left-0 right-0 bg-white border mt-1 max-h-48 overflow-y-auto shadow-lg z-50">
                 {locationSuggestions.map((suggestion, index) => (
                   <li
                     key={index}
@@ -258,12 +258,12 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
                   <img
                     src={img.preview}
                     alt={`preview-${index}`}
-                    className="w-full h-20 object-cover rounded border"
+                    className="w-full h-20 object-cover border"
                   />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
-                    className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700"
+                    className="absolute top-0 right-0 bg-red-600 text-white p-1 text-xs hover:bg-red-700"
                   >
                     <X size={14} />
                   </button>
@@ -276,15 +276,15 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
             placeholder="Additional Info"
             value={formData.additionalInfo}
             onChange={handleInputChange}
-            className="w-full border px-4 py-2 rounded-md"
+            className="w-full border px-4 py-2"
           />
           <div className="flex justify-end gap-4">
-            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-md border">
+            <button type="button" onClick={resetForm} className="px-4 py-2 border">
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
+              className="bg-indigo-600 text-white px-4 py-2 hover:bg-indigo-700 disabled:bg-gray-400"
               disabled={submitting}
             >
               {submitting ? (

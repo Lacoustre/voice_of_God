@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useApp } from '../context/AppContext';
 import {
   Users,
-  Calendar,
-  Mail,
-  AlertCircle,
+  MessageSquare,
+  UserCheck,
   Home,
   Image,
   UserCog,
   Church,
   Megaphone,
+  Mail,
+  Calendar,
 } from "lucide-react";
 
 import EventsPage from "../pages/Event";
@@ -58,14 +59,14 @@ const ChurchAdminPanel = () => {
             .filter(e => new Date(e.date) >= now)
             .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-          let topThree = [...upcoming.slice(0, 3)];
+          let topThree = [...upcoming.slice(0, 5)];
 
-          if (topThree.length < 3) {
+          if (topThree.length < 5) {
             const past = eventsData.events
               .filter(e => new Date(e.date) < now)
               .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            topThree = [...topThree, ...past.slice(0, 3 - topThree.length)];
+            topThree = [...topThree, ...past.slice(0, 5 - topThree.length)];
           }
           
           setEvents(topThree);
@@ -73,14 +74,14 @@ const ChurchAdminPanel = () => {
           setEvents([]);
         }
 
-        const randomDelay = () => Math.floor(Math.random() * 3000) + 1000;
+        const randomDelay = () => 1000;
 
         setTimeout(() => setRawStats((s) => ({ ...s, totalMembers: data.totalMembers })), randomDelay());
         setTimeout(() => setRawStats((s) => ({ ...s, unrepliedMessages: data.unrepliedMessages })), randomDelay());
         setTimeout(() => setRawStats((s) => ({ ...s, upcomingEvents: data.upcomingEvents })), randomDelay());
         setTimeout(() => setRawStats((s) => ({ ...s, unapprovedMembers: data.unapprovedMembers })), randomDelay());
 
-        setTimeout(() => setLoading(false), 3500);
+        setTimeout(() => setLoading(false), 1000);
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
         setLoading(false);
@@ -92,26 +93,7 @@ const ChurchAdminPanel = () => {
 
   const getStatValue = (value) => {
     return value === null ? (
-      <svg
-        className="animate-spin h-10 w-10 text-violet-600 mx-auto"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        />
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v8H4z"
-        />
-      </svg>
+      <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
     ) : (
       value
     );
@@ -127,7 +109,7 @@ const ChurchAdminPanel = () => {
     {
       title: "Unreplied Messages",
       value: getStatValue(rawStats.unrepliedMessages),
-      icon: Mail,
+      icon: MessageSquare,
       color: "bg-yellow-500",
     },
     {
@@ -139,7 +121,7 @@ const ChurchAdminPanel = () => {
     {
       title: "Unapproved Members",
       value: getStatValue(rawStats.unapprovedMembers),
-      icon: AlertCircle,
+      icon: UserCheck,
       color: "bg-red-500",
     },
   ];

@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { FaChurch, FaBible, FaPrayingHands, FaCircle } from "react-icons/fa";
-
-const getServiceIcon = (title) => {
-  if (title.toLowerCase().includes('sunday')) return <FaChurch />;
-  if (title.toLowerCase().includes('bible')) return <FaBible />;
-  return <FaPrayingHands />;
-};
+import ServiceCard from "./ServiceCard";
 
 const ServicesPage = () => {
   const [services, setServices] = useState([]);
@@ -237,146 +230,38 @@ const ServicesPage = () => {
 
   if (loading) {
     return (
-      <section className="py-20 px-6" id="services">
-        <div className="flex items-center justify-center h-64">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-purple-200 rounded-full animate-spin border-t-purple-600"></div>
-            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent rounded-full animate-ping border-t-purple-400"></div>
-          </div>
+      <section className="py-24 px-6" id="services">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto justify-items-center">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="w-full h-full max-w-sm bg-white/90 rounded-3xl shadow-2xl overflow-hidden animate-pulse" style={{ aspectRatio: "1/1.2" }}>
+              <div className="h-72 bg-gray-300"></div>
+              <div className="p-8 space-y-4">
+                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-24 px-6 bg-section-gradient" id="services">
-      <div className="space-y-20 w-full">
-        {services.filter(service => !service.title.toLowerCase().includes('bible')).map((service, index) => {
-          const isEven = index % 2 === 0;
-
-          return (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 60, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: index * 0.2, type: "spring", stiffness: 100 }}
-              viewport={{ once: true, margin: "-100px" }}
-              className={`flex flex-col lg:flex-row ${
-                !isEven ? "lg:flex-row-reverse" : ""
-              } items-center gap-12 relative`}
+    <section className="py-24 px-6" id="services">
+      <div className="flex justify-center px-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full justify-items-center">
+          {services.filter(service => !service.title.toLowerCase().includes('bible')).map((service, index) => (
+            <div
+              key={service._id || index}
+              className="w-full h-full max-w-sm relative"
+              style={{ aspectRatio: "1/1.2" }}
             >
-              {/* Image with hover pop */}
-              <motion.div 
-                className="relative lg:w-[40%] w-full flex justify-center z-20 group cursor-pointer"
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-64 h-64 object-cover rounded-lg shadow-xl"
-                />
-                
-
-              </motion.div>
-
-              {/* Text Content Card */}
-              <motion.div 
-                className="lg:w-[60%] w-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl cursor-pointer z-10 relative overflow-hidden"
-                whileHover={{ y: -8, boxShadow: "0 25px 50px rgba(0,0,0,0.15)", scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 200, damping: 20 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="flex items-center justify-between mb-6 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <motion.div 
-                      className="text-3xl text-primary-600 p-3 bg-primary-100 rounded-xl"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      {React.cloneElement(getServiceIcon(service.title), {
-                        className: "text-primary-600",
-                      })}
-                    </motion.div>
-                    <h3 className="text-3xl font-bold text-primary-800 group-hover:text-primary-900 transition-colors">
-                      {service.title}
-                    </h3>
-                  </div>
-                  
-                  {/* Live indicator in title section */}
-                  {ongoingServices[service._id] && (
-                    <motion.div 
-                      className="bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2"
-                      initial={{ scale: 0.9, opacity: 0.8 }}
-                      animate={{ 
-                        scale: [0.9, 1.05, 0.9],
-                        opacity: [0.8, 1, 0.8],
-                      }}
-                      transition={{ 
-                        repeat: Infinity, 
-                        duration: 1.5,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <motion.div
-                        animate={{ opacity: [0.5, 1, 0.5] }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                      >
-                        <FaCircle className="text-xs" />
-                      </motion.div>
-                      <span className="font-bold text-sm">{service.ongoingText || "LIVE NOW"}</span>
-                    </motion.div>
-                  )}
-                </div>
-
-                <div className="relative z-10">
-                  <p className="text-base text-primary-700 leading-relaxed mb-4">
-                    {service.description}
-                  </p>
-
-                  {service.verse && (
-                    <div className="mb-4 p-4 bg-primary-50 rounded-xl">
-                      <p className="text-sm text-primary-700 italic font-medium">
-                        {service.verse}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {service.schedule && service.schedule.length > 0 && (
-                  <div className="mb-4 relative z-10">
-                    <h4 className="text-base font-bold text-primary-700 mb-3">Schedule:</h4>
-                    <div className="flex flex-wrap gap-3">
-                      {service.schedule.map((scheduleItem, idx) => (
-                        <motion.span 
-                          key={idx} 
-                          className="text-sm bg-gradient-to-r from-primary-100 to-primary-200 text-primary-800 px-4 py-2 rounded-full shadow-sm"
-                          whileHover={{ scale: 1.05, y: -2 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          {scheduleItem}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {service.title.toLowerCase().includes('sunday') && (
-                  <div className="relative z-10">
-                    <div className="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
-                      <p className="text-sm text-blue-700 font-medium mb-2">
-                        📖 <strong>Bible Teaching:</strong> Early morning study before the main service
-                      </p>
-                      <p className="text-sm text-blue-700 font-medium">
-                        ⛪ <strong>Sunday Service:</strong> Main worship and fellowship
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            </motion.div>
-          );
-        })}
+              <ServiceCard service={service} isOngoing={ongoingServices[service._id]} />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

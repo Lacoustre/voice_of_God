@@ -175,7 +175,6 @@ const ViewAnnouncementModal = ({ announcement, onClose, onSave, onDelete }) => {
                       alert('Failed to update announcement');
                     }
                   } catch (error) {
-                    console.error('Error updating announcement:', error);
                     alert('Error updating announcement');
                   } finally {
                     setIsSaving(false);

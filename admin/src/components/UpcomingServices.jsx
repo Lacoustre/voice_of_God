@@ -23,7 +23,6 @@ const UpcomingServices = () => {
         setServices(data.services.slice(0, 3));
       }
     } catch (err) {
-      console.error("Error fetching services:", err);
     } finally {
       setLoading(false);
     }

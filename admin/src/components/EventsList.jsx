@@ -28,7 +28,6 @@ const EventsList = ({ events: propEvents }) => {
 
   const fetchEvents = async (retryCount = 0) => {
     try {
-      console.log(`Fetching events from: ${API_BASE_URL}/events`);
       const res = await fetch(`${API_BASE_URL}/events`);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -38,12 +37,10 @@ const EventsList = ({ events: propEvents }) => {
       if (!contentType || !contentType.includes('application/json')) {
         // Retry once for Render cold starts
         if (retryCount === 0) {
-          console.log('Non-JSON response received, retrying after delay...');
           await new Promise(resolve => setTimeout(resolve, 3000));
           return fetchEvents(1);
         }
         const text = await res.text();
-        console.error('Non-JSON response:', text.substring(0, 100) + '...');
         throw new Error('Server did not return JSON.');
       }
 
@@ -70,7 +67,6 @@ const EventsList = ({ events: propEvents }) => {
 
       setEvents(topThree);
     } catch (error) {
-      console.error("Error fetching events:", error);
       setToast({ message: "Error fetching events", type: "error" });
     }
   };

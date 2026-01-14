@@ -64,7 +64,6 @@ const Ministries = () => {
         }
       }
     } catch (error) {
-      console.error("Error fetching ministries:", error);
       toast.error("Error loading ministries: " + error.message);
       
       // Fallback to default ministries on error
@@ -130,7 +129,6 @@ const Ministries = () => {
         setMinistries(prev => prev.filter(ministry => ministry.id !== id && ministry.$id !== id));
       }
     } catch (error) {
-      console.error("Error deleting ministry:", error);
       toast.error(`Error deleting ministry: ${error.message}`);
       // Update UI optimistically even if API fails
       setMinistries(prev => prev.filter(ministry => ministry.id !== id && ministry.$id !== id));
@@ -188,7 +186,6 @@ const Ministries = () => {
         setShowModal(false);
       }
     } catch (error) {
-      console.error(`Error ${currentMinistry ? "updating" : "adding"} ministry:`, error);
       toast.error(`Error ${currentMinistry ? "updating" : "adding"} ministry: ${error.message}`);
       
       // Update UI optimistically even if API fails

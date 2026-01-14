@@ -138,13 +138,11 @@ const MediaPage = () => {
   };
 
   const handleTogglePublish = async (item, target) => {
-    console.log('handleTogglePublish called:', { item: item.$id, target, currentPublished: item.published });
     setActionLoading(true);
     const newPublishedState = !item.published;
     
     try {
       const result = await updateMedia(item.$id, target, newPublishedState);
-      console.log('updateMedia result:', result);
       
       if (result.success) {
         showToast(`Media ${newPublishedState ? "published" : "unpublished"}`);
@@ -157,13 +155,10 @@ const MediaPage = () => {
               : mediaItem
           )
         }));
-        console.log('Local state updated');
       } else {
-        console.error('Update failed:', result.error);
         showToast(`Failed to update media: ${result.error || 'Unknown error'}`, 'error');
       }
     } catch (error) {
-      console.error('Error in handleTogglePublish:', error);
       showToast(`Error updating media: ${error.message}`, 'error');
     }
     setActionLoading(false);
@@ -244,16 +239,46 @@ const MediaPage = () => {
         <h2 className="text-3xl font-bold text-indigo-800">Media Management</h2>
         <button
           onClick={() => setShowUpload(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition text-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white hover:bg-purple-700 transition text-sm"
         >
           <Image size={16} /> Upload Media
         </button>
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center gap-4 mt-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="text-gray-600">Loading media...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border-r md:pr-4">
+            <h3 className="text-xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+              <Image size={20} className="text-indigo-600" />
+              Top Carousel
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-gray-200 border rounded-lg shadow w-full h-64 animate-pulse">
+                  <div className="w-full h-48 bg-gray-300"></div>
+                  <div className="p-3">
+                    <div className="h-4 bg-gray-300 w-3/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="md:pl-4">
+            <h3 className="text-xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+              <Image size={20} className="text-indigo-600" />
+              Donation Carousel
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-gray-200 border rounded-lg shadow w-full h-64 animate-pulse">
+                  <div className="w-full h-48 bg-gray-300"></div>
+                  <div className="p-3">
+                    <div className="h-4 bg-gray-300 w-3/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -308,7 +333,7 @@ const MediaPage = () => {
             type="file"
             multiple
             onChange={handleImageUpload}
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border px-3 py-2"
           />
 
           <div className="grid grid-cols-3 gap-2">
@@ -331,7 +356,7 @@ const MediaPage = () => {
           </div>
 
           <button 
-            className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center gap-2"
+            className="w-full bg-purple-600 text-white py-3 flex items-center justify-center gap-2"
             disabled={actionLoading}
           >
             {actionLoading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}

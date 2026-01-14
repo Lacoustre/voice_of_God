@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }) => {
           setUser(parsedUserData);
           setLoading(false); // Set loading to false immediately after setting user
         } catch (e) {
-          console.error('Error parsing stored user data:', e);
         }
       }
       
@@ -56,7 +55,6 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('lastUserFetchTime', now.toString());
           }
         } catch (error) {
-          console.log('Failed to fetch user data, but keeping authenticated');
         }
       }
     } else {
@@ -72,13 +70,11 @@ export const AuthProvider = ({ children }) => {
     try {
       // Skip fetching user data if userId is not valid
       if (!userId) {
-        console.log('No userId provided, skipping user data fetch');
         return getUserDataFromStorage();
       }
       
       const token = localStorage.getItem('authToken');
       if (!token) {
-        console.log('No auth token found, skipping user data fetch');
         return getUserDataFromStorage();
       }
       
@@ -86,7 +82,6 @@ export const AuthProvider = ({ children }) => {
       // This is a temporary solution until the backend is fixed
       const storedUserData = getUserDataFromStorage();
       if (storedUserData) {
-        console.log('Using stored user data instead of API call');
         return storedUserData;
       }
       
@@ -100,15 +95,12 @@ export const AuthProvider = ({ children }) => {
           const userData = await res.json();
           return userData;
         } else {
-          console.log(`Failed to fetch user data: ${res.status}`);
           return null;
         }
       } catch (apiError) {
-        console.error('API error fetching user data:', apiError);
         return null;
       }
     } catch (error) {
-      console.error('Error in fetchUserData:', error);
       return getUserDataFromStorage();
     }
   };
@@ -120,7 +112,6 @@ export const AuthProvider = ({ children }) => {
       try {
         return JSON.parse(storedUserData);
       } catch (e) {
-        console.error('Error parsing stored user data:', e);
       }
     }
     return null;
@@ -161,7 +152,6 @@ export const AuthProvider = ({ children }) => {
 
   const showToast = (message, type = 'success') => {
     // This will be handled by individual components
-    console.log(`Toast: ${type} - ${message}`);
   };
 
   const logout = () => {
@@ -206,7 +196,6 @@ export const AuthProvider = ({ children }) => {
       try {
         await fetchUserData(user.$id);
       } catch (error) {
-        console.error('Failed to refresh user data:', error);
       }
     }
   };
@@ -227,7 +216,6 @@ export const AuthProvider = ({ children }) => {
         try {
           data = JSON.parse(text);
         } catch (e) {
-          console.error('Error parsing response:', e);
         }
       }
       
@@ -260,7 +248,6 @@ export const AuthProvider = ({ children }) => {
         try {
           data = JSON.parse(text);
         } catch (e) {
-          console.error('Error parsing response:', e);
         }
       }
       

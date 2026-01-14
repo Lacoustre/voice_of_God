@@ -35,43 +35,44 @@ const AdminManagement = () => {
   const newFileInputRef = useRef();
   const editFileInputRef = useRef();
 
-  const showToast = (message, type = 'success') => {
+  const showToast = (message, type = "success") => {
     setToast({ message, type });
   };
 
   // Use a ref to track if we've already fetched admins
   const hasFetchedRef = useRef(false);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       // Only fetch if we haven't already
-      if (!hasFetchedRef.current && typeof fetchAdmins === 'function') {
+      if (!hasFetchedRef.current && typeof fetchAdmins === "function") {
         hasFetchedRef.current = true;
         try {
           const result = await fetchAdmins();
           if (!result.success) {
-            console.error('Failed to fetch admins:', result.error);
-            showToast('Failed to load admins: ' + result.error, 'error');
+            showToast("Failed to load admins: " + result.error, "error");
           }
         } catch (err) {
-          console.error('Exception in fetchAdmins:', err);
-          showToast('Error loading admins: ' + err.message, 'error');
+          showToast("Error loading admins: " + err.message, "error");
           hasFetchedRef.current = false; // Reset so we can try again
         }
       }
     };
-    
+
     fetchData();
   }, []); // Empty dependency array to run only once on mount
 
   const handleCreateAdmin = async () => {
     try {
       const file = newFileInputRef.current.files[0];
-      if (!file) return showToast("Please upload a profile image.", 'error');
+      if (!file) return showToast("Please upload a profile image.", "error");
 
       const uploadResult = await uploadFile(file);
       if (!uploadResult.success) {
-        return showToast("Failed to upload image: " + uploadResult.error, 'error');
+        return showToast(
+          "Failed to upload image: " + uploadResult.error,
+          "error"
+        );
       }
 
       const result = await createAdmin({
@@ -93,10 +94,10 @@ const AdminManagement = () => {
           dateofbirth: "",
         });
       } else {
-        showToast("Failed to create admin: " + result.error, 'error');
+        showToast("Failed to create admin: " + result.error, "error");
       }
     } catch (err) {
-      showToast("Failed to create admin: " + err.message, 'error');
+      showToast("Failed to create admin: " + err.message, "error");
     }
   };
 
@@ -113,7 +114,7 @@ const AdminManagement = () => {
       }
       showToast("Profile image uploaded successfully!");
     } else {
-      showToast("Failed to upload profile image: " + result.error, 'error');
+      showToast("Failed to upload profile image: " + result.error, "error");
     }
   };
 
@@ -136,10 +137,10 @@ const AdminManagement = () => {
         setShowEditModal(false);
         setEditingAdmin(null);
       } else {
-        showToast("Failed to update admin: " + result.error, 'error');
+        showToast("Failed to update admin: " + result.error, "error");
       }
     } catch (err) {
-      showToast("Failed to update admin: " + err.message, 'error');
+      showToast("Failed to update admin: " + err.message, "error");
     }
   };
 
@@ -151,13 +152,12 @@ const AdminManagement = () => {
         showToast("Admin deleted successfully!");
         setShowDeleteConfirm(null);
       } else {
-        showToast("Failed to delete admin: " + result.error, 'error');
+        showToast("Failed to delete admin: " + result.error, "error");
       }
     } finally {
       setIsDeleting(false);
     }
   };
-
 
   return (
     <div className="p-6 bg-white rounded-xl shadow border h-full">
@@ -173,21 +173,34 @@ const AdminManagement = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {loading ? (
-          <div className="col-span-full flex flex-col items-center gap-4 mt-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-            <p className="text-gray-600">Loading admins...</p>
-          </div>
-        ) :  !admins || admins.length === 0 ? (
+          <>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div
+                key={i}
+                className="border shadow-sm p-4 bg-gray-50 animate-pulse"
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-16 h-16 bg-gray-300"></div>
+                  <div className="flex-1">
+                    <div className="h-3 bg-gray-300 w-20 mb-2"></div>
+                    <div className="h-4 bg-gray-300 w-32 mb-2"></div>
+                    <div className="h-3 bg-gray-300 w-20 mb-1"></div>
+                    <div className="h-4 bg-gray-300 w-28"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : !admins || admins.length === 0 ? (
           <div className="col-span-full flex justify-center items-center mt-12">
             <p className="text-gray-500">No admins found.</p>
           </div>
-        ) :
-        (
+        ) : (
           admins.map((admin, index) => (
             <div
               key={admin.$id || `admin-${index}`}
               onClick={() => setSelectedAdmin(admin)}
-              className="border rounded-lg shadow-sm p-4 bg-gray-50 hover:shadow-md cursor-pointer transition-all"
+              className="border shadow-sm p-4 bg-gray-50 cursor-pointer transition-all"
             >
               <div className="flex items-center gap-4 mb-3">
                 <img
@@ -288,7 +301,10 @@ const AdminManagement = () => {
 
       {selectedAdmin && (
         <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center px-4">
-          <div className="bg-white w-full max-w-3xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto font-sans relative" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+          <div
+            className="bg-white w-full max-w-3xl shadow-lg p-6 max-h-[90vh] overflow-y-auto font-sans relative"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
             <div className="text-center mb-6 relative">
               <h2 className="text-2xl font-semibold text-gray-800">
                 Admin Details
@@ -321,41 +337,46 @@ const AdminManagement = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-gray-700">
               <div>
                 <label className="block font-medium mb-1">Name</label>
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {selectedAdmin.name}
                 </div>
               </div>
               <div>
                 <label className="block font-medium mb-1">Email</label>
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {selectedAdmin.email}
                 </div>
               </div>
               <div>
                 <label className="block font-medium mb-1">Username</label>
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {selectedAdmin.username}
                 </div>
               </div>
               <div>
                 <label className="block font-medium mb-1">Phone</label>
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {selectedAdmin.phone}
                 </div>
               </div>
               <div>
                 <label className="block font-medium mb-1">Date of Birth</label>
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
-                  {selectedAdmin.dateofbirth ? new Date(selectedAdmin.dateofbirth).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }) : 'Not specified'}
+                <div className="bg-gray-100 px-3 py-2">
+                  {selectedAdmin.dateofbirth
+                    ? new Date(selectedAdmin.dateofbirth).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )
+                    : "Not specified"}
                 </div>
               </div>
               <div>
                 <label className="block font-medium mb-1">Address</label>
-                <div className="bg-gray-100 px-3 py-2 rounded-md">
+                <div className="bg-gray-100 px-3 py-2">
                   {selectedAdmin.address}
                 </div>
               </div>
@@ -367,7 +388,7 @@ const AdminManagement = () => {
                   setShowDeleteConfirm(selectedAdmin.$id);
                   setSelectedAdmin(null);
                 }}
-                className="flex items-center gap-2 text-sm text-red-600 px-3 py-2 rounded hover:bg-red-50"
+                className="flex items-center gap-2 text-sm text-red-600 px-3 py-2 hover:bg-red-50"
               >
                 <Trash2 size={16} />
                 Delete
@@ -378,7 +399,7 @@ const AdminManagement = () => {
                   setShowEditModal(true);
                   setSelectedAdmin(null);
                 }}
-                className="flex items-center gap-2 text-sm text-blue-600 px-3 py-2 rounded hover:bg-blue-50"
+                className="flex items-center gap-2 text-sm text-blue-600 px-3 py-2 hover:bg-blue-50"
               >
                 <Pencil size={16} />
                 Edit
@@ -491,13 +512,13 @@ const AdminManagement = () => {
                 onClick={() => handleDeleteAdmin(showDeleteConfirm)}
                 className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? "Deleting..." : "Delete"}
               </LoadingButton>
             </div>
           </div>
         </div>
       )}
-      
+
       {toast && (
         <Toast
           message={toast.message}

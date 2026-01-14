@@ -38,7 +38,6 @@ const AnnouncementPage = () => {
       const data = await response.json();
       setAnnouncements(data.data || []);
     } catch (error) {
-      console.error('Error fetching announcements:', error);
     }
   };
 
@@ -71,7 +70,6 @@ const AnnouncementPage = () => {
         showToast('Failed to create announcement', 'error');
       }
     } catch (error) {
-      console.error('Error creating announcement:', error);
       showToast('Error creating announcement', 'error');
     } finally {
       setLoading(false);
@@ -107,7 +105,7 @@ const AnnouncementPage = () => {
         <h2 className="text-2xl font-bold text-gray-800">Announcements</h2>
         <button
           onClick={() => setShowModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white hover:bg-orange-700 transition text-sm"
         >
           <FileText size={16} /> Create Announcement
         </button>
@@ -245,7 +243,7 @@ const AnnouncementPage = () => {
           <input
             type="text"
             placeholder="Announcement Title"
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border px-3 py-2"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             required
@@ -269,7 +267,7 @@ const AnnouncementPage = () => {
           )}
           <textarea
             placeholder="Announcement Message"
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border px-3 py-2"
             value={formData.content}
             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
             required
@@ -277,7 +275,7 @@ const AnnouncementPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-orange-600 text-white py-3 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-orange-600 text-white py-3 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             {loading ? "Creating..." : "Create"}
@@ -320,7 +318,6 @@ const AnnouncementPage = () => {
                 showToast("Failed to delete announcement", 'error');
               }
             } catch (error) {
-              console.error("Error deleting announcement:", error);
               showToast("Failed to delete announcement", 'error');
             }
           }}

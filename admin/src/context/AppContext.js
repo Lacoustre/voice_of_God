@@ -19,7 +19,12 @@ export const AppProvider = ({ children }) => {
     process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
   const getAuthToken = () => {
-    return localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return null;
+    }
+    // Remove any quotes or extra whitespace that might have been added
+    return token.trim().replace(/^"|"$/g, '');
   };
 
   const fetchMedia = async () => {
@@ -38,7 +43,6 @@ export const AppProvider = ({ children }) => {
       const data = await response.json();
       return { success: true, data };
     } catch (error) {
-      console.error("Error fetching media:", error);
       return { success: false, error: error.message };
     }
   };
@@ -49,7 +53,6 @@ export const AppProvider = ({ children }) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      console.log('Uploading file to:', `${API_BASE_URL}/api/media/upload-file`);
       
       const response = await fetch(`${API_BASE_URL}/api/media/upload-file`, {
         method: "POST",
@@ -61,15 +64,12 @@ export const AppProvider = ({ children }) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`File upload error! Status: ${response.status}, Response: ${errorText}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('File upload successful:', data);
       return { success: true, url: data.url, fileId: data.fileId };
     } catch (error) {
-      console.error("Error uploading file:", error);
       return { success: false, error: error.message };
     }
   };
@@ -98,7 +98,6 @@ export const AppProvider = ({ children }) => {
       const data = await response.json();
       return { success: true, data };
     } catch (error) {
-      console.error("Error uploading media:", error);
       return { success: false, error: error.message };
     }
   };
@@ -126,7 +125,6 @@ export const AppProvider = ({ children }) => {
       const data = await response.json();
       return { success: true, data };
     } catch (error) {
-      console.error("Error updating media:", error);
       return { success: false, error: error.message };
     }
   };
@@ -153,7 +151,6 @@ export const AppProvider = ({ children }) => {
       const data = await response.json();
       return { success: true, data };
     } catch (error) {
-      console.error("Error deleting media:", error);
       return { success: false, error: error.message };
     }
   };
@@ -177,7 +174,6 @@ export const AppProvider = ({ children }) => {
       const data = await response.json();
       return { success: true, data };
     } catch (error) {
-      console.error("Error testing email service:", error);
       return { success: false, error: error.message };
     }
   };
@@ -189,13 +185,11 @@ export const AppProvider = ({ children }) => {
       const token = getAuthToken();
       
       if (!token) {
-        console.error("No auth token found");
         setAdmins([]);
         setLoading(false);
         return { success: false, error: "Authentication token missing", admins: [] };
       }
       
-      console.log(`Fetching admins from: ${API_BASE_URL}/api/admin/get`);
       
       const response = await fetch(`${API_BASE_URL}/api/admin/get`, {
         headers: {
@@ -205,17 +199,23 @@ export const AppProvider = ({ children }) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`HTTP error! status: ${response.status}, response: ${errorText}`);
+        
+        // If token is invalid, clear it and redirect to login
+        if (response.status === 401) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('userData');
+          window.location.href = '/login';
+        }
+        
         throw new Error(`HTTP error! status: ${response.status}, response: ${errorText}`);
       }
 
       const data = await response.json();
-      console.log("Admins fetched successfully:", data);
       setAdmins(data.admins || []);
       setLoading(false);
       return { success: true, admins: data.admins || [] };
     } catch (error) {
-      console.error("Error fetching admins:", error);
       setAdmins([]);
       setLoading(false);
       return { success: false, error: error.message, admins: [] };
@@ -246,7 +246,6 @@ export const AppProvider = ({ children }) => {
       
       return { success: true, admin: data };
     } catch (error) {
-      console.error("Error creating admin:", error);
       return { success: false, error: error.message };
     }
   };
@@ -278,7 +277,6 @@ export const AppProvider = ({ children }) => {
       
       return { success: true, admin: data };
     } catch (error) {
-      console.error("Error updating admin:", error);
       return { success: false, error: error.message };
     }
   };
@@ -302,7 +300,6 @@ export const AppProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      console.error("Error deleting admin:", error);
       return { success: false, error: error.message };
     }
   };

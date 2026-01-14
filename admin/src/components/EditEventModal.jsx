@@ -234,7 +234,6 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
                       setShowConfirmDelete(false);
                       onClose();
                     } catch (err) {
-                      console.error(err);
                       setToast({
                         message: "Failed to delete event",
                         type: "error",

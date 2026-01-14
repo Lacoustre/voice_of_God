@@ -156,7 +156,6 @@ const MembersPage = () => {
       }
     } catch (err) {
       showToast('Failed to fetch members', 'error');
-      console.error('Error fetching members:', err);
     } finally {
       setLoading(false);
     }
@@ -246,7 +245,6 @@ const MembersPage = () => {
       setShowAddModal(false);
     } catch (err) {
       showToast('Failed to create member', 'error');
-      console.error('Error creating member:', err);
     } finally {
       setSubmitting(false);
     }
@@ -521,7 +519,6 @@ const MembersPage = () => {
               showToast('Member updated successfully!');
             } catch (err) {
               showToast('Failed to update member', 'error');
-              console.error('Error updating member:', err);
             } finally {
               setUpdatingMemberId(null);
             }
@@ -535,7 +532,6 @@ const MembersPage = () => {
               showToast('Member deleted successfully!');
             } catch (err) {
               showToast('Failed to delete member', 'error');
-              console.error('Error deleting member:', err);
             } finally {
               setDeletingMemberId(null);
             }

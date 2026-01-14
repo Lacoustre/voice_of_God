@@ -62,7 +62,6 @@ const MinistryModal = ({ ministry, onClose, onSave }) => {
     try {
       await onSave(formData);
     } catch (error) {
-      console.error("Error saving ministry:", error);
     } finally {
       setLoading(false);
     }

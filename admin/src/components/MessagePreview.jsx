@@ -23,7 +23,6 @@ const MessagePreview = () => {
         setMessages(data.contacts.slice(0, 3));
       }
     } catch (err) {
-      console.error("Error fetching messages:", err);
     } finally {
       setLoading(false);
     }

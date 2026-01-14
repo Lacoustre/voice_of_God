@@ -12,35 +12,31 @@ const API_BASE_URL =
 const ServiceCard = ({ service, onClick }) => (
   <div
     onClick={onClick}
-    className="cursor-pointer border bg-white transition overflow-hidden flex flex-col relative h-96"
-    style={{
-      backgroundImage: `url(${service.image})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    }}
+    className="group cursor-pointer border bg-black transition-all duration-300 overflow-hidden flex flex-col relative h-96 hover:-translate-y-2 hover:shadow-2xl"
   >
-    {/* Overlay */}
-    <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+    {/* Background Image */}
+    <div 
+      className="absolute inset-0 transition-all duration-500 group-hover:scale-50 group-hover:translate-x-full group-hover:translate-y-full group-hover:opacity-0"
+      style={{
+        backgroundImage: `url(${service.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    />
+    
+    {/* Gradient Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/20 group-hover:from-black/20 group-hover:to-black/5 transition-all duration-500"></div>
 
     {/* Content */}
-    <div className="p-4 flex flex-col space-y-2 text-left relative z-10 mt-auto">
+    <div className="p-4 flex flex-col space-y-2 text-left relative z-10">
       {/* Title */}
-      <p className="text-sm text-white">
-        <span className="font-semibold">Title:</span> {service.title}
+      <p className="text-lg text-white font-bold transition-all duration-500 group-hover:-translate-y-2">
+        {service.title}
       </p>
-
-      {/* Schedule */}
-      {service.schedule && service.schedule.length > 0 && (
-        <p className="text-sm text-white">
-          <span className="font-semibold">Schedule:</span>{" "}
-          {service.schedule.join(", ")}
-        </p>
-      )}
-
-      {/* Description */}
-      <p className="text-sm text-white">
-        <span className="font-semibold">Description:</span>{" "}
-        <span className="italic text-indigo-300">{service.description}</span>
+      
+      {/* Description - Hidden by default, slides in on hover */}
+      <p className="text-sm text-white opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+        {service.description}
       </p>
     </div>
   </div>
@@ -81,7 +77,6 @@ const ServicesPage = () => {
       }
     } catch (err) {
       showToast("Failed to fetch services", "error");
-      console.error("Error fetching services:", err);
     } finally {
       setLoading(false);
     }
@@ -151,7 +146,6 @@ const ServicesPage = () => {
         schedule: updatedService.schedule?.filter((s) => s.trim()) || [],
       };
 
-      console.log("Sending service data to backend:", serviceData);
 
       if (updatedService.$id || updatedService.id) {
         const serviceId = updatedService.$id || updatedService.id;
@@ -171,7 +165,6 @@ const ServicesPage = () => {
       }
     } catch (err) {
       showToast("Failed to save service", "error");
-      console.error("Error saving service:", err);
     } finally {
       setSubmitting(false);
     }
@@ -184,7 +177,6 @@ const ServicesPage = () => {
       showToast("Service deleted successfully!");
     } catch (err) {
       showToast("Failed to delete service", "error");
-      console.error("Error deleting service:", err);
     }
   };
 
@@ -202,20 +194,26 @@ const ServicesPage = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow border border-gray-100 p-6 h-full">
+      <div className="bg-white shadow border border-gray-100 p-6 h-full">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Church Services</h2>
           <button
             disabled
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white cursor-not-allowed"
           >
             <Calendar size={18} />
             Schedule Service
           </button>
         </div>
-        <div className="flex flex-col items-center gap-4 mt-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="text-gray-600">Loading services...</p>
+        <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-6 max-h-[690px] overflow-y-auto pr-2 scrollbar-hide">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="border bg-black h-96 animate-pulse">
+              <div className="p-4">
+                <div className="h-6 bg-gray-700 w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-700 w-1/2"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -227,7 +225,7 @@ const ServicesPage = () => {
         <h2 className="text-2xl font-bold text-gray-800">Church Services</h2>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition"
         >
           <Calendar size={18} />
           Schedule Service

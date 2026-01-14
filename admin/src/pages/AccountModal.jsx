@@ -33,7 +33,6 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
 
   useEffect(() => {
     if (showAccountModal && user) {
-      console.log('Logged in user details:', user);
       
       // Format date to yyyy-MM-dd for input field
       let formattedDate = '';
@@ -74,7 +73,6 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
       toast.success('Profile image uploaded successfully!');
     } catch (err) {
       toast.error('Failed to upload profile image: ' + err.message);
-      console.error('Upload error:', err);
     }
   };
 
@@ -101,7 +99,6 @@ const AccountModal = ({ showAccountModal, setShowAccountModal }) => {
       logout();
       navigate("/login");
     } catch (err) {
-      console.error("Logout failed:", err);
     } finally {
       setLogoutLoading(false);
     }

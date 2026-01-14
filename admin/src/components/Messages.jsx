@@ -44,7 +44,6 @@ const MessagesPage = () => {
       setMessages(formattedMessages);
     } catch (err) {
       showToast('Failed to fetch messages', 'error');
-      console.error('Error fetching messages:', err);
     } finally {
       setLoading(false);
     }
@@ -81,7 +80,6 @@ const MessagesPage = () => {
       setReplyText("");
       showToast(`Reply sent to ${email} and message deleted`, "success");
     } catch (error) {
-      console.error('Error sending reply:', error);
       showToast("Failed to send reply. Message not deleted.", "error");
     } finally {
       setReplyLoading(false);
@@ -136,9 +134,30 @@ const MessagesPage = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Visitor Messages</h2>
         </div>
-        <div className="flex flex-col items-center gap-4 mt-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="text-gray-600">Loading messages...</p>
+        <div className="space-y-3 pr-2">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="bg-gray-50 p-4 rounded-lg border animate-pulse">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                  <div>
+                    <div className="h-4 bg-gray-300 w-40 mb-2"></div>
+                    <div className="h-4 bg-gray-300 w-32"></div>
+                  </div>
+                </div>
+                <div className="h-4 bg-gray-300 w-24"></div>
+              </div>
+              <div className="mb-3">
+                <div className="h-3 bg-gray-300 w-20 mb-2"></div>
+                <div className="h-4 bg-gray-300 w-full mb-2"></div>
+                <div className="h-4 bg-gray-300 w-3/4"></div>
+              </div>
+              <div className="flex gap-2 pt-3 border-t border-gray-200">
+                <div className="h-8 bg-gray-300 w-20 rounded-lg"></div>
+                <div className="h-8 bg-gray-300 w-28 rounded-lg"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

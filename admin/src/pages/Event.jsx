@@ -120,7 +120,6 @@ const EventsPage = () => {
 
       setEvents(data.events);
     } catch (err) {
-      console.error("Error fetching events:", err);
       showToast("Failed to fetch events", "error");
     } finally {
       setLoading(false);
@@ -210,7 +209,6 @@ const EventsPage = () => {
       showToast("Event updated!");
     } catch (err) {
       showToast(err.message || "Failed to update event", "error");
-      console.error("Update error:", err);
     }
   };
 
@@ -225,7 +223,6 @@ const EventsPage = () => {
       showToast("Event deleted!");
     } catch (err) {
       showToast("Failed to delete event", "error");
-      console.error(err);
     }
   };
 
@@ -305,7 +302,6 @@ const EventsPage = () => {
         setLocationSuggestions(suggestions);
         setShowLocationDropdown(suggestions.length > 0);
       } catch (err) {
-        console.error("Error fetching location suggestions:", err);
         setLocationSuggestions([]);
         setShowLocationDropdown(false);
       }

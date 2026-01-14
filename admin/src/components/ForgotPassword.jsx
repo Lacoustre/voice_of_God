@@ -66,7 +66,6 @@ const ForgotPassword = ({ onBack }) => {
         try {
           data = JSON.parse(text);
         } catch (e) {
-          console.error('Error parsing response:', e);
         }
       }
       

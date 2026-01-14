@@ -49,7 +49,6 @@ const SignIn = () => {
         setToast({ message: result.error || 'Login failed', type: 'error' });
       }
     } catch (err) {
-      console.error("Login failed:", err);
       setToast({ message: 'Login failed', type: 'error' });
     } finally {
       setSigningIn(false);

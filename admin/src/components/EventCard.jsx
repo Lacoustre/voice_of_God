@@ -26,7 +26,6 @@ const handleDelete = async () => {
     if (onDelete) onDelete(event.$id);
     setToast({ message: "Event deleted successfully", type: "success" });
   } catch (err) {
-    console.error(err);
     setToast({ message: err.message || "Delete failed", type: "error" });
   } finally {
     setIsDeleting(false);

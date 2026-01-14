@@ -24,7 +24,6 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
       setIsEditing(false);
       setIsChanged(false);
     } catch (error) {
-      console.error("Error updating member:", error);
     }
   };
 
@@ -35,7 +34,6 @@ const ViewMemberModal = ({ member, onClose, onUpdate, onDelete }) => {
       setShowConfirmDelete(false);
       onClose();
     } catch (error) {
-      console.error("Error deleting member:", error);
     } finally {
       setIsDeleting(false);
     }

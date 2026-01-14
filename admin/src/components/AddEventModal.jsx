@@ -107,7 +107,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
         const data = new FormData();
         data.append("file", file);
 
-        console.log(`Uploading file to: ${API_BASE_URL}/media/upload-file`);
         const res = await fetch(`${API_BASE_URL}/media/upload-file`, {
           method: "POST",
           body: data,
@@ -115,7 +114,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
 
         if (!res.ok) {
           const errorText = await res.text();
-          console.error('Upload error response:', errorText);
           throw new Error(`Image upload failed: ${res.status} ${res.statusText}`);
         }
         
@@ -130,7 +128,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
         }
       }
 
-      console.log(`Creating event at: ${API_BASE_URL}/events`);
       const response = await fetch(`${API_BASE_URL}/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -142,7 +139,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Event creation error:', errorText);
         throw new Error(`Event creation failed: ${response.status} ${response.statusText}`);
       }
       

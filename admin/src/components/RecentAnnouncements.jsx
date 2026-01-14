@@ -23,7 +23,6 @@ const RecentAnnouncements = () => {
         setAnnouncements(data.data.slice(0, 3));
       }
     } catch (err) {
-      console.error("Error fetching announcements:", err);
     } finally {
       setLoading(false);
     }

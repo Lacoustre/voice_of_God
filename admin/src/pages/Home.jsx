@@ -83,7 +83,6 @@ const ChurchAdminPanel = () => {
 
         setTimeout(() => setLoading(false), 1000);
       } catch (err) {
-        console.error("Failed to fetch dashboard data:", err);
         setLoading(false);
       }
     };

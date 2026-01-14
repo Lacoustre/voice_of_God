@@ -39,7 +39,6 @@ const EditServiceModal = ({ service, onClose, onSave, onDelete }) => {
       setShowConfirmDelete(false);
       onClose();
     } catch (error) {
-      console.error('Error deleting service:', error);
     } finally {
       setIsDeleting(false);
     }

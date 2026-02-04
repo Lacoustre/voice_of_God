@@ -48,8 +48,6 @@ const Footer = () => {
 
     setIsSubmittingMessage(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
       const response = await fetch("https://voice-of-god.onrender.com/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -81,8 +79,8 @@ const Footer = () => {
   return (
     <footer id="contact" className="bg-primary-900 text-white py-16 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-8">
-          <div className="mb-8 md:mb-0 md:max-w-xl">
+        <div className="flex flex-col lg:flex-row justify-between items-start mb-16 gap-6">
+          <div className="mb-8 lg:mb-0 lg:max-w-xs">
             <h3 className="text-3xl font-semibold tracking-tight mb-6 transform transition duration-500 ease-in-out hover:scale-105 text-white">
               New to Voice of God Ministries?
             </h3>
@@ -95,15 +93,10 @@ const Footer = () => {
             <p className="text-lg text-white leading-relaxed mb-4 font-bold">
               We invite you to join us..
             </p>
-            <Link to="/" onClick={scrollToTop}>
-              <div className="bg-primary-900 rounded-lg mt-10 p-2">
-                <img src={logo} alt="Logo" className="h-50 mt-6" />
-              </div>
-            </Link>
           </div>
 
-          <div className="flex flex-wrap gap-12 lg:gap-16 mb-8 md:mb-0 md:flex-1 md:justify-end">
-            <div className="min-w-[160px]">
+          <div className="flex flex-wrap gap-6 mb-8 lg:mb-0 lg:flex-1 lg:justify-end">
+            <div className="min-w-[120px]">
               <h4 className="font-bold text-xl mb-6 text-white">Quick Links</h4>
               <ul className="space-y-4">
                 <li><Link to="/" onClick={scrollToTop} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">HOME</span></Link></li>
@@ -114,24 +107,43 @@ const Footer = () => {
               </ul>
             </div>
 
-            <div className="min-w-[200px]">
+            <div className="min-w-[160px]">
               <h4 className="font-bold text-xl mb-6 text-white">Contact</h4>
               <ul className="space-y-4">
-                <li><a href="tel:8607263424" className="text-white hover:text-primary-200 flex items-center group"><FaPhone className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform">+1 (860) 726-3424</span></a></li>
-                <li><a href="mailto:INFO@THEVOGMINISTRIES.ORG" className="text-white hover:text-primary-200 flex items-center group"><FaEnvelope className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform break-all">INFO@THEVOGMINISTRIES.ORG</span></a></li>
-                <li><a href="https://maps.google.com/?q=52+Connecticut+Avenue+A+South+Windsor+CT+06074" target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary-200 flex items-center group"><FaMapMarkerAlt className="mr-2 text-white" /><span className="group-hover:translate-x-2 transition-transform">52 Connecticut Avenue, A<br />South Windsor, CT 06074</span></a></li>
+                <li>
+                  <a href="tel:8607263424" className="text-white hover:text-primary-200 group">
+                    <span className="text-xs text-white/70">Phone: </span>
+                    <span className="text-sm group-hover:translate-x-2 transition-transform">+1 (860) 726-3424</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:INFO@THEVOGMINISTRIES.ORG" className="text-white hover:text-primary-200 group">
+                    <span className="text-xs text-white/70">Email: </span>
+                    <span className="text-sm group-hover:translate-x-2 transition-transform break-all">INFO@THEVOGMINISTRIES.ORG</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://maps.google.com/?q=52+Connecticut+Avenue+A+South+Windsor+CT+06074" target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary-200 group">
+                    <span className="text-xs text-white/70">Address: </span>
+                    <span className="text-sm group-hover:translate-x-2 transition-transform">52 Connecticut Avenue, A South Windsor, CT 06074</span>
+                  </a>
+                </li>
               </ul>
+            </div>
 
-              <h1 className="text-white text-2xl font-bold mt-6">Send us a message</h1>
-
+            <div className="min-w-[160px]">
+              <h4 className="font-bold text-xl mb-6 text-white">Feedback</h4>
               <form onSubmit={handleSubmit} className="mt-6">
                 <div className="flex flex-col space-y-4">
-                  <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="p-2 rounded-lg bg-white/20 text-white text-center placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-white" required />
-                  <input type="tel" placeholder="Your phone" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="p-2 rounded-lg bg-white/20 text-white text-center placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-white" required />
-                  <textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && e.ctrlKey && handleSubmit(e)} className="p-2 rounded-lg bg-white/20 text-white text-center placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-white" rows="4" required />
-                  <button type="submit" disabled={isSubmittingMessage} className="p-2 px-4 border border-white bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all duration-300 shadow-md flex items-center justify-center gap-2">
-                    {isSubmittingMessage && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
-                    {isSubmittingMessage ? "Sending..." : "Send Message"}
+                  <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="p-2 rounded-lg bg-white/20 text-white text-center placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-orange-500 border-2 border-orange-500" required />
+                  <input type="tel" placeholder="Your phone" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)} className="p-2 rounded-lg bg-white/20 text-white text-center placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-orange-500 border-2 border-orange-500" required />
+                  <textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && e.ctrlKey && handleSubmit(e)} className="p-2 rounded-lg bg-white/20 text-white text-center placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-orange-500 border-2 border-orange-500" rows="4" required />
+                  <button type="submit" disabled={isSubmittingMessage} className="p-2 px-4 border border-white bg-white/20 text-white rounded-lg transition-all duration-300 shadow-md flex items-center justify-center gap-2 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-orange-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
+                    <span className="relative z-10">
+                      {isSubmittingMessage && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block mr-2"></div>}
+                      {isSubmittingMessage ? "Sending..." : "Send Message"}
+                    </span>
                   </button>
                 </div>
               </form>
@@ -143,13 +155,6 @@ const Footer = () => {
           <SocialIcon href="https://www.facebook.com/vogohenebaPK/" icon="facebook" label="Facebook" />
           <SocialIcon href="https://www.instagram.com/vogministries?igsh=eDV0YnJ3NTV5MzRi" icon="instagram" label="Instagram" />
           <SocialIcon href="https://www.youtube.com/@VoiceOfGodMinistries/streams" icon="youtube" label="YouTube" />
-        </div>
-
-        <div className="text-center mb-8">
-          <Link to="/join" onClick={scrollToTop} className="inline-flex items-center gap-2 px-6 py-3 bg-primary-700 text-white font-semibold rounded-xl hover:bg-primary-600 hover:shadow-lg hover:scale-105 transition-all duration-200">
-            <Heart size={20} />
-            Join Our Church Family
-          </Link>
         </div>
 
         <p className="text-center text-sm text-white opacity-80">

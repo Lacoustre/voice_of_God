@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Center placeholder text in inputs */
+/* Left align placeholder text in inputs */
 ::placeholder {
-  text-align: center;
+  text-align: left;
 }
 
 body {
@@ -32,4 +32,69 @@ code {
 
 .animate-marquee {
   animation: marquee 30s linear infinite;
+}
+
+/* Carousel slide animations */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.7s ease-in-out;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.7s ease-in-out;
+}
+
+.animate-slide-out-right {
+  animation: slide-out-right 0.7s ease-in-out;
+}
+
+.animate-slide-out-left {
+  animation: slide-out-left 0.7s ease-in-out;
+}
+
+.hover\:scale-103:hover {
+  transform: scale(1.03);
 }

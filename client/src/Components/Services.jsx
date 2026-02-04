@@ -231,18 +231,14 @@ const ServicesPage = () => {
   if (loading) {
     return (
       <section className="py-24 px-6" id="services">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto justify-items-center">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="w-full h-full max-w-sm bg-white/90 rounded-3xl shadow-2xl overflow-hidden animate-pulse" style={{ aspectRatio: "1/1.2" }}>
-              <div className="h-72 bg-gray-300"></div>
-              <div className="p-8 space-y-4">
-                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+        <div className="flex justify-center px-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full justify-items-center">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="w-full h-full max-w-sm border bg-black overflow-hidden animate-pulse" style={{ aspectRatio: "1/1.2" }}>
+                <div className="h-full bg-gray-800" />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     );

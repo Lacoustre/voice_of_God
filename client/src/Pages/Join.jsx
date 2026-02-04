@@ -132,8 +132,6 @@ const MemberRegistrationPage = () => {
     try {
       setLoading(true);
       
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
       let imageUrl = "";
       if (member.imageFile) {
         imageUrl = await uploadImage(member.imageFile);
@@ -180,7 +178,7 @@ const MemberRegistrationPage = () => {
   const progress = step === 1 ? 50 : 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-white py-12 px-4">
       {/* Background Decorations */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-slate-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
@@ -231,7 +229,7 @@ const MemberRegistrationPage = () => {
         </div>
 
         {/* Main Form */}
-        <div className="bg-gradient-to-br from-indigo-50/80 via-white/80 to-purple-50/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+        <div className="rounded-3xl shadow-2xl overflow-hidden">
           <div className="p-8 md:p-12">
             <form onSubmit={handleSubmit}>
             {step === 1 && (

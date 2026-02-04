@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Apostle_PK from "../assets/Apostle_PK.jpg";
 import Pastor_Geina from "../assets/Pastor_Geina.jpg";
@@ -40,60 +40,117 @@ const leaders = [
 ];
 
 const LeadershipPage = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [previousSlide, setPreviousSlide] = useState(null);
+  const [direction, setDirection] = useState('right');
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleNext = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setPreviousSlide(currentSlide);
+    setDirection('right');
+    setCurrentSlide((prev) => (prev + 1) % leaders.length);
+    setTimeout(() => {
+      setPreviousSlide(null);
+      setIsAnimating(false);
+    }, 700);
+  };
+
+  const handlePrev = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setPreviousSlide(currentSlide);
+    setDirection('left');
+    setCurrentSlide((prev) => (prev - 1 + leaders.length) % leaders.length);
+    setTimeout(() => {
+      setPreviousSlide(null);
+      setIsAnimating(false);
+    }, 700);
+  };
+
   return (
-    <section className="py-0 bg-church-gradient">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
-        viewport={{ once: true }}
-        className="text-center mb-16"
-      >
-        <motion.p 
-          className="text-xl text-primary-600 max-w-3xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          viewport={{ once: true }}
-        >
-          Meet the dedicated leaders guiding our ministry with faith and vision.
-        </motion.p>
-      </motion.div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 w-full px-0">
-        {leaders.map((leader, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl text-center p-8 cursor-pointer group relative overflow-hidden"
-            whileHover={{ 
-              y: -12, 
-              scale: 1.03, 
-              boxShadow: "0 25px 50px rgba(0,0,0,0.15)",
-              borderColor: "rgba(71, 85, 105, 0.3)"
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-100/20 to-primary-200/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <motion.div 
-              className="w-36 h-36 mx-auto mb-6 overflow-hidden rounded-full relative z-10"
-              whileHover={{ scale: 1.1, rotate: 2 }}
-              transition={{ type: "spring", stiffness: 250, damping: 20 }}
-            >
-              <img
-                src={leader.image}
-                alt={leader.name}
-                className="w-full h-full object-cover object-top transition-colors duration-300"
-              />
-            </motion.div>
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-primary-800 mb-2 group-hover:text-primary-900 transition-colors">{leader.name}</h3>
-              <p className="text-sm text-primary-600 italic mb-4 font-semibold">{leader.title}</p>
-              <p className="text-sm text-primary-700 leading-relaxed">{leader.bio}</p>
+    <section className="bg-white pt-32 py-20">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Our Leadership</h2>
+        
+        <div className="relative">
+          {/* Current Slide */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+            {/* Left Side - Image */}
+            <div className="md:col-span-7">
+              <div 
+                key={`current-${currentSlide}`}
+                className={`h-96 w-full overflow-hidden ${
+                  direction === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left'
+                }`}
+              >
+                <img
+                  src={leaders[currentSlide].image}
+                  alt={leaders[currentSlide].name}
+                  className="w-full h-full object-cover object-top transition-transform duration-300 hover:scale-103"
+                />
+              </div>
             </div>
-          </motion.div>
-        ))}
+            
+            {/* Right Side - Content */}
+            <div className="md:col-span-5 flex flex-col justify-center text-left">
+              <div 
+                key={`content-${currentSlide}`}
+                className={direction === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left'}
+              >
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">{leaders[currentSlide].name}</h3>
+                <p className="text-lg text-gray-600 mb-2">{leaders[currentSlide].title}</p>
+                <p className="text-gray-700 leading-relaxed mb-6">{leaders[currentSlide].bio}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Previous Slide (Exiting) */}
+          {previousSlide !== null && previousSlide !== currentSlide && (
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                <div className="md:col-span-7">
+                  <div 
+                    className={`h-96 w-full overflow-hidden ${
+                      direction === 'right' ? 'animate-slide-out-left' : 'animate-slide-out-right'
+                    }`}
+                  >
+                    <img
+                      src={leaders[previousSlide].image}
+                      alt={leaders[previousSlide].name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+                <div className="md:col-span-5 flex flex-col justify-center text-left">
+                  <div className={direction === 'right' ? 'animate-slide-out-left' : 'animate-slide-out-right'}>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4">{leaders[previousSlide].name}</h3>
+                    <p className="text-lg text-gray-600 mb-2">{leaders[previousSlide].title}</p>
+                    <p className="text-gray-700 leading-relaxed mb-6">{leaders[previousSlide].bio}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Navigation */}
+        <div className="flex items-center justify-end gap-4 mt-8">
+          <button
+            onClick={handlePrev}
+            className="w-10 h-10 bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition-colors"
+          >
+            ❮
+          </button>
+          <span className="text-lg font-medium">{currentSlide + 1}/{leaders.length}</span>
+          <button
+            onClick={handleNext}
+            className="w-10 h-10 bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center transition-colors"
+          >
+            ❯
+          </button>
+        </div>
       </div>
     </section>
   );

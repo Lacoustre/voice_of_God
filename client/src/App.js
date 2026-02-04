@@ -2,24 +2,22 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Home from './Pages/Home';
-import Join from './Pages/Join';
-import Donation from './Pages/Donation';
-import QRCodePage from './Pages/QRCode';
-import Ministries from './Pages/Ministries';
-import YouthMinistryPage from './Pages/YouthMinistry';
-import WomensMinistryPage from './Pages/WomensMinistry';
-import CharityFoundationPage from './Pages/CharityFoundation';
-import ChosenGenerationPage from './Pages/ChosenGeneration';
-import MensMinistryPage from './Pages/MensMinistry';
-import ChildrensMinistryPage from './Pages/ChildrensMinistry';
+import Home from './Pages/Home.jsx';
+import Donation from './Pages/Donation.jsx';
+import QRCodePage from './Pages/QRCode.jsx';
+import Ministries from './Pages/Ministries.jsx';
+import YouthMinistryPage from './Pages/YouthMinistry.jsx';
+import WomensMinistryPage from './Pages/WomensMinistry.jsx';
+import CharityFoundationPage from './Pages/CharityFoundation.jsx';
+import ChosenGenerationPage from './Pages/ChosenGeneration.jsx';
+import MensMinistryPage from './Pages/MensMinistry.jsx';
+import ChildrensMinistryPage from './Pages/ChildrensMinistry.jsx';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/join" element={<Join />} />
         <Route path="/donation" element={<Donation />} />
         <Route path="/qr" element={<QRCodePage />} />
         <Route path="/ministries" element={<Ministries />} />

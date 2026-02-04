@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ChevronDown, Heart, Menu, X } from "lucide-react";
 import logo from "../assets/modified_logo.png";
 import CarouselComponent from "./CarouselComponent";
-import { Heart } from "lucide-react";
 import { scrollToSection } from "./ScrollToSection";
+import JoinModal from "./JoinModal";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [showMinistriesDropdown, setShowMinistriesDropdown] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
   
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'leadership', 'services', 'ministries', 'events', 'contact'];
+      setScrolled(window.scrollY > 50);
+      setShowMinistriesDropdown(false);
       
-      // Find the section that is currently in view
+      const sections = ['home', 'leadership', 'services', 'ministries', 'events', 'contact'];
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          // If the section is in the viewport (with some offset for navbar)
           if (rect.top <= 150 && rect.bottom >= 150) {
             setActiveSection(section);
             break;
@@ -29,277 +34,288 @@ export default function Navbar() {
       }
     };
     
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+    
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check on initial load
+    window.addEventListener('keydown', handleEscape);
+    handleScroll();
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('keydown', handleEscape);
     };
   }, []);
 
+  const navItems = [
+    { name: 'HOME', id: 'home' },
+    { name: 'LEADERSHIP', id: 'leadership' },
+    { name: 'SERVICES', id: 'services' },
+    { name: 'EVENTS', id: 'events' },
+    { name: 'CONTACT', id: 'contact' }
+  ];
+
+  const ministryItems = [
+    { name: "Children's Ministry", path: "/childrens-ministry" },
+    { name: "Youth Ministry", path: "/youth-ministry" },
+    { name: "Chosen Generation", path: "/chosen-generation" },
+    { name: "Women's Ministry", path: "/womens-ministry" },
+    { name: "Men's Ministry", path: "/mens-ministry" },
+    { name: "Charity Foundation", path: "/charity-foundation" }
+  ];
+
   return (
-    <div>
+    <div className="relative -mt-20">
       <div id="home" className="relative">
         <CarouselComponent />
-        <nav className="fixed md:top-8 top-0 left-1/2 transform -translate-x-1/2 z-50 bg-primary-900 text-white shadow-md md:rounded-2xl px-4 py-3 max-w-7xl w-full md:w-[calc(100%-2rem)] mx-auto md:mx-4">
-        <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-1">
-            <img
-              src={logo}
-              alt="Logo"
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <span className="text-lg font-semibold tracking-wide sm:inline hidden">
-              Voice of God Ministies
-            </span>
-            <span className="text-lg font-semibold tracking-wide sm:hidden inline">
-              VOG
-            </span>
-          </Link>
-
-          <ul className="hidden md:flex space-x-4 items-center font-semibold">
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'home' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
-            >
-              <a href="#home" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('home'); } else { window.location.href = '/#home'; }}} className="cursor-pointer">HOME</a>
-            </motion.li>
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'leadership' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
-            >
-              <a href="#leadership" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('leadership'); } else { window.location.href = '/#leadership'; }}} className="cursor-pointer">LEADERSHIP</a>
-            </motion.li>
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'services' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
-            >
-              <a href="#services" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('services'); } else { window.location.href = '/#services'; }}} className="cursor-pointer">SERVICES</a>
-            </motion.li>
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition relative ${activeSection === 'ministries' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
-            >
-              <button onClick={() => setShowMinistriesDropdown(!showMinistriesDropdown)} className="cursor-pointer flex items-center gap-1">
-                MINISTRIES
-                <svg className={`w-4 h-4 transition-transform ${showMinistriesDropdown ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <AnimatePresence>
-                {showMinistriesDropdown && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 mt-2 bg-white text-slate-800 rounded-lg shadow-xl border border-gray-200 min-w-48 z-50"
-                  >
-                    <div className="py-2">
-                      <Link to="/childrens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Children's Ministry</Link>
-                      <Link to="/youth-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Youth Ministry</Link>
-                      <Link to="/chosen-generation" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Chosen Generation</Link>
-                      <Link to="/womens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Women's Ministry</Link>
-                      <Link to="/mens-ministry" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Men's Ministry</Link>
-                      <Link to="/charity-foundation" onClick={() => setShowMinistriesDropdown(false)} className="block px-4 py-2 hover:bg-slate-50 transition-colors text-sm font-medium">Charity Foundation</Link>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.li>
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'events' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
-            >
-              <a href="#events" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('events'); } else { window.location.href = '/#events'; }}} className="cursor-pointer">EVENTS</a>
-            </motion.li>
-
-            <motion.li
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`cursor-pointer transition ${activeSection === 'contact' ? 'text-white font-bold scale-110' : 'text-primary-200'}`}
-            >
-              <a href="#contact" onClick={(e) => {e.preventDefault(); if(window.location.pathname === '/') { scrollToSection('contact'); } else { window.location.href = '/#contact'; }}} className="cursor-pointer">CONTACT</a>
-            </motion.li>
-            <li>
-              <Link
-                to="/join"
-                className="inline-flex items-center gap-1 px-4 py-2 bg-primary-700 text-white font-semibold rounded-xl hover:bg-primary-600 hover:shadow-lg hover:scale-105 transition-all duration-200"
-              >
-                <Heart size={16} />
-                Join Us
-              </Link>
-            </li>
-          </ul>
-
-          <div className="md:hidden flex items-center ml-auto">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="focus:outline-none flex items-center justify-center"
-              aria-label="Toggle menu"
-            >
-              <motion.div className="w-6 h-5 flex flex-col justify-between">
-                <motion.span
-                  className={`h-0.5 w-full bg-white block rounded-sm transition-all duration-300 ${
-                    isMenuOpen ? "rotate-45 translate-y-2" : ""
-                  }`}
-                ></motion.span>
-                <motion.span
-                  className={`h-0.5 w-full bg-white block rounded-sm transition-all duration-300 ${
-                    isMenuOpen ? "opacity-0" : "opacity-100"
-                  }`}
-                ></motion.span>
-                <motion.span
-                  className={`h-0.5 w-full bg-white block rounded-sm transition-all duration-300 ${
-                    isMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                  }`}
-                ></motion.span>
-              </motion.div>
-            </button>
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden bg-primary-800 px-4 py-3 text-white font-semibold rounded-b-2xl space-y-2 [&>div]:border-b [&>div]:border-primary-200/20 [&>div]:pb-1 absolute right-0 w-48 top-full mt-2 text-sm"
-            >
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <a
-                  href="#home"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/#home';
-                    setTimeout(() => scrollToSection('home'), 100);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'home' ? 'text-white font-bold' : 'text-white/80'}`}
-                >
-                  HOME
-                </a>
-              </motion.div>
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <a
-                  href="#leadership"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('leadership');
-                    setIsMenuOpen(false);
-                  }}
-                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'leadership' ? 'text-white font-bold' : 'text-white/80'}`}
-                >
-                  LEADERSHIP
-                </a>
-              </motion.div>
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <a
-                  href="#services"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('services');
-                    setIsMenuOpen(false);
-                  }}
-                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'services' ? 'text-white font-bold' : 'text-white/80'}`}
-                >
-                  SERVICES
-                </a>
-              </motion.div>
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <div className="space-y-1">
-                  <button
-                    onClick={() => setShowMinistriesDropdown(!showMinistriesDropdown)}
-                    className={`cursor-pointer flex justify-end w-full items-center gap-1 ${activeSection === 'ministries' ? 'text-white font-bold' : 'text-white/80'}`}
-                  >
-                    MINISTRIES
-                    <svg className={`w-3 h-3 transition-transform ${showMinistriesDropdown ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  {showMinistriesDropdown && (
-                    <div className="text-xs text-white/60 space-y-1 pl-4">
-                      <Link to="/childrens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Children's Ministry</Link>
-                      <Link to="/youth-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Youth Ministry</Link>
-                      <Link to="/chosen-generation" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Chosen Generation</Link>
-                      <Link to="/womens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Women's Ministry</Link>
-                      <Link to="/mens-ministry" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Men's Ministry</Link>
-                      <Link to="/charity-foundation" className="block cursor-pointer hover:text-white" onClick={() => {setIsMenuOpen(false); setShowMinistriesDropdown(false);}}>Charity Foundation</Link>
-                    </div>
-                  )}
+        
+        <nav className={`absolute lg:fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? 'lg:bg-white/95 lg:backdrop-blur-md lg:shadow-lg lg:border-b lg:border-gray-200/20' 
+            : 'lg:bg-white/10 lg:backdrop-blur-sm'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-20 lg:h-20 h-24">
+              
+              {/* Logo */}
+              <Link to="/" className="flex items-center space-x-3 group">
+                <div className="relative">
+                  <img
+                    src={logo}
+                    alt="Voice of God Ministries"
+                    className="w-14 h-14 rounded-full object-cover ring-2 ring-white/40 group-hover:ring-white/60 transition-all"
+                  />
                 </div>
-              </motion.div>
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <a
-                  href="#events"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('events');
-                    setIsMenuOpen(false);
-                  }}
-                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'events' ? 'text-white font-bold' : 'text-white/80'}`}
-                >
-                  EVENTS
-                </a>
-              </motion.div>
+                <div className="hidden sm:block">
+                  <h1 className={`text-xl font-bold tracking-tight ${scrolled ? 'text-gray-900' : 'text-white'}`}>
+                    Voice of God Ministries
+                  </h1>
+                </div>
+              </Link>
 
-              <motion.div
-                whileHover={{ x: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-b border-gray-700 pb-2"
-              >
-                <a
-                  href="#contact"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('contact');
-                    setIsMenuOpen(false);
-                  }}
-                  className={`cursor-pointer flex justify-end w-full ${activeSection === 'contact' ? 'text-white font-bold' : 'text-white/80'}`}
-                >
-                  CONTACT
-                </a>
-              </motion.div>
-              <div className="pt-1 flex justify-end">
-                <Link
-                  to="/join"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-700 text-white font-semibold rounded-lg hover:bg-slate-600 hover:shadow-lg hover:scale-105 transition-all duration-200 text-xs"
-                >
-                  <Heart size={12} />
-                  Join Us
-                </Link>
+              {/* Desktop Navigation */}
+              <div className="hidden lg:flex items-center space-x-1">
+                {navItems.map((item) => (
+                  <motion.a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if(window.location.pathname === '/') {
+                        scrollToSection(item.id);
+                      } else {
+                        window.location.href = `/#${item.id}`;
+                      }
+                    }}
+                    className={`px-4 py-2 text-sm font-medium transition-all duration-200 relative ${
+                      activeSection === item.id
+                        ? scrolled 
+                          ? 'text-gray-900' 
+                          : 'text-white'
+                        : scrolled
+                          ? 'text-gray-700 hover:text-gray-900'
+                          : 'text-white/90 hover:text-white'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.name}
+                    {activeSection === item.id && (
+                      <div className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                        scrolled ? 'bg-gray-900' : 'bg-white'
+                      }`} />
+                    )}
+                  </motion.a>
+                ))}
+
+                {/* Ministries Dropdown */}
+                <div className="relative">
+                  <motion.button
+                    onClick={() => setShowMinistriesDropdown(!showMinistriesDropdown)}
+                    className={`flex items-center space-x-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      scrolled
+                        ? 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                        : 'text-white/90 hover:bg-white/10 hover:text-white'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span>MINISTRIES</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${showMinistriesDropdown ? 'rotate-180' : ''}`} />
+                  </motion.button>
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+
+              {/* CTA Button */}
+              <div className="hidden lg:flex items-center space-x-4">
+                <button
+                  onClick={() => setShowJoinModal(true)}
+                  className={`inline-flex items-center space-x-2 px-6 py-2.5 font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl relative overflow-hidden group hover:text-white ${
+                    scrolled ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+                  }`}
+                >
+                  <div className="absolute inset-0 bg-orange-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
+                  <span className="relative z-10">Join Us</span>
+                </button>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <motion.button
+                onClick={() => setMobileMenuOpen(true)}
+                className="lg:hidden p-2 rounded-lg transition-colors text-white"
+                whileTap={{ scale: 0.95 }}
+              >
+                <Menu className="w-6 h-6" />
+              </motion.button>
+            </div>
+
+            {/* Ministries Dropdown - Expands navbar height */}
+            <AnimatePresence>
+              {showMinistriesDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="lg:block hidden overflow-hidden border-t border-gray-200/20 mt-4"
+                >
+                  <div className="py-4">
+                    <div className={`flex items-center space-x-2 px-4 py-2 mb-3 text-base font-bold ${
+                      scrolled ? 'text-gray-900' : 'text-white'
+                    }`}>
+                      <span className="cursor-pointer group">Ministries
+                        <span className="bg-orange-500 text-white px-2 py-1 text-sm transform group-hover:translate-x-1 transition-transform inline-block ml-2">&gt;</span>
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {ministryItems.map((ministry) => (
+                        <Link
+                          key={ministry.path}
+                          to={ministry.path}
+                          onClick={() => setShowMinistriesDropdown(false)}
+                          className={`block px-4 py-3 text-sm font-medium rounded-lg ${
+                            scrolled
+                              ? 'text-gray-700'
+                              : 'text-white/90'
+                          }`}
+                        >
+                          {ministry.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <>
+                {/* Overlay */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="lg:hidden fixed inset-0 bg-black/50 z-50"
+                />
+                
+                {/* Sidebar */}
+                <motion.div
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: 'tween', duration: 0.5, ease: 'easeInOut' }}
+                  className="lg:hidden fixed right-0 top-0 h-full w-full bg-white z-50 overflow-y-auto"
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-6 border-b">
+                    <img src={logo} alt="Logo" className="w-10 h-10 rounded-full" />
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 rounded-lg"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
+                  
+                  {/* Navigation */}
+                  <div className="py-4">
+                    {!mobileDropdownOpen ? (
+                      <>
+                        {navItems.map((item) => (
+                          <a
+                            key={item.id}
+                            href={`#${item.id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if(window.location.pathname === '/') {
+                                scrollToSection(item.id);
+                              } else {
+                                window.location.href = `/#${item.id}`;
+                              }
+                              setMobileMenuOpen(false);
+                            }}
+                            className="block w-full px-6 py-4 text-left border-b border-gray-100 hover:bg-gray-50"
+                          >
+                            {item.name}
+                          </a>
+                        ))}
+                        
+                        {/* Ministries Dropdown */}
+                        <button
+                          onClick={() => setMobileDropdownOpen(true)}
+                          className="flex items-center justify-between w-full px-6 py-4 text-left border-b border-gray-100 hover:bg-gray-50"
+                        >
+                          <span>MINISTRIES</span>
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setShowJoinModal(true);
+                          }}
+                          className="block w-full px-6 py-4 text-left border-b border-gray-100 font-semibold text-white bg-gray-900 relative overflow-hidden group"
+                        >
+                          <div className="absolute inset-0 bg-orange-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
+                          <span className="relative z-10">Join Us</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => setMobileDropdownOpen(false)}
+                          className="flex items-center w-full px-6 py-4 text-left border-b border-gray-100 hover:bg-gray-50"
+                        >
+                          <span>&larr; Back</span>
+                        </button>
+                        {ministryItems.map((ministry) => (
+                          <Link
+                            key={ministry.path}
+                            to={ministry.path}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="block px-6 py-4 text-left border-b border-gray-100 hover:bg-gray-50"
+                          >
+                            {ministry.name}
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </nav>
       </div>
+      
+      <JoinModal isOpen={showJoinModal} onClose={() => setShowJoinModal(false)} />
     </div>
   );
 }

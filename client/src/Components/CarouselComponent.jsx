@@ -55,9 +55,7 @@ export default function CarouselComponent() {
 
   if (loading) {
     return (
-      <div className="relative overflow-hidden h-64 sm:h-96 md:h-screen w-full flex items-center justify-center bg-gray-900">
-        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <div className="relative overflow-hidden h-64 sm:h-96 md:h-screen w-full bg-gray-300 animate-pulse mt-16 md:mt-0" />
     );
   }
 

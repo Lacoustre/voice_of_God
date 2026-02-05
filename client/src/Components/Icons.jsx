@@ -23,7 +23,7 @@ const SocialIcon = ({ href, icon, label }) => {
       aria-label={label}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-gray-300 hover:text-white transition-all duration-300 ease-in-out transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-purple-900 rounded-full p-2"
+      className="text-gray-300 hover:text-white transition-all duration-300 ease-in-out transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-primary-900 rounded-full p-2"
     >
       {getIcon()}
     </a>

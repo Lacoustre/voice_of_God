@@ -32,6 +32,14 @@ export default function Navbar() {
           }
         }
       }
+      
+      // Check if we're at the bottom of the page (footer visible)
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      if (windowHeight + scrollTop >= documentHeight - 100) {
+        setActiveSection('contact');
+      }
     };
     
     const handleEscape = (e) => {

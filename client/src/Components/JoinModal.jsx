@@ -8,6 +8,10 @@ import Toast from "./Toast";
 import { validateEmail, validatePhone, formatPhoneNumber } from "../utils/validation";
 
 const API_BASE_URL = "https://voice-of-god.onrender.com/api";
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
+
+let autocompleteService = null;
+let placesService = null;
 
 const FormField = ({ label, icon: Icon, required, children, description }) => (
   <div className="space-y-2">
@@ -33,8 +37,32 @@ const JoinModal = ({ isOpen, onClose }) => {
   const [dragActive, setDragActive] = useState(false);
   const [step, setStep] = useState(1);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const fileInputRef = useRef(null);
   const confettiIntervalRef = useRef(null);
+  const addressInputRef = useRef(null);
+
+  useEffect(() => {
+    if (!GOOGLE_MAPS_API_KEY) return;
+    
+    if (!window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.onload = () => {
+        autocompleteService = new window.google.maps.places.AutocompleteService();
+        placesService = new window.google.maps.places.PlacesService(document.createElement('div'));
+      };
+      document.head.appendChild(script);
+      return () => {
+        if (script.parentNode) script.parentNode.removeChild(script);
+      };
+    } else {
+      autocompleteService = new window.google.maps.places.AutocompleteService();
+      placesService = new window.google.maps.places.PlacesService(document.createElement('div'));
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -179,6 +207,32 @@ const JoinModal = ({ isOpen, onClose }) => {
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
     return data.url;
+  };
+
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setMember({ ...member, address: value });
+    
+    if (value.length > 2 && autocompleteService) {
+      autocompleteService.getPlacePredictions(
+        { input: value, types: ['address'] },
+        (predictions, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+            setAddressSuggestions(predictions);
+            setShowSuggestions(true);
+          }
+        }
+      );
+    } else {
+      setAddressSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const selectAddress = (suggestion) => {
+    setMember({ ...member, address: suggestion.description });
+    setShowSuggestions(false);
+    setAddressSuggestions([]);
   };
 
   const removeGroup = (groupToRemove) => {
@@ -389,13 +443,31 @@ const JoinModal = ({ isOpen, onClose }) => {
                   </div>
 
                   <FormField label="Home Address" icon={MapPin}>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
-                      placeholder="123 Faith Street, Hope City, HC 12345"
-                      value={member.address}
-                      onChange={(e) => setMember({ ...member, address: e.target.value })}
-                    />
+                    <div className="relative">
+                      <input
+                        ref={addressInputRef}
+                        type="text"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                        placeholder="123 Faith Street, Hope City, HC 12345"
+                        value={member.address}
+                        onChange={handleAddressChange}
+                        onFocus={() => addressSuggestions.length > 0 && setShowSuggestions(true)}
+                      />
+                      {showSuggestions && addressSuggestions.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                          {addressSuggestions.map((suggestion) => (
+                            <button
+                              key={suggestion.place_id}
+                              type="button"
+                              className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                              onClick={() => selectAddress(suggestion)}
+                            >
+                              <div className="text-sm text-gray-700">{suggestion.description}</div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </FormField>
 
                   <div className="flex justify-end">

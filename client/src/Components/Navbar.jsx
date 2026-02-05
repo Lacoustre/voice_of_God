@@ -59,12 +59,12 @@ export default function Navbar() {
   ];
 
   const ministryItems = [
-    { name: "Children's Ministry", path: "/childrens-ministry" },
-    { name: "Youth Ministry", path: "/youth-ministry" },
-    { name: "Chosen Generation", path: "/chosen-generation" },
-    { name: "Women's Ministry", path: "/womens-ministry" },
-    { name: "Men's Ministry", path: "/mens-ministry" },
-    { name: "Charity Foundation", path: "/charity-foundation" }
+    { name: "Children's Ministry", path: "/ministries", section: "children-ministry" },
+    { name: "Youth Ministry", path: "/ministries", section: "youth-ministry" },
+    { name: "Chosen Generation", path: "/ministries", section: "chosen-generation" },
+    { name: "Women's Ministry", path: "/ministries", section: "womens-ministry" },
+    { name: "Men's Ministry", path: "/ministries", section: "mens-ministry" },
+    { name: "Charity Foundation", path: "/ministries", section: "charity-foundation" }
   ];
 
   return (
@@ -193,8 +193,8 @@ export default function Navbar() {
                     <div className="grid grid-cols-2 gap-4">
                       {ministryItems.map((ministry) => (
                         <Link
-                          key={ministry.path}
-                          to={ministry.path}
+                          key={ministry.section}
+                          to={`${ministry.path}#${ministry.section}`}
                           onClick={() => setShowMinistriesDropdown(false)}
                           className={`block px-4 py-3 text-sm font-medium rounded-lg ${
                             scrolled
@@ -297,8 +297,8 @@ export default function Navbar() {
                         </button>
                         {ministryItems.map((ministry) => (
                           <Link
-                            key={ministry.path}
-                            to={ministry.path}
+                            key={ministry.section}
+                            to={`${ministry.path}#${ministry.section}`}
                             onClick={() => setMobileMenuOpen(false)}
                             className="block px-6 py-4 text-left border-b border-gray-100 hover:bg-gray-50"
                           >

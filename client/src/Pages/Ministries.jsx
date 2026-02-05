@@ -1,4 +1,7 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 import SectionTitle from "../Components/SectionTitle";
 import WomensMinistry from "../Components/Ministries/WomensMinistry";
 import MensMinistry from "../Components/Ministries/MensMinistry";
@@ -8,19 +11,23 @@ import ChildrenMinistry from "../Components/Ministries/ChildrenMinistry";
 import ChosenGeneration from "../Components/Ministries/ChosenGeneration";
 
 export default function Ministries() {
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <Navbar />
       <div className="pt-0 pb-20">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8"
-          >
-            <SectionTitle title="Our Ministries" />
-          </motion.div>
-
           <div className="space-y-16">
             <motion.section
               id="womens-ministry"
@@ -84,6 +91,7 @@ export default function Ministries() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

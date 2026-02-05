@@ -21,6 +21,11 @@ export default function CharityFoundation() {
   };
 
   useEffect(() => {
+    document.body.style.overflow = showModal ? 'hidden' : 'unset';
+    return () => (document.body.style.overflow = 'unset');
+  }, [showModal]);
+
+  useEffect(() => {
     const fetchDonationImages = async () => {
       try {
         const response = await fetch('https://voice-of-god.onrender.com/api/media/media');
@@ -119,7 +124,7 @@ export default function CharityFoundation() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center px-4">
           <motion.div
-            className="bg-gray-900 text-white max-w-sm w-full p-6 rounded-xl shadow-xl relative"
+            className="bg-gray-900 text-white max-w-sm w-full p-6 shadow-xl relative"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.3 }}
@@ -130,14 +135,14 @@ export default function CharityFoundation() {
 
             <h3 className="text-xl font-bold mb-4 text-amber-300 text-center">Donate via Zelle</h3>
             <p className="text-center text-sm mb-3">Please use the Zelle number below to send your donation:</p>
-            <div className="bg-gray-800 text-center p-3 rounded-lg mb-4 font-semibold tracking-wide text-amber-200 text-lg">
+            <div className="bg-gray-800 text-center p-3 mb-4 font-semibold tracking-wide text-amber-200 text-lg">
               +1 (860) 967 5647
             </div>
             <p className="text-xs text-gray-400 text-center mb-4 italic">Include "Charity Donation" in the memo if possible.</p>
 
             <button
               onClick={handleCopyZelle}
-              className="w-full py-2 bg-amber-600 hover:bg-amber-700 rounded-lg font-bold transition"
+              className="w-full py-2 bg-amber-600 hover:bg-amber-700 font-bold transition"
             >
               Copy Zelle Number
             </button>

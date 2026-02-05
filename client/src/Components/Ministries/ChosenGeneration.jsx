@@ -24,7 +24,6 @@ export default function ChosenGeneration() {
           }
         }
       } catch (error) {
-        console.log('Using fallback chosen generation images');
       } finally {
         setLoading(false);
       }

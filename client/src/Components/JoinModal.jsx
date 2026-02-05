@@ -11,7 +11,29 @@ const API_BASE_URL = "https://voice-of-god.onrender.com/api";
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
 
 let autocompleteService = null;
-let placesService = null;
+
+const loadGoogleMapsScript = () => {
+  return new Promise((resolve, reject) => {
+    if (window.google?.maps?.places) {
+      resolve();
+      return;
+    }
+    
+    const existingScript = document.querySelector(`script[src*="maps.googleapis.com"]`);
+    if (existingScript) {
+      existingScript.onload = resolve;
+      return;
+    }
+    
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`;
+    script.async = true;
+    script.defer = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+};
 
 const FormField = ({ label, icon: Icon, required, children, description }) => (
   <div className="space-y-2">
@@ -46,22 +68,11 @@ const JoinModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!GOOGLE_MAPS_API_KEY) return;
     
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.onload = () => {
+    loadGoogleMapsScript().then(() => {
+      if (window.google?.maps?.places?.AutocompleteService) {
         autocompleteService = new window.google.maps.places.AutocompleteService();
-        placesService = new window.google.maps.places.PlacesService(document.createElement('div'));
-      };
-      document.head.appendChild(script);
-      return () => {
-        if (script.parentNode) script.parentNode.removeChild(script);
-      };
-    } else {
-      autocompleteService = new window.google.maps.places.AutocompleteService();
-      placesService = new window.google.maps.places.PlacesService(document.createElement('div'));
-    }
+      }
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -319,7 +330,6 @@ const JoinModal = ({ isOpen, onClose }) => {
       setStep(1);
 
     } catch (err) {
-      console.error(err);
       showToast("Registration failed. Please try again.", "error");
     } finally {
       setLoading(false);
@@ -346,7 +356,7 @@ const JoinModal = ({ isOpen, onClose }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          className="bg-white max-w-4xl w-full max-h-[95vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-8 md:p-12">

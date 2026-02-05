@@ -65,11 +65,9 @@ const Footer = () => {
         setMessage("");
       } else {
         const errorData = await response.json();
-        console.error("Server error:", errorData);
         showToast(`Message could not be sent: ${errorData.message || "Please try again later"}`, "error");
       }
     } catch (error) {
-      console.error("Error sending message:", error);
       showToast("An error occurred. Please try again.", "error");
     } finally {
       setIsSubmittingMessage(false);

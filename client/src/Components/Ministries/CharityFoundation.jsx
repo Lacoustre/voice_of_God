@@ -39,7 +39,6 @@ export default function CharityFoundation() {
           }
         }
       } catch (error) {
-        console.log('Using fallback donation images');
       } finally {
         setLoading(false);
       }

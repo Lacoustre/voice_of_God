@@ -35,7 +35,6 @@ export default function CarouselComponent() {
           }
         }
       } catch (error) {
-        console.log('Using fallback carousel images');
       } finally {
         setLoading(false);
       }

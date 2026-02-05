@@ -44,7 +44,6 @@ export default function Home() {
         const data = await response.json();
         setEvents(data.events);
       } catch (error) {
-        console.error("Error fetching events:", error);
       } finally {
         setLoading(false);
       }

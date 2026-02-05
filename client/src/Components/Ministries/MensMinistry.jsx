@@ -24,7 +24,6 @@ export default function MensMinistry() {
           }
         }
       } catch (error) {
-        console.log('Using fallback mens ministry images');
       } finally {
         setLoading(false);
       }

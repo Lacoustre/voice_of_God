@@ -18,7 +18,6 @@ const AnnouncementSection = () => {
           setAnnouncements(data.data);
         }
       } catch (error) {
-        console.error('Error fetching announcements:', error);
       } finally {
         setLoading(false);
       }
@@ -63,7 +62,6 @@ const AnnouncementSection = () => {
         alert(`Failed to send phone messages: ${result.error}`);
       }
     } catch (error) {
-      console.error('Error sending phone messages:', error);
       alert('Error sending phone messages. Please try again.');
     } finally {
       setSendingPhone(false);

@@ -80,7 +80,7 @@ const Footer = () => {
     <footer id="contact" className="bg-primary-900 text-white py-16 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row justify-between items-start mb-16 gap-6">
-          <div className="mb-8 lg:mb-0 lg:max-w-xs">
+          <div className="mb-8 lg:mb-0 lg:max-w-xs text-center lg:text-left">
             <h3 className="text-3xl font-semibold tracking-tight mb-6 transform transition duration-500 ease-in-out hover:scale-105 text-white">
               New to Voice of God Ministries?
             </h3>
@@ -90,15 +90,21 @@ const Footer = () => {
             <p className="text-lg text-white leading-relaxed italic border-l-4 border-white pl-4 mb-4 font-bold">
               Matthew 18:20 - "For where two or three are gathered together in my name, there am I in the midst of them."
             </p>
-            <p className="text-lg text-white leading-relaxed mb-4 font-bold">
-              We invite you to join us..
-            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-lg text-white leading-relaxed font-bold">
+                We invite you to join us..
+              </p>
+              <Link to="/join" className="inline-block px-6 py-2.5 bg-white text-gray-900 font-semibold transition-all duration-200 relative overflow-hidden group hover:text-white">
+                <div className="absolute inset-0 bg-orange-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
+                <span className="relative z-10">Join Us</span>
+              </Link>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-6 mb-8 lg:mb-0 lg:flex-1 lg:justify-end">
-            <div className="min-w-[120px]">
+          <div className="flex flex-wrap gap-6 mb-8 lg:mb-0 lg:flex-1 lg:justify-end justify-center">
+            <div className="min-w-[120px] text-center lg:text-left">
               <h4 className="font-bold text-xl mb-6 text-white">Quick Links</h4>
-              <ul className="space-y-4">
+              <ul className="space-y-4 flex flex-col items-center lg:items-start">
                 <li><Link to="/" onClick={scrollToTop} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">HOME</span></Link></li>
                 <li><a href="#leadership" onClick={(e) => { e.preventDefault(); document.getElementById('leadership').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">LEADERSHIP</span></a></li>
                 <li><a href="#services" onClick={(e) => { e.preventDefault(); document.getElementById('services').scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-white hover:text-primary-200 group flex items-center transition-all duration-300"><span className="group-hover:translate-x-2 transition-transform">SERVICES</span></a></li>
@@ -107,7 +113,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            <div className="min-w-[160px]">
+            <div className="min-w-[160px] text-center lg:text-left">
               <h4 className="font-bold text-xl mb-6 text-white">Contact</h4>
               <ul className="space-y-4">
                 <li>
@@ -131,7 +137,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            <div className="min-w-[160px]">
+            <div className="min-w-[160px] text-center lg:text-left">
               <h4 className="font-bold text-xl mb-6 text-white">Feedback</h4>
               <form onSubmit={handleSubmit} className="mt-6">
                 <div className="flex flex-col space-y-4">

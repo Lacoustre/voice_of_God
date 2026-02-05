@@ -87,17 +87,17 @@ export default function Home() {
 
         <div className="flex justify-center px-2">
           {loading ? (
-            <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full max-w-7xl">
+            <div className="flex gap-6 overflow-x-auto w-full max-w-7xl pb-4 scrollbar-hide">
               {Array(8).fill(0).map((_, i) => (
-                <div key={i} className="border bg-black h-96 animate-pulse" />
+                <div key={i} className="border bg-black h-96 min-w-[250px] animate-pulse" />
               ))}
             </div>
           ) : (
-            <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full max-w-7xl">
+            <div className="flex gap-6 overflow-x-auto w-full max-w-7xl pb-4 scrollbar-hide">
               {[...events.filter(event => new Date(event.date) >= new Date()), ...events.filter(event => new Date(event.date) < new Date())].map((event, index) => {
                 const isUpcoming = new Date(event.date) >= new Date();
                 return (
-                  <div key={event.id || event.$id} className="relative cursor-pointer" onClick={() => {
+                  <div key={event.id || event.$id} className="relative cursor-pointer min-w-[250px]" onClick={() => {
                     setSelectedEvent(event);
                     setIsEventModalOpen(true);
                   }}>

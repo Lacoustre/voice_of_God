@@ -3,6 +3,7 @@ import SocialIcon from "./Icons";
 import { Link } from "react-router-dom";
 import logo from "../assets/modified_logo.png";
 import Toast from "./Toast";
+import JoinModal from "./JoinModal";
 import { validateEmail, validatePhone, formatPhoneNumber } from "../utils/validation";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { Heart } from "lucide-react";
@@ -20,6 +21,7 @@ const Footer = () => {
   const [phone, setPhone] = useState("");
   const [isSubmittingMessage, setIsSubmittingMessage] = useState(false);
   const [toast, setToast] = useState(null);
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -92,10 +94,10 @@ const Footer = () => {
               <p className="text-lg text-white leading-relaxed font-bold">
                 We invite you to join us..
               </p>
-              <Link to="/join" className="inline-block px-6 py-2.5 bg-white text-gray-900 font-semibold transition-all duration-200 relative overflow-hidden group hover:text-white">
+              <button onClick={() => setIsJoinModalOpen(true)} className="inline-block px-6 py-2.5 bg-white text-gray-900 font-semibold transition-all duration-200 relative overflow-hidden group hover:text-white">
                 <div className="absolute inset-0 bg-orange-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
                 <span className="relative z-10">Join Us</span>
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -173,6 +175,11 @@ const Footer = () => {
           onClose={() => setToast(null)} 
         />
       )}
+      
+      <JoinModal 
+        isOpen={isJoinModalOpen} 
+        onClose={() => setIsJoinModalOpen(false)} 
+      />
     </footer>
   );
 };

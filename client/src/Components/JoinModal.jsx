@@ -365,7 +365,7 @@ const JoinModal = ({ isOpen, onClose }) => {
                 Join Voice of God Ministry
               </h1>
               <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
-                <X size={24} />
+                <X size={24} className="text-black" />
               </button>
             </div>
 

@@ -6,12 +6,14 @@ import { formatDate } from "../utils/dateUtils";
 const EventModal = ({ isOpen, onClose, event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const [isImageFullscreen, setIsImageFullscreen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setCurrentImageIndex(0);
       setImageError(false);
+      setIsImageFullscreen(false);
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -51,21 +53,17 @@ const EventModal = ({ isOpen, onClose, event }) => {
           className="bg-white max-w-5xl w-full max-h-[95vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="relative bg-gradient-to-br from-gray-900 to-gray-800">
+          <div className="relative bg-gray-100">
             {images.length > 0 ? (
-              <div className="relative w-full h-[500px] overflow-hidden">
+              <div className="relative w-full min-h-[400px] max-h-[600px] flex items-center justify-center bg-gray-900">
                 <img
                   src={images[currentImageIndex]}
                   alt={`${event.title} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
-                  style={{
-                    objectPosition: 'center',
-                  }}
+                  className="w-full h-full max-h-[600px] object-contain cursor-zoom-in"
+                  onClick={() => setIsImageFullscreen(true)}
                   onError={() => setImageError(true)}
+                  title="Click to view fullscreen"
                 />
-                
-                {/* Gradient overlay for better text visibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 pointer-events-none" />
                 
                 {hasMultipleImages && (
                   <>
@@ -117,7 +115,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
                 )}
               </div>
             ) : (
-              <div className="w-full h-[500px] flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+              <div className="w-full h-[400px] flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
                 <div className="text-center text-white">
                   <Calendar size={64} className="mx-auto mb-4 opacity-50" />
                   <p className="text-lg">No images available</p>
@@ -180,6 +178,61 @@ const EventModal = ({ isOpen, onClose, event }) => {
             )}
           </div>
         </motion.div>
+
+        {/* Fullscreen Image Viewer */}
+        {isImageFullscreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black z-[60] flex items-center justify-center p-4"
+            onClick={() => setIsImageFullscreen(false)}
+          >
+            <button
+              onClick={() => setIsImageFullscreen(false)}
+              className="absolute top-4 right-4 p-3 bg-white/90 hover:bg-white rounded-full transition-all duration-300 hover:scale-110 shadow-lg z-20"
+              aria-label="Close fullscreen"
+            >
+              <X size={28} className="text-gray-800" />
+            </button>
+            
+            {hasMultipleImages && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 hover:bg-white shadow-lg text-gray-800 rounded-full transition-all duration-300 hover:scale-110 z-10"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft size={28} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 hover:bg-white shadow-lg text-gray-800 rounded-full transition-all duration-300 hover:scale-110 z-10"
+                  aria-label="Next image"
+                >
+                  <ChevronRight size={28} />
+                </button>
+              </>
+            )}
+            
+            <img
+              src={images[currentImageIndex]}
+              alt={`${event.title} - Image ${currentImageIndex + 1}`}
+              className="max-w-full max-h-full object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+            
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
+              {currentImageIndex + 1} / {images.length}
+            </div>
+          </motion.div>
+        )}
       </motion.div>
     </AnimatePresence>
   );

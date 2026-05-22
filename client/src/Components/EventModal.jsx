@@ -5,10 +5,13 @@ import { formatDate } from "../utils/dateUtils";
 
 const EventModal = ({ isOpen, onClose, event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      setCurrentImageIndex(0);
+      setImageError(false);
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -24,10 +27,12 @@ const EventModal = ({ isOpen, onClose, event }) => {
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    setImageError(false);
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+    setImageError(false);
   };
 
   return (
@@ -46,49 +51,85 @@ const EventModal = ({ isOpen, onClose, event }) => {
           className="bg-white max-w-5xl w-full max-h-[95vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="relative">
-            {images.length > 0 && (
-              <div className="h-96 w-full relative">
+          <div className="relative bg-gradient-to-br from-gray-900 to-gray-800">
+            {images.length > 0 ? (
+              <div className="relative w-full h-[500px] overflow-hidden">
                 <img
                   src={images[currentImageIndex]}
                   alt={`${event.title} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-contain bg-gray-100"
+                  className="w-full h-full object-cover"
+                  style={{
+                    objectPosition: 'center',
+                  }}
+                  onError={() => setImageError(true)}
                 />
+                
+                {/* Gradient overlay for better text visibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 pointer-events-none" />
                 
                 {hasMultipleImages && (
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 hover:bg-white shadow-lg text-gray-800 rounded-full transition-all duration-300 hover:scale-110 z-10"
+                      aria-label="Previous image"
                     >
                       <ChevronLeft size={24} />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/90 hover:bg-white shadow-lg text-gray-800 rounded-full transition-all duration-300 hover:scale-110 z-10"
+                      aria-label="Next image"
                     >
                       <ChevronRight size={24} />
                     </button>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    
+                    {/* Image counter */}
+                    <div className="absolute top-4 left-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                      {currentImageIndex + 1} / {images.length}
+                    </div>
+                    
+                    {/* Dot indicators */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
                       {images.map((_, idx) => (
                         <button
                           key={idx}
-                          onClick={() => setCurrentImageIndex(idx)}
-                          className={`w-2 h-2 rounded-full transition-all ${
-                            idx === currentImageIndex ? 'bg-white w-8' : 'bg-white/50'
+                          onClick={() => {
+                            setCurrentImageIndex(idx);
+                            setImageError(false);
+                          }}
+                          className={`h-2 rounded-full transition-all duration-300 ${
+                            idx === currentImageIndex 
+                              ? 'bg-white w-8 shadow-lg' 
+                              : 'bg-white/50 w-2 hover:bg-white/75'
                           }`}
+                          aria-label={`Go to image ${idx + 1}`}
                         />
                       ))}
                     </div>
                   </>
                 )}
+                
+                {imageError && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                    <p className="text-white text-lg">Failed to load image</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="w-full h-[500px] flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                <div className="text-center text-white">
+                  <Calendar size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">No images available</p>
+                </div>
               </div>
             )}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 hover:bg-white/90 rounded-lg transition-colors"
+              className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white rounded-full transition-all duration-300 hover:scale-110 shadow-lg z-20"
+              aria-label="Close modal"
             >
-              <X size={24} />
+              <X size={24} className="text-gray-800" />
             </button>
           </div>
 

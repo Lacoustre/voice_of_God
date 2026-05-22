@@ -105,13 +105,19 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
         }
       }
 
+      // Ensure date is in YYYY-MM-DD format (no timezone conversion)
+      const eventData = {
+        ...formData,
+        date: formData.date, // Keep as YYYY-MM-DD string
+        images: imageUrls,
+      };
+
+      console.log('Sending event data:', eventData);
+
       const response = await fetch(`${API_BASE_URL}/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          images: imageUrls,
-        }),
+        body: JSON.stringify(eventData),
       });
 
       if (!response.ok) {

@@ -26,25 +26,35 @@ exports.getEvents = async (req, res) => {
 exports.createEvent = async (req, res) => {
   const { title, date, time, verse, location, images, additionalInfo } = req.body;
 
+  console.log('Received date from frontend:', date);
+  console.log('Date type:', typeof date);
+
   if (!title || !date || !time || !location || !additionalInfo) {
     return res.status(400).json({ success: false, error: "Missing required fields" });
   }
 
   try {
+    // Store date as-is (YYYY-MM-DD format)
+    const eventData = {
+      title,
+      date, // Keep as string in YYYY-MM-DD format
+      time,
+      verse,
+      location,
+      images: images || [],
+      additionalInfo,
+    };
+
+    console.log('Storing event data:', eventData);
+
     const event = await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID,
       process.env.EVENTS_COLLECTION_ID,
       sdk.ID.unique(),
-      {
-        title,
-        date,
-        time,
-        verse,
-        location,
-        images: images || [],
-        additionalInfo,
-      }
+      eventData
     );
+
+    console.log('Stored event:', event);
 
     res.status(201).json({ success: true, event }); 
   } catch (error) {

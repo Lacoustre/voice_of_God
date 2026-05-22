@@ -34,10 +34,27 @@ exports.createEvent = async (req, res) => {
   }
 
   try {
-    // Store date as-is (YYYY-MM-DD format)
+    // Ensure date is in YYYY-MM-DD format string
+    let formattedDate = date;
+    
+    // If date is a Date object or timestamp, convert to YYYY-MM-DD
+    if (date instanceof Date || !isNaN(Date.parse(date))) {
+      const d = new Date(date);
+      // Get date in local timezone as YYYY-MM-DD
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      formattedDate = `${year}-${month}-${day}`;
+    }
+    
+    // If it's already in YYYY-MM-DD format, keep it as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      formattedDate = date;
+    }
+
     const eventData = {
       title,
-      date, // Keep as string in YYYY-MM-DD format
+      date: formattedDate, // Store as YYYY-MM-DD string
       time,
       verse,
       location,
@@ -45,7 +62,7 @@ exports.createEvent = async (req, res) => {
       additionalInfo,
     };
 
-    console.log('Storing event data:', eventData);
+    console.log('Storing event data with formatted date:', eventData);
 
     const event = await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID,
@@ -69,13 +86,32 @@ exports.updateEvent = async (req, res) => {
   const { title, date, time, verse, location, images, additionalInfo } = req.body;
 
   try {
+    // Ensure date is in YYYY-MM-DD format string
+    let formattedDate = date;
+    
+    if (date) {
+      // If date is a Date object or timestamp, convert to YYYY-MM-DD
+      if (date instanceof Date || !isNaN(Date.parse(date))) {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        formattedDate = `${year}-${month}-${day}`;
+      }
+      
+      // If it's already in YYYY-MM-DD format, keep it as is
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        formattedDate = date;
+      }
+    }
+
     const updated = await databases.updateDocument(
       process.env.APPWRITE_DATABASE_ID,
       process.env.EVENTS_COLLECTION_ID,
       id,
       {
         title,
-        date,
+        date: formattedDate,
         time,
         verse,
         location,

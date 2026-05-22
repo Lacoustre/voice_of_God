@@ -98,15 +98,18 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
             'User-Agent': 'VoiceOfGodMinistries/1.0'
           }
         }
-      );
+      ).catch(() => null);
 
       clearTimeout(timeoutId);
 
-      if (!res.ok) {
-        throw new Error('Location service unavailable');
+      if (!res || !res.ok) {
+        setLocationSuggestions([]);
+        setShowLocationDropdown(false);
+        setIsLoadingLocations(false);
+        return;
       }
 
-      const data = await res.json();
+      const data = await res.json().catch(() => []);
       
       if (Array.isArray(data) && data.length > 0) {
         setLocationSuggestions(data.map((place) => place.display_name));
@@ -116,9 +119,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
         setShowLocationDropdown(false);
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.warn('Location autocomplete failed:', error.message);
-      }
+      // Silently handle all errors including extension blocks
       setLocationSuggestions([]);
       setShowLocationDropdown(false);
     } finally {

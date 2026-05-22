@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { X } from "lucide-react";
 import Toast from "./common/Toast";
 
@@ -20,6 +20,8 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const locationTimeoutRef = useRef(null);
 
   const resetForm = () => {
     setFormData({
@@ -73,27 +75,74 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
     });
   };
 
-  const handleInputChange = async (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const fetchLocationSuggestions = useCallback(async (query) => {
+    if (!query || query.trim().length < 3) {
+      setLocationSuggestions([]);
+      setShowLocationDropdown(false);
+      return;
+    }
 
-    if (name === "location" && value.trim().length > 2) {
-      try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-            value
-          )}&format=json&addressdetails=1&limit=5`
-        );
-        const data = await res.json();
+    setIsLoadingLocations(true);
+    
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          query
+        )}&format=json&addressdetails=1&limit=5`,
+        {
+          signal: controller.signal,
+          headers: {
+            'User-Agent': 'VoiceOfGodMinistries/1.0'
+          }
+        }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error('Location service unavailable');
+      }
+
+      const data = await res.json();
+      
+      if (Array.isArray(data) && data.length > 0) {
         setLocationSuggestions(data.map((place) => place.display_name));
-        setShowLocationDropdown(data.length > 0);
-      } catch {
+        setShowLocationDropdown(true);
+      } else {
         setLocationSuggestions([]);
         setShowLocationDropdown(false);
       }
-    } else if (name === "location") {
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.warn('Location autocomplete failed:', error.message);
+      }
       setLocationSuggestions([]);
       setShowLocationDropdown(false);
+    } finally {
+      setIsLoadingLocations(false);
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "location") {
+      if (locationTimeoutRef.current) {
+        clearTimeout(locationTimeoutRef.current);
+      }
+
+      if (value.trim().length > 2) {
+        locationTimeoutRef.current = setTimeout(() => {
+          fetchLocationSuggestions(value);
+        }, 500);
+      } else {
+        setLocationSuggestions([]);
+        setShowLocationDropdown(false);
+      }
     }
   };
 
@@ -217,14 +266,48 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
               placeholder="Location"
               value={formData.location}
               onChange={handleInputChange}
+              onBlur={() => {
+                setTimeout(() => setShowLocationDropdown(false), 200);
+              }}
+              onFocus={() => {
+                if (locationSuggestions.length > 0) {
+                  setShowLocationDropdown(true);
+                }
+              }}
               className="w-full border px-4 py-2"
+              autoComplete="off"
             />
-            {showLocationDropdown && (
+            {isLoadingLocations && (
+              <div className="absolute right-3 top-3">
+                <svg
+                  className="animate-spin h-5 w-5 text-indigo-600"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+              </div>
+            )}
+            {showLocationDropdown && locationSuggestions.length > 0 && (
               <ul className="absolute left-0 right-0 bg-white border mt-1 max-h-48 overflow-y-auto shadow-lg z-50">
                 {locationSuggestions.map((suggestion, index) => (
                   <li
                     key={index}
-                    onClick={() => {
+                    onMouseDown={(e) => {
+                      e.preventDefault();
                       setFormData((prev) => ({
                         ...prev,
                         location: suggestion,

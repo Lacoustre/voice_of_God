@@ -52,7 +52,7 @@ const EditEventModal = ({ event, onClose, onSave, onDelete }) => {
             type="date"
             className="w-full border p-2"
             placeholder="Date"
-            value={form.date || ""}
+            value={form.date ? (form.date.includes('T') ? form.date.split('T')[0] : form.date) : ""}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
             onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
           />

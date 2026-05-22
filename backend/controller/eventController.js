@@ -15,6 +15,8 @@ exports.getEvents = async (req, res) => {
       process.env.EVENTS_COLLECTION_ID
     );
 
+    console.log('Raw events from Appwrite:', JSON.stringify(response.documents[0], null, 2));
+
     res.status(200).json({ success: true, events: response.documents });
   } catch (error) {
     console.error("Get Events Error:", error);
@@ -34,27 +36,25 @@ exports.createEvent = async (req, res) => {
   }
 
   try {
-    // Ensure date is in YYYY-MM-DD format string
-    let formattedDate = date;
+    // Convert date to ISO string with local timezone at noon to avoid timezone issues
+    // This ensures the date stays the same regardless of timezone
+    let isoDate;
     
-    // If date is a Date object or timestamp, convert to YYYY-MM-DD
-    if (date instanceof Date || !isNaN(Date.parse(date))) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      // Date is in YYYY-MM-DD format, convert to ISO with time at noon UTC
+      isoDate = `${date}T12:00:00.000Z`;
+    } else {
+      // Fallback: try to parse and format
       const d = new Date(date);
-      // Get date in local timezone as YYYY-MM-DD
       const year = d.getFullYear();
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
-      formattedDate = `${year}-${month}-${day}`;
-    }
-    
-    // If it's already in YYYY-MM-DD format, keep it as is
-    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      formattedDate = date;
+      isoDate = `${year}-${month}-${day}T12:00:00.000Z`;
     }
 
     const eventData = {
       title,
-      date: formattedDate, // Store as YYYY-MM-DD string
+      date: isoDate, // Store as ISO string with noon UTC time
       time,
       verse,
       location,
@@ -62,7 +62,7 @@ exports.createEvent = async (req, res) => {
       additionalInfo,
     };
 
-    console.log('Storing event data with formatted date:', eventData);
+    console.log('Storing event data with ISO date:', eventData);
 
     const event = await databases.createDocument(
       process.env.APPWRITE_DATABASE_ID,
@@ -71,7 +71,9 @@ exports.createEvent = async (req, res) => {
       eventData
     );
 
-    console.log('Stored event:', event);
+    console.log('Event returned from Appwrite:', JSON.stringify(event, null, 2));
+    console.log('Date field in response:', event.date);
+    console.log('Date field type:', typeof event.date);
 
     res.status(201).json({ success: true, event }); 
   } catch (error) {
@@ -86,22 +88,18 @@ exports.updateEvent = async (req, res) => {
   const { title, date, time, verse, location, images, additionalInfo } = req.body;
 
   try {
-    // Ensure date is in YYYY-MM-DD format string
-    let formattedDate = date;
+    // Convert date to ISO string with noon UTC time
+    let isoDate = date;
     
     if (date) {
-      // If date is a Date object or timestamp, convert to YYYY-MM-DD
-      if (date instanceof Date || !isNaN(Date.parse(date))) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        isoDate = `${date}T12:00:00.000Z`;
+      } else if (date instanceof Date || !isNaN(Date.parse(date))) {
         const d = new Date(date);
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        formattedDate = `${year}-${month}-${day}`;
-      }
-      
-      // If it's already in YYYY-MM-DD format, keep it as is
-      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        formattedDate = date;
+        isoDate = `${year}-${month}-${day}T12:00:00.000Z`;
       }
     }
 
@@ -111,7 +109,7 @@ exports.updateEvent = async (req, res) => {
       id,
       {
         title,
-        date: formattedDate,
+        date: isoDate,
         time,
         verse,
         location,

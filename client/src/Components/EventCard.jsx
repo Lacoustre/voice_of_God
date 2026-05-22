@@ -43,9 +43,11 @@ const EventCard = ({ event }) => {
         <h3 className="text-xl font-bold text-white drop-shadow-lg transition-all duration-300 group-hover:-translate-y-2 mb-2">
           {event?.title || "Untitled Event"}
         </h3>
-        <p className="text-sm text-white/90 mt-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 line-clamp-2">
-          {event?.verse || "No verse available"}
-        </p>
+        {event?.verse && (
+          <p className="text-sm text-white/90 mt-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 line-clamp-2">
+            {event.verse}
+          </p>
+        )}
       </div>
     </motion.div>
   );

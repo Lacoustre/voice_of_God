@@ -1,5 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { formatDate } from "../utils/dateUtils";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
 
@@ -51,11 +52,7 @@ const handleDelete = async () => {
         </p>
         <p className="text-sm text-gray-700">
           <span className="font-semibold">Date:</span>{" "}
-          {new Date(event.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}{" "}
+          {formatDate(event.date)}{" "}
           at{" "}
           {event.time || "TBD"}
         </p>

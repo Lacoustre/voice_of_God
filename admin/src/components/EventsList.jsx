@@ -4,6 +4,7 @@ import EventCard from "./EventCard";
 import Toast from "../components/common/Toast";
 import AddEventModal from "./AddEventModal";
 import { useApp } from "../context/AppContext";
+import { parseLocalDate } from "../utils/dateUtils";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "https://voice-of-god.onrender.com";
@@ -50,17 +51,24 @@ const EventsList = ({ events: propEvents }) => {
       }
 
       const now = new Date();
+      now.setHours(0, 0, 0, 0);
 
       const upcoming = data.events
-        .filter((e) => new Date(e.date) >= now)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+        .filter((e) => {
+          const eventDate = parseLocalDate(e.date);
+          return eventDate && eventDate >= now;
+        })
+        .sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
 
       let topThree = [...upcoming.slice(0, 5)];
 
       if (topThree.length < 5) {
         const past = data.events
-          .filter((e) => new Date(e.date) < now)
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
+          .filter((e) => {
+            const eventDate = parseLocalDate(e.date);
+            return eventDate && eventDate < now;
+          })
+          .sort((a, b) => parseLocalDate(b.date) - parseLocalDate(a.date));
 
         topThree = [...topThree, ...past.slice(0, 5 - topThree.length)];
       }

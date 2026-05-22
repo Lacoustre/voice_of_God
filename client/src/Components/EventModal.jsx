@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { formatDate } from "../utils/dateUtils";
 
 const EventModal = ({ isOpen, onClose, event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -98,12 +99,7 @@ const EventModal = ({ isOpen, onClose, event }) => {
               {event.date && (
                 <div className="flex items-center gap-3 text-gray-700">
                   <Calendar size={20} className="text-orange-500" />
-                  <span>{new Date(event.date + 'T00:00:00').toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}</span>
+                  <span>{formatDate(event.date)}</span>
                 </div>
               )}
 

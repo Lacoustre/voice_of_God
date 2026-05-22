@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
 import Toast from "./common/Toast";
 
@@ -18,10 +18,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
   });
 
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [locationSuggestions, setLocationSuggestions] = useState([]);
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
-  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
-  const locationTimeoutRef = useRef(null);
 
   const resetForm = () => {
     setFormData({
@@ -34,8 +30,6 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
       additionalInfo: "",
     });
     setImagePreviews([]);
-    setLocationSuggestions([]);
-    setShowLocationDropdown(false);
     onClose();
   };
 
@@ -75,76 +69,9 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
     });
   };
 
-  const fetchLocationSuggestions = useCallback(async (query) => {
-    if (!query || query.trim().length < 3) {
-      setLocationSuggestions([]);
-      setShowLocationDropdown(false);
-      return;
-    }
-
-    setIsLoadingLocations(true);
-    
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          query
-        )}&format=json&addressdetails=1&limit=5`,
-        {
-          signal: controller.signal,
-          headers: {
-            'User-Agent': 'VoiceOfGodMinistries/1.0'
-          }
-        }
-      ).catch(() => null);
-
-      clearTimeout(timeoutId);
-
-      if (!res || !res.ok) {
-        setLocationSuggestions([]);
-        setShowLocationDropdown(false);
-        setIsLoadingLocations(false);
-        return;
-      }
-
-      const data = await res.json().catch(() => []);
-      
-      if (Array.isArray(data) && data.length > 0) {
-        setLocationSuggestions(data.map((place) => place.display_name));
-        setShowLocationDropdown(true);
-      } else {
-        setLocationSuggestions([]);
-        setShowLocationDropdown(false);
-      }
-    } catch (error) {
-      // Silently handle all errors including extension blocks
-      setLocationSuggestions([]);
-      setShowLocationDropdown(false);
-    } finally {
-      setIsLoadingLocations(false);
-    }
-  }, []);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "location") {
-      if (locationTimeoutRef.current) {
-        clearTimeout(locationTimeoutRef.current);
-      }
-
-      if (value.trim().length > 2) {
-        locationTimeoutRef.current = setTimeout(() => {
-          fetchLocationSuggestions(value);
-        }, 500);
-      } else {
-        setLocationSuggestions([]);
-        setShowLocationDropdown(false);
-      }
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -260,69 +187,14 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }) => {
             onChange={handleInputChange}
             className="w-full border px-4 py-2"
           />
-          <div className="relative">
-            <input
-              type="text"
-              name="location"
-              placeholder="Location"
-              value={formData.location}
-              onChange={handleInputChange}
-              onBlur={() => {
-                setTimeout(() => setShowLocationDropdown(false), 200);
-              }}
-              onFocus={() => {
-                if (locationSuggestions.length > 0) {
-                  setShowLocationDropdown(true);
-                }
-              }}
-              className="w-full border px-4 py-2"
-              autoComplete="off"
-            />
-            {isLoadingLocations && (
-              <div className="absolute right-3 top-3">
-                <svg
-                  className="animate-spin h-5 w-5 text-indigo-600"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  />
-                </svg>
-              </div>
-            )}
-            {showLocationDropdown && locationSuggestions.length > 0 && (
-              <ul className="absolute left-0 right-0 bg-white border mt-1 max-h-48 overflow-y-auto shadow-lg z-50">
-                {locationSuggestions.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      setFormData((prev) => ({
-                        ...prev,
-                        location: suggestion,
-                      }));
-                      setShowLocationDropdown(false);
-                    }}
-                    className="px-4 py-2 hover:bg-indigo-50 cursor-pointer text-sm text-gray-700"
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <input
+            type="text"
+            name="location"
+            placeholder="Location (e.g., 123 Main St, New York, NY)"
+            value={formData.location}
+            onChange={handleInputChange}
+            className="w-full border px-4 py-2"
+          />
           <input
             type="file"
             name="images"
